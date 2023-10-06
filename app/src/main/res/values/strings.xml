@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">AniListBingo</string>
+
+    <string name="name">Name:</string>
+    <string name="delete">delete</string>
+    <string name="edit">edit</string>
+</resources>
