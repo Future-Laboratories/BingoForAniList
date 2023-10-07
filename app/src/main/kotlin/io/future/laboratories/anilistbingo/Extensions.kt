@@ -1,62 +1,33 @@
 package io.future.laboratories.anilistbingo
 
-import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
-import android.content.pm.PackageManager
 import android.util.Log
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import com.squareup.moshi.Moshi
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
 import io.future.laboratories.anilistbingo.Companion.STORAGE_PATH
 import io.future.laboratories.anilistbingo.data.BingoData
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
+import io.future.laboratories.anilistbingo.data.api.API
+import io.future.laboratories.anilistbingo.data.api.DataHolder
+import io.future.laboratories.anilistbingo.data.api.DataHolderCall
+import io.future.laboratories.anilistbingo.data.api.DataHolderCallback
+import io.future.laboratories.anilistbingo.data.api.DataHolderResponse
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
-import java.util.prefs.Preferences
-
-//region permissions
-//fun getPermission(
-//    context: Context,
-//    activity: Activity,
-//    permission: String,
-//    onSuccess: () -> Unit = {},
-//    onFailure: () -> Unit = {
-//        ActivityCompat.requestPermissions(
-//            activity,
-//            arrayOf(permission),
-//            MY_PERMISSIONS_REQUESTS.getValue(permission)
-//        )
-//    },
-//) {
-//    if (ContextCompat.checkSelfPermission(
-//            context,
-//            permission
-//        ) == PackageManager.PERMISSION_GRANTED
-//    ) {
-//        onSuccess()
-//    } else {
-//        onFailure()
-//    }
-//}
-//
-//internal val MY_PERMISSIONS_REQUESTS = mapOf<String, Int>(
-//    Manifest.permission.READ_EXTERNAL_STORAGE to 100,
-//    Manifest.permission.WRITE_EXTERNAL_STORAGE to 101,
-//)
-//endregion
 
 //region save & load
 
@@ -65,7 +36,7 @@ internal val BUILDER
 
 internal val ADAPTER = BUILDER.adapter(BingoData::class.java)
 
-public fun Context.save(data: BingoData) {
+internal fun Context.save(data: BingoData) {
     val file = File(filesDir, STORAGE_PATH("${data.id}"))
     if (!file.exists()) {
         file.parentFile?.mkdir()
@@ -76,7 +47,7 @@ public fun Context.save(data: BingoData) {
     }
 }
 
-public fun Context.loadAll(): SnapshotStateList<BingoData> {
+internal fun Context.loadAll(): SnapshotStateList<BingoData> {
     val bingoDataList = SnapshotStateList<BingoData>()
     val file = File(filesDir, STORAGE_PATH())
 
@@ -89,7 +60,7 @@ public fun Context.loadAll(): SnapshotStateList<BingoData> {
     return bingoDataList
 }
 
-public fun Context.loadSingle(id: Int): BingoData? {
+internal fun Context.loadSingle(id: Int): BingoData? {
     var data: BingoData? = null
 
     val file = File(filesDir, STORAGE_PATH("$id"))
@@ -114,7 +85,7 @@ public fun Context.loadSingle(id: Int): BingoData? {
     return data
 }
 
-public fun Context.deleteSingle(id: Int) {
+internal fun Context.deleteSingle(id: Int) {
     val file = File(filesDir, STORAGE_PATH("$id"))
     if (file.exists()) {
         file.delete()
@@ -125,18 +96,51 @@ public fun Context.deleteSingle(id: Int) {
 
 //region Colors
 
-public val textColor: Color
+internal val textColor: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 
 //endregion
 
 //region logout
-public fun SharedPreferences.logout() {
+
+internal fun SharedPreferences.logout() {
     edit {
-        putString(MainActivity.PREFERENCE_ACCESS_TOKEN, null)
-        putString(MainActivity.PREFERENCE_ACCESS_TYPE, null)
-        putLong(MainActivity.PREFERENCE_ACCESS_EXPIRED, 0)
+        putString(PREFERENCE_ACCESS_TOKEN, null)
+        putString(PREFERENCE_ACCESS_TYPE, null)
+        putLong(PREFERENCE_ACCESS_EXPIRED, -1L)
+        putLong(PREFERENCE_ACCESS_USER_ID, -1L)
     }
 }
+
+//endregion
+
+//region retrofit
+
+private val retrofit: Retrofit = Retrofit.Builder()
+    .addConverterFactory(MoshiConverterFactory.create())
+    .baseUrl("https://graphql.anilist.co")
+    .build()
+
+internal val api: API = retrofit.create(API::class.java)
+
+internal fun <T> DataHolderCall<T>.enqueue(
+    onFailure: ((DataHolderCall<T>, Throwable) -> Unit)? = null,
+    onResponse: (call: DataHolderCall<T>, response: DataHolderResponse<T>) -> Unit,
+) = this.enqueue(object : DataHolderCallback<T> {
+    override fun onResponse(
+        call: DataHolderCall<T>,
+        response: Response<DataHolder<T>>,
+    ) = onResponse(call, response)
+
+    override fun onFailure(
+        call: DataHolderCall<T>,
+        t: Throwable,
+    ) {
+        Log.e("DataHolderCall", "${t}")
+
+        onFailure?.invoke(call, t)
+    }
+})
+
 //endregion

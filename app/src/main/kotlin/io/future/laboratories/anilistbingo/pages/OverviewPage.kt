@@ -40,13 +40,12 @@ import io.future.laboratories.anilistbingo.ui.NegativeButton
 import io.future.laboratories.anilistbingo.ui.PositiveButton
 
 @Composable
-public fun OverviewPage(
+internal fun OverviewPage(
     context: Context,
     preferences: SharedPreferences,
     data: SnapshotStateList<BingoData>,
     isLoggedIn: Boolean,
     onLogout: () -> Unit,
-    onLogin: () -> Unit,
     onEdit: (BingoData) -> Unit,
     onDelete: (BingoData) -> Unit,
     onClickField: (BingoData) -> Unit,

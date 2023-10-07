@@ -2,6 +2,7 @@ package io.future.laboratories.anilistbingo
 
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
@@ -14,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,20 +26,33 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
+import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
 import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.anilistbingo.data.api.API
+import io.future.laboratories.anilistbingo.data.api.AniListBody
 import io.future.laboratories.anilistbingo.pages.BingoPage
 import io.future.laboratories.anilistbingo.pages.EditorPage
 import io.future.laboratories.anilistbingo.pages.OverviewPage
+import io.future.laboratories.anilistbingo.ui.PositiveButton
 import io.future.laboratories.anilistbingo.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
     private val preferences: SharedPreferences by lazy {
         getSharedPreferences(
             PREFERENCE_BASE_KEY,
-            MODE_PRIVATE
+            MODE_PRIVATE,
         )
     }
+
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAll() }
+    private val authorization
+        get() = "" +
+                "${preferences.getString(PREFERENCE_ACCESS_TYPE, null)} " +
+                "${preferences.getString(PREFERENCE_ACCESS_TOKEN, null)}" +
+                ""
 
     private var currentPage: Page by mutableStateOf(Page.OVERVIEW)
     private var isLoggedIn: Boolean by mutableStateOf(false)
@@ -53,6 +68,26 @@ public class MainActivity : ComponentActivity() {
                 putString(PREFERENCE_ACCESS_TYPE, sub2.substringBefore("&"))
                 val sub3 = it.substringAfter("&expires_in=").substringBefore("&")
                 putLong(PREFERENCE_ACCESS_EXPIRED, System.currentTimeMillis() + sub3.toInt() * 1000)
+            }
+
+            api.postAniListUser(
+                authorization = authorization,
+                json = AniListBody(API.aniListUserQuery, emptyMap())
+            ).enqueue { _, response ->
+                Log.d("myTag", response.body().toString())
+                preferences.edit {
+                    putLong(PREFERENCE_ACCESS_USER_ID, response.body()?.data?.viewer?.id ?: -1L)
+                }
+
+                api.postAniList(
+                    authorization = authorization,
+                    json = AniListBody(
+                        query = API.aniListListQuery,
+                        variables = mapOf("userId" to preferences.getLong(PREFERENCE_ACCESS_USER_ID, -1L))
+                    ),
+                ).enqueue { _, response ->
+                    Log.d("myTag", response.body().toString())
+                }
             }
         }
 
@@ -77,7 +112,6 @@ public class MainActivity : ComponentActivity() {
                                 data = runtimeData,
                                 isLoggedIn = isLoggedIn,
                                 onLogout = { isLoggedIn = false },
-                                onLogin = { isLoggedIn = true },
                                 onEdit = { data ->
                                     currentPage = Page.EDITOR(bingoData = data)
                                 },
@@ -88,7 +122,6 @@ public class MainActivity : ComponentActivity() {
                             ) { bingoData ->
                                 currentPage = Page.BINGO(bingoData)
                             }
-
                             is Page.BINGO -> BingoPage(bingoData = (currentPage as Page.BINGO).bingoData)
                             is Page.EDITOR -> {
                                 EditorPage(
@@ -128,8 +161,9 @@ public class MainActivity : ComponentActivity() {
     }
 
     private fun validateKey() {
-        isLoggedIn = System.currentTimeMillis() <= preferences.getLong(PREFERENCE_ACCESS_EXPIRED, 0L)
-        if(!isLoggedIn) {
+        isLoggedIn =
+            System.currentTimeMillis() <= preferences.getLong(PREFERENCE_ACCESS_EXPIRED, -1L)
+        if (!isLoggedIn) {
             preferences.logout()
         }
     }
@@ -142,10 +176,7 @@ public class MainActivity : ComponentActivity() {
         class BINGO(var bingoData: BingoData) : Page()
     }
 
-    public companion object {
+    private companion object {
         private const val PREFERENCE_BASE_KEY = "BINGO_PREFERENCE_KEY"
-        public const val PREFERENCE_ACCESS_TOKEN: String = "${PREFERENCE_BASE_KEY}_TOKEN"
-        public const val PREFERENCE_ACCESS_TYPE: String= "${PREFERENCE_BASE_KEY}_TYPE"
-        public const val PREFERENCE_ACCESS_EXPIRED: String = "${PREFERENCE_BASE_KEY}_EXPIRED"
     }
 }

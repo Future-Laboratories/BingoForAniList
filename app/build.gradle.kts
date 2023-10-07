@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
     implementation(libs.retrofit)
+    implementation(libs.retrofit2.converter.moshi)
 
     // testImplementations
     testImplementation(libs.junit)

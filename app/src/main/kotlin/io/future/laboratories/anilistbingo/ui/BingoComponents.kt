@@ -29,7 +29,7 @@ import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
 
 @Composable
-public fun Bingo(
+internal fun Bingo(
     bingoData: BingoData,
     onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
@@ -45,7 +45,7 @@ public fun Bingo(
 }
 
 @Composable
-private fun BingoRow(
+internal fun BingoRow(
     rowData: RowData,
     bingoData: BingoData,
     onValueChanged: ((BingoData) -> Unit)? = null,

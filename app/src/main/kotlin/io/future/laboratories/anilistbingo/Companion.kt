@@ -4,7 +4,13 @@ import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
 
-public object Companion {
+internal object Companion {
+    private const val PREFIX = "BINGO"
+    internal const val PREFERENCE_ACCESS_TOKEN: String = "${PREFIX}_TOKEN"
+    internal const val PREFERENCE_ACCESS_TYPE: String = "${PREFIX}_BINGO_TYPE"
+    internal const val PREFERENCE_ACCESS_EXPIRED: String = "${PREFIX}_BINGO_EXPIRED"
+    internal const val PREFERENCE_ACCESS_USER_ID: String = "${PREFIX}_USER_ID"
+
     internal var MOCK_DATA: BingoData = BingoData(
         id = 2070,
         name = "Mock Bingo",

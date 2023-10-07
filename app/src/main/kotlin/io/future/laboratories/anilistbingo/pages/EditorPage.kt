@@ -36,7 +36,7 @@ import io.future.laboratories.anilistbingo.textColor
 import io.future.laboratories.anilistbingo.ui.PositiveButton
 
 @Composable
-public fun EditorPage(
+internal fun EditorPage(
     preferences: SharedPreferences,
     bingoData: BingoData? = null,
     onClickSave: (BingoData) -> Unit,
@@ -101,7 +101,7 @@ public fun EditorPage(
 }
 
 @Composable
-public fun BingoEditor(
+private fun BingoEditor(
     bingoData: BingoData,
 ) {
     Column {

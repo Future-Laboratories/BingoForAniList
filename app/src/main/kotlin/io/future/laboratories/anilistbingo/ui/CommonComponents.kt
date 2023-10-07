@@ -12,10 +12,10 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistbingo.textColor
 
 @Composable
-public fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.width(4.dp))
+internal fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.width(4.dp))
 
 @Composable
-public fun PositiveButton(
+internal fun PositiveButton(
     onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit,
 ): Unit = Button(
@@ -25,7 +25,7 @@ public fun PositiveButton(
 )
 
 @Composable
-public fun NegativeButton(
+internal fun NegativeButton(
     onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit,
 ): Unit = Button(
