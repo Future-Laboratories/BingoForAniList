@@ -30,6 +30,6 @@ internal fun NegativeButton(
     content: @Composable RowScope.() -> Unit,
 ): Unit = Button(
     onClick = onClick,
-    colors = ButtonDefaults.buttonColors(containerColor = Color.Red, contentColor = textColor),
+    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFAA0000), contentColor = textColor),
     content = content,
 )

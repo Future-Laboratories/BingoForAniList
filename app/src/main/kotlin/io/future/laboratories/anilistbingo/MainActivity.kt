@@ -73,10 +73,9 @@ public class MainActivity : ComponentActivity() {
             api.postAniListUser(
                 authorization = authorization,
                 json = AniListBody(API.aniListUserQuery, emptyMap())
-            ).enqueue { _, response ->
-                Log.d("myTag", response.body().toString())
+            ).enqueue { _, userResponse ->
                 preferences.edit {
-                    putLong(PREFERENCE_ACCESS_USER_ID, response.body()?.data?.viewer?.id ?: -1L)
+                    putLong(PREFERENCE_ACCESS_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)
                 }
 
                 api.postAniList(
@@ -85,8 +84,7 @@ public class MainActivity : ComponentActivity() {
                         query = API.aniListListQuery,
                         variables = mapOf("userId" to preferences.getLong(PREFERENCE_ACCESS_USER_ID, -1L))
                     ),
-                ).enqueue { _, response ->
-                    Log.d("myTag", response.body().toString())
+                ).enqueue { _, listResponse ->
                 }
             }
         }
@@ -127,9 +125,12 @@ public class MainActivity : ComponentActivity() {
                                 EditorPage(
                                     preferences = preferences,
                                     bingoData = (currentPage as Page.EDITOR).bingoData,
-                                ) { bingoData ->
+                                ) { bingoData, isNew ->
                                     save(bingoData)
-                                    runtimeData.add(bingoData)
+                                    if(isNew) {
+                                        runtimeData.add(bingoData)
+                                    }
+
                                     currentPage = Page.OVERVIEW
                                 }
                             }

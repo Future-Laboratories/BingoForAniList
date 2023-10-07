@@ -137,7 +137,7 @@ internal fun <T> DataHolderCall<T>.enqueue(
         call: DataHolderCall<T>,
         t: Throwable,
     ) {
-        Log.e("DataHolderCall", "${t}")
+        Log.e("DataHolderCall", "$t")
 
         onFailure?.invoke(call, t)
     }

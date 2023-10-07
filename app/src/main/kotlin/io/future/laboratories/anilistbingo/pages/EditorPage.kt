@@ -39,7 +39,7 @@ import io.future.laboratories.anilistbingo.ui.PositiveButton
 internal fun EditorPage(
     preferences: SharedPreferences,
     bingoData: BingoData? = null,
-    onClickSave: (BingoData) -> Unit,
+    onClickSave: (BingoData, isNew: Boolean) -> Unit,
 ) {
     var lastId = preferences.getInt("LAST_USED_ID", 0)
     val localBingoData by remember {
@@ -62,20 +62,7 @@ internal fun EditorPage(
     }
 
     Column {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.name))
-
-            var bingoName by remember { mutableStateOf(localBingoData.name) }
-
-            TextField(
-                value = bingoName,
-                onValueChange = {
-                    bingoName = it
-                    localBingoData.name = it
-                },
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
+        BingoNameField(bingoData = localBingoData)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -97,6 +84,26 @@ internal fun EditorPage(
         ) {
             Text(text = "Done")
         }
+    }
+}
+
+@Composable
+private fun BingoNameField(
+    bingoData: BingoData,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(text = stringResource(id = R.string.name))
+
+        var bingoName by remember { mutableStateOf(bingoData.name) }
+
+        TextField(
+            value = bingoName,
+            onValueChange = {
+                bingoName = it
+                bingoData.name = it
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -161,7 +168,7 @@ private fun validateDataAndSave(
     preferences: SharedPreferences,
     bingoData: BingoData,
     isNewDataSet: Boolean,
-    onClickSave: (BingoData) -> Unit,
+    onClickSave: (BingoData, isNewDataSet: Boolean) -> Unit,
 ) {
     if (bingoData.id == 0) return
 
@@ -183,5 +190,5 @@ private fun validateDataAndSave(
         }
     }
 
-    onClickSave(bingoData)
+    onClickSave(bingoData, isNewDataSet)
 }
