@@ -1,17 +1,18 @@
 package io.future.laboratories.anilistbingo.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,83 +20,87 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistbingo.R
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
+import io.future.laboratories.anilistbingo.textColor
 
 @Composable
-internal fun Bingo(
+internal fun BingoNameField(
     bingoData: BingoData,
-    onValueChanged: ((BingoData) -> Unit)? = null,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(text = stringResource(id = R.string.name))
+
+        var bingoName by remember { mutableStateOf(bingoData.name) }
+
+        TextField(
+            value = bingoName,
+            onValueChange = {
+                bingoName = it
+                bingoData.name = it
+            },
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+internal fun BingoEditor(
+    bingoData: BingoData,
 ) {
     Column {
         bingoData.rowData.take(5).forEach { rowData ->
-            BingoRow(
+            BingoEditorRow(
                 rowData = rowData,
-                bingoData = bingoData,
-                onValueChanged = onValueChanged,
             )
         }
     }
 }
 
 @Composable
-internal fun BingoRow(
+private fun BingoEditorRow(
     rowData: RowData,
-    bingoData: BingoData,
-    onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
     Row {
         rowData.fieldData.take(5).forEach { fieldData ->
-            BingoField(
+            BingoEditorField(
                 fieldData = fieldData,
-                bingoData = bingoData,
-                onValueChanged = onValueChanged,
             )
         }
     }
 }
 
-private val colorFilter = ColorFilter.tint(color = Color.Red.copy(alpha = 0.6f))
-
 @Composable
-private fun RowScope.BingoField(
+private fun RowScope.BingoEditorField(
     fieldData: FieldData,
-    bingoData: BingoData,
-    onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
-    var isMarked by remember { mutableStateOf(fieldData.isMarked) }
-
+    var fieldText by remember { mutableStateOf(fieldData.text) }
     Box(
         modifier = Modifier
             .weight(1f)
             .aspectRatio(1f)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
-            .clickable {
-                fieldData.isMarked = !fieldData.isMarked
-                isMarked = fieldData.isMarked
-                onValueChanged?.invoke(bingoData)
-            },
+            .border(width = 1.dp, color = MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = fieldData.text,
-            overflow = TextOverflow.Ellipsis,
-        )
-
-        if (isMarked) {
-            Image(
-                painter = painterResource(id = R.drawable.checked),
+        BasicTextField(
+            value = fieldText,
+            onValueChange = {
+                fieldText = it
+                fieldData.text = fieldText
+            },
+            modifier = Modifier.fillMaxSize(),
+            textStyle = LocalTextStyle.current.copy(color = textColor),
+        ) { innerTextField ->
+            Box(
                 modifier = Modifier.fillMaxSize(),
-                contentDescription = null,
-                colorFilter = colorFilter,
-            )
+                contentAlignment = Alignment.CenterStart,
+            ) {
+                innerTextField()
+            }
         }
     }
 }

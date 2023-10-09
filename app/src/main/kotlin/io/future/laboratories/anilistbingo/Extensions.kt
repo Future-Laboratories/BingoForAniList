@@ -13,7 +13,7 @@ import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
-import io.future.laboratories.anilistbingo.Companion.STORAGE_PATH
+import io.future.laboratories.anilistbingo.Companion.storagePath
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.api.API
 import io.future.laboratories.anilistbingo.data.api.DataHolder
@@ -36,8 +36,8 @@ internal val BUILDER
 
 internal val ADAPTER = BUILDER.adapter(BingoData::class.java)
 
-internal fun Context.save(data: BingoData) {
-    val file = File(filesDir, STORAGE_PATH("${data.id}"))
+internal fun Context.save(data: BingoData, subPath: String = "${data.id}") {
+    val file = File(filesDir, storagePath(subPath))
     if (!file.exists()) {
         file.parentFile?.mkdir()
     }
@@ -49,9 +49,9 @@ internal fun Context.save(data: BingoData) {
 
 internal fun Context.loadAll(): SnapshotStateList<BingoData> {
     val bingoDataList = SnapshotStateList<BingoData>()
-    val file = File(filesDir, STORAGE_PATH())
+    val file = File(filesDir, storagePath())
 
-    file.walkTopDown().forEach {
+    file.walkTopDown().maxDepth(1).forEach {
         if (!it.isDirectory) {
             bingoDataList.add(loadSingle(it.name.toInt()) ?: return@forEach)
         }
@@ -60,10 +60,12 @@ internal fun Context.loadAll(): SnapshotStateList<BingoData> {
     return bingoDataList
 }
 
-internal fun Context.loadSingle(id: Int): BingoData? {
+internal fun Context.loadSingle(bingoId: Int): BingoData? = loadSingle("$bingoId")
+
+internal fun Context.loadSingle(subPath: String): BingoData? {
     var data: BingoData? = null
 
-    val file = File(filesDir, STORAGE_PATH("$id"))
+    val file = File(filesDir, storagePath(subPath))
     if (file.exists()) {
         val fileReader = FileReader(file)
         val stringBuilder = StringBuilder()
@@ -86,7 +88,7 @@ internal fun Context.loadSingle(id: Int): BingoData? {
 }
 
 internal fun Context.deleteSingle(id: Int) {
-    val file = File(filesDir, STORAGE_PATH("$id"))
+    val file = File(filesDir, storagePath("$id"))
     if (file.exists()) {
         file.delete()
     }

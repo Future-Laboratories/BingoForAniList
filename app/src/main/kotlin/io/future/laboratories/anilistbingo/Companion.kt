@@ -122,7 +122,7 @@ internal object Companion {
         ),
     )
 
-    internal fun STORAGE_PATH(subPath: String? = null): String {
+    internal fun storagePath(subPath: String? = null): String {
         return if (subPath != null) "Bingo/${subPath}" else "Bingo"
     }
 }

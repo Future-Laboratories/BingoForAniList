@@ -33,6 +33,8 @@ import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
 import io.future.laboratories.anilistbingo.textColor
+import io.future.laboratories.anilistbingo.ui.BingoEditor
+import io.future.laboratories.anilistbingo.ui.BingoNameField
 import io.future.laboratories.anilistbingo.ui.PositiveButton
 
 @Composable
@@ -83,83 +85,6 @@ internal fun EditorPage(
             },
         ) {
             Text(text = "Done")
-        }
-    }
-}
-
-@Composable
-private fun BingoNameField(
-    bingoData: BingoData,
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = stringResource(id = R.string.name))
-
-        var bingoName by remember { mutableStateOf(bingoData.name) }
-
-        TextField(
-            value = bingoName,
-            onValueChange = {
-                bingoName = it
-                bingoData.name = it
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
-}
-
-@Composable
-private fun BingoEditor(
-    bingoData: BingoData,
-) {
-    Column {
-        bingoData.rowData.take(5).forEach { rowData ->
-            BingoEditorRow(
-                rowData = rowData,
-            )
-        }
-    }
-}
-
-@Composable
-private fun BingoEditorRow(
-    rowData: RowData,
-) {
-    Row {
-        rowData.fieldData.take(5).forEach { fieldData ->
-            BingoEditorField(
-                fieldData = fieldData,
-            )
-        }
-    }
-}
-
-@Composable
-private fun RowScope.BingoEditorField(
-    fieldData: FieldData,
-) {
-    var fieldText by remember { mutableStateOf(fieldData.text) }
-    Box(
-        modifier = Modifier
-            .weight(1f)
-            .aspectRatio(1f)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.primary),
-        contentAlignment = Alignment.Center,
-    ) {
-        BasicTextField(
-            value = fieldText,
-            onValueChange = {
-                fieldText = it
-                fieldData.text = fieldText
-            },
-            modifier = Modifier.fillMaxSize(),
-            textStyle = LocalTextStyle.current.copy(color = textColor),
-        ) { innerTextField ->
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.CenterStart,
-            ) {
-                innerTextField()
-            }
         }
     }
 }

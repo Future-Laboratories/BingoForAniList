@@ -76,6 +76,9 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit2.converter.moshi)
 
+    // Coil
+    implementation(libs.coil.compose)
+
     // testImplementations
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)

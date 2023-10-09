@@ -51,10 +51,13 @@ internal interface API {
                     lists {
                       name
                       entries {
-                        id
                         media {
+                          id
                           title {
                             userPreferred
+                          }
+                          coverImage {
+                            large
                           }
                         }
                       }

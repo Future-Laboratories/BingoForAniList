@@ -18,13 +18,13 @@ import androidx.core.view.WindowCompat
 private val DarkColorScheme = darkColorScheme(
     primary = PrimaryLight,
     secondary = SecondaryLight,
-    tertiary = TertiaryLight
+    tertiary = TertiaryLight,
 )
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryDark,
     secondary = SecondaryDark,
-    tertiary = TertiaryDark
+    tertiary = TertiaryDark,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -65,6 +65,6 @@ internal fun AniListBingoTheme(
     MaterialTheme(
         colorScheme = colorScheme,
         typography = Typography,
-        content = content
+        content = content,
     )
 }
