@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
 
-    id("com.google.devtools.ksp").version("1.9.10-1.0.13")
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -51,7 +51,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
     packaging {
         resources {
@@ -73,8 +73,7 @@ dependencies {
     // Moshi & Retrofit
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
-    implementation(libs.retrofit)
-    implementation(libs.retrofit2.converter.moshi)
+    implementation(project(":anilistapi"))
 
     // Coil
     implementation(libs.coil.compose)

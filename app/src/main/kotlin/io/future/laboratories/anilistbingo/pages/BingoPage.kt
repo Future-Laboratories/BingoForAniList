@@ -3,8 +3,8 @@ package io.future.laboratories.anilistbingo.pages
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
+import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.api.MediaList
 import io.future.laboratories.anilistbingo.loadSingle
 import io.future.laboratories.anilistbingo.save
 import io.future.laboratories.anilistbingo.ui.Bingo

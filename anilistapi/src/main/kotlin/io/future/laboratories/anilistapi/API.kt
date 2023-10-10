@@ -1,5 +1,9 @@
-package io.future.laboratories.anilistbingo.data.api
+package io.future.laboratories.anilistapi
 
+import io.future.laboratories.anilistapi.data.AniListBody
+import io.future.laboratories.anilistapi.data.DataHolder
+import io.future.laboratories.anilistapi.data.MediaListCollectionData
+import io.future.laboratories.anilistapi.data.ViewerData
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -9,11 +13,11 @@ import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 
-internal typealias DataHolderCall<T> = Call<DataHolder<T>>
-internal typealias DataHolderCallback<T> = Callback<DataHolder<T>>
-internal typealias DataHolderResponse<T> = Response<DataHolder<T>>
+public typealias DataHolderCall<T> = Call<DataHolder<T>>
+public typealias DataHolderCallback<T> = Callback<DataHolder<T>>
+public typealias DataHolderResponse<T> = Response<DataHolder<T>>
 
-internal interface API {
+public interface API {
     @POST("/")
     @Headers(
         "Accept: application/json",

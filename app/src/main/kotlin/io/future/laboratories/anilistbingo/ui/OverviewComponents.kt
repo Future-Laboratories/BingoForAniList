@@ -30,9 +30,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.R
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.api.MediaList
 import io.future.laboratories.anilistbingo.logout
 
 @Composable

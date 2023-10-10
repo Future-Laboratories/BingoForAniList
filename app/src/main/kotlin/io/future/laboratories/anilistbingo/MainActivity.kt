@@ -29,15 +29,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import io.future.laboratories.anilistapi.API
+import io.future.laboratories.anilistapi.api
+import io.future.laboratories.anilistapi.data.AniListBody
+import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
 import io.future.laboratories.anilistbingo.MainActivity.Page.OVERVIEW.previousPage
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.api.API
-import io.future.laboratories.anilistbingo.data.api.AniListBody
-import io.future.laboratories.anilistbingo.data.api.MediaList
 import io.future.laboratories.anilistbingo.pages.BingoPage
 import io.future.laboratories.anilistbingo.pages.EditorPage
 import io.future.laboratories.anilistbingo.pages.OverviewPage
@@ -100,7 +102,10 @@ public class MainActivity : ComponentActivity() {
 
             api.postAniListUser(
                 authorization = authorization,
-                json = AniListBody(API.aniListUserQuery, emptyMap()),
+                json = AniListBody(
+                    API.aniListUserQuery,
+                    emptyMap()
+                ),
             ).enqueue { _, userResponse ->
                 preferences.edit {
                     putLong(PREFERENCE_ACCESS_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)

@@ -16,8 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.api.MediaList
 import io.future.laboratories.anilistbingo.ui.AnimeItem
 import io.future.laboratories.anilistbingo.ui.BingoItem
 import io.future.laboratories.anilistbingo.ui.LoginButton

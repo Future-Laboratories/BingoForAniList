@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "AniListBingo"
 include(":app")
- 
+include(":anilistapi")
