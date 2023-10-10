@@ -2,17 +2,60 @@ package io.future.laboratories.anilistbingo.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import io.future.laboratories.anilistbingo.textColor
+
+//region Divider & Spacer
+
+@Composable
+internal fun RowScope.DefaultDivider() = Divider(
+    modifier = Modifier
+        .weight(1f)
+        .clip(RoundedCornerShape(1.dp)),
+    thickness = 2.dp,
+    color = MaterialTheme.colorScheme.primary,
+)
+
+@Composable
+internal fun DefaultHeader(title: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        DefaultDivider()
+
+        Text(
+            text = title,
+            modifier = Modifier.padding(all = 4.dp),
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 16.sp,
+        )
+
+        DefaultDivider()
+    }
+}
+
+@Composable
+internal fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.size(4.dp))
+
+//endregion
+
+//region Buttons
 
 internal val negativeButtonColors
     @Composable get() = ButtonDefaults.buttonColors(
@@ -22,9 +65,6 @@ internal val negativeButtonColors
 
 internal val positiveButtonColors
     @Composable get() = ButtonDefaults.buttonColors(contentColor = textColor)
-
-@Composable
-internal fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.size(4.dp))
 
 @Composable
 internal fun PositiveImageButton(
@@ -89,3 +129,5 @@ internal fun NegativeButton(
     colors = negativeButtonColors,
     content = content,
 )
+
+//endregion

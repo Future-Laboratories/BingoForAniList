@@ -146,3 +146,9 @@ internal fun <T> DataHolderCall<T>.enqueue(
 })
 
 //endregion
+
+//region Strings
+
+internal fun String.colon() = "$this:"
+
+//endregion

@@ -100,7 +100,7 @@ public class MainActivity : ComponentActivity() {
 
             api.postAniListUser(
                 authorization = authorization,
-                json = AniListBody(API.aniListUserQuery, emptyMap())
+                json = AniListBody(API.aniListUserQuery, emptyMap()),
             ).enqueue { _, userResponse ->
                 preferences.edit {
                     putLong(PREFERENCE_ACCESS_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)
@@ -141,7 +141,7 @@ public class MainActivity : ComponentActivity() {
                                     onDelete = { data ->
                                         deleteSingle(data.id)
                                         runtimeData.remove(data)
-                                    }
+                                    },
                                 ) { bingoData, animeData ->
                                     currentPage = Page.BINGO(
                                         bingoData = bingoData,

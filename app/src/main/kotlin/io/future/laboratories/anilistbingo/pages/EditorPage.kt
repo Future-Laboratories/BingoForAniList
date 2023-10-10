@@ -1,40 +1,23 @@
 package io.future.laboratories.anilistbingo.pages
 
 import android.content.SharedPreferences
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.Divider
-import androidx.compose.material3.LocalTextStyle
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
 import io.future.laboratories.anilistbingo.R
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
-import io.future.laboratories.anilistbingo.textColor
 import io.future.laboratories.anilistbingo.ui.BingoEditor
 import io.future.laboratories.anilistbingo.ui.BingoNameField
+import io.future.laboratories.anilistbingo.ui.BingoOptionToggle
+import io.future.laboratories.anilistbingo.ui.DefaultHeader
 import io.future.laboratories.anilistbingo.ui.PositiveButton
 
 @Composable
@@ -64,15 +47,28 @@ internal fun EditorPage(
     }
 
     Column {
+        DefaultHeader(title = stringResource(id = R.string.name))
+
         BingoNameField(bingoData = localBingoData)
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Divider(color = MaterialTheme.colorScheme.tertiary)
-
-        Spacer(modifier = Modifier.height(8.dp))
+        DefaultHeader(title = stringResource(id = R.string.bingo))
 
         BingoEditor(bingoData = localBingoData)
+
+        DefaultHeader(title = stringResource(id = R.string.options))
+
+        var shuffle = false
+        BingoOptionToggle(optionName = stringResource(id = R.string.shuffle)) { value ->
+            shuffle = value
+        }
+        if (bingoData != null) {
+            Text(
+                text = stringResource(id = R.string.shuffle_hint),
+                fontSize = 14.sp,
+            )
+        }
+
+        DefaultHeader(title = stringResource(id = R.string.complete))
 
         PositiveButton(
             onClick = {
@@ -80,11 +76,12 @@ internal fun EditorPage(
                     preferences = preferences,
                     bingoData = localBingoData,
                     isNewDataSet = bingoData == null,
+                    shuffle = shuffle,
                     onClickSave = onClickSave,
                 )
             },
         ) {
-            Text(text = "Done")
+            Text(text = stringResource(id = R.string.done))
         }
     }
 }
@@ -93,6 +90,7 @@ private fun validateDataAndSave(
     preferences: SharedPreferences,
     bingoData: BingoData,
     isNewDataSet: Boolean,
+    shuffle: Boolean,
     onClickSave: (BingoData, isNewDataSet: Boolean) -> Unit,
 ) {
     if (bingoData.id == 0) return
@@ -107,6 +105,14 @@ private fun validateDataAndSave(
         row.fieldData.forEach { field ->
             if (field.text.isBlank()) return
         }
+    }
+
+    if (shuffle) {
+        bingoData.rowData = bingoData.rowData
+            .flatMap { it.fieldData }
+            .shuffled()
+            .chunked(5)
+            .map { fieldData -> RowData(fieldData) }
     }
 
     if (isNewDataSet) {
