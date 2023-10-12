@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo.pages
+package io.future.laboratories.ui.pages
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -19,12 +19,12 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollection
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.ui.AnimeItem
-import io.future.laboratories.anilistbingo.ui.BingoItem
-import io.future.laboratories.anilistbingo.ui.LoginButton
+import io.future.laboratories.ui.components.AnimeItem
+import io.future.laboratories.ui.components.BingoItem
+import io.future.laboratories.ui.components.LoginButton
 
 @Composable
-internal fun OverviewPage(
+public fun OverviewPage(
     context: Context,
     preferences: SharedPreferences,
     bingoDataList: SnapshotStateList<BingoData>,

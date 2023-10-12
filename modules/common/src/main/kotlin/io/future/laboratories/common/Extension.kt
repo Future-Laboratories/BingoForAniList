@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo
+package io.future.laboratories.common
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -7,13 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.graphics.Color
 import androidx.core.content.edit
-import com.squareup.moshi.Moshi
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
-import io.future.laboratories.anilistbingo.Companion.TEMP_PATH
-import io.future.laboratories.anilistbingo.Companion.storagePath
+import com.squareup.moshi.JsonAdapter
+import io.future.laboratories.Companion.BUILDER
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_USER_ID
+import io.future.laboratories.Companion.TEMP_PATH
+import io.future.laboratories.Companion.storagePath
 import io.future.laboratories.anilistbingo.data.BingoData
 import java.io.BufferedReader
 import java.io.BufferedWriter
@@ -23,18 +24,9 @@ import java.io.FileWriter
 
 //region save & load
 
-internal val BUILDER
-    get() = Moshi.Builder().build()
+public inline fun <reified T> getAdapter(): JsonAdapter<T> = BUILDER.adapter(T::class.java)
 
-internal inline fun <reified T> getAdapter() = BUILDER.adapter(T::class.java)
-
-internal fun Context.delete(storagePath: String) {
-    val file = File(filesDir, storagePath)
-
-    file.delete()
-}
-
-internal inline fun <reified T> Context.save(data: T, storagePath: String) {
+public inline fun <reified T> Context.save(data: T, storagePath: String) {
     val file = File(filesDir, storagePath)
     if (!file.exists()) {
         file.parentFile?.mkdir()
@@ -45,7 +37,7 @@ internal inline fun <reified T> Context.save(data: T, storagePath: String) {
     }
 }
 
-internal fun Context.loadAllBingoData(): SnapshotStateList<BingoData> {
+public fun Context.loadAllBingoData(): SnapshotStateList<BingoData> {
     val bingoDataList = SnapshotStateList<BingoData>()
     val file = File(filesDir, storagePath())
 
@@ -58,11 +50,11 @@ internal fun Context.loadAllBingoData(): SnapshotStateList<BingoData> {
     return bingoDataList
 }
 
-internal fun Context.loadSingleBingoData(bingoId: Int): BingoData? = loadSingle(
+private fun Context.loadSingleBingoData(bingoId: Int): BingoData? = loadSingle(
     storagePath = storagePath("$bingoId"),
 )
 
-internal inline fun <reified T> Context.loadSingle(storagePath: String): T? {
+public inline fun <reified T> Context.loadSingle(storagePath: String): T? {
     var data: T? = null
 
     val file = File(filesDir, storagePath)
@@ -87,8 +79,8 @@ internal inline fun <reified T> Context.loadSingle(storagePath: String): T? {
     return data
 }
 
-internal fun Context.deleteSingle(id: Int) {
-    val file = File(filesDir, storagePath("$id"))
+public fun Context.deleteSingle(storagePath: String) {
+    val file = File(filesDir, storagePath)
     if (file.exists()) {
         file.delete()
     }
@@ -98,7 +90,7 @@ internal fun Context.deleteSingle(id: Int) {
 
 //region Colors
 
-internal val textColor: Color
+public val textColor: Color
     @Composable
     get() = if (isSystemInDarkTheme()) Color.White else Color.Black
 
@@ -106,8 +98,8 @@ internal val textColor: Color
 
 //region logout
 
-internal fun SharedPreferences.logout(context: Context) {
-    context.delete(TEMP_PATH)
+public fun SharedPreferences.logout(context: Context) {
+    context.deleteSingle(TEMP_PATH)
 
     edit {
         putString(PREFERENCE_ACCESS_TOKEN, null)
@@ -116,11 +108,5 @@ internal fun SharedPreferences.logout(context: Context) {
         putLong(PREFERENCE_ACCESS_USER_ID, -1L)
     }
 }
-
-//endregion
-
-//region Strings
-
-internal fun String.colon() = "$this:"
 
 //endregion

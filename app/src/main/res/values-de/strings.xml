@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bingo for AniList</string>
+    <string name="app_name">Bingo für AniList</string>
 
-    <string name="name">Name</string>
-    <string name="delete">Löschen</string>
     <string name="back">Zurück</string>
-    <string name="edit">Bearbeiten</string>
-    <string name="delete_permanently">Sind Sie sich sicher, dass Sie dieses Bingo Löschen möchten?</string>
-    <string name="bingo">Bingo</string>
-    <string name="options">Einstellungen</string>
-    <string name="shuffle">Mischen</string>
-    <string name="done">Fertig</string>
-    <string name="complete">Abschluss</string>
-    <string name="shuffle_hint">Info: Mischen im Bearbeitungsmodus wird nur auf <u>NEUE</u> Bingo\'s angewendet</string>
+
 </resources>

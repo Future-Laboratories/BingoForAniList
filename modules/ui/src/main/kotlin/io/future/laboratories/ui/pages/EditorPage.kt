@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo.pages
+package io.future.laboratories.ui.pages
 
 import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Column
@@ -10,18 +10,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
-import io.future.laboratories.anilistbingo.R
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
-import io.future.laboratories.anilistbingo.ui.BingoEditor
-import io.future.laboratories.anilistbingo.ui.BingoNameField
-import io.future.laboratories.anilistbingo.ui.BingoOptionToggle
-import io.future.laboratories.anilistbingo.ui.DefaultHeader
-import io.future.laboratories.anilistbingo.ui.PositiveButton
+import io.future.laboratories.ui.R
+import io.future.laboratories.ui.components.BingoEditor
+import io.future.laboratories.ui.components.BingoNameField
+import io.future.laboratories.ui.components.BingoOptionToggle
+import io.future.laboratories.ui.components.DefaultHeader
+import io.future.laboratories.ui.components.PositiveButton
 
 @Composable
-internal fun EditorPage(
+public fun EditorPage(
     preferences: SharedPreferences,
     bingoData: BingoData? = null,
     onClickSave: (BingoData, isNew: Boolean) -> Unit,

@@ -1,16 +1,16 @@
-package io.future.laboratories.anilistbingo.pages
+package io.future.laboratories.ui.pages
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.loadSingle
-import io.future.laboratories.anilistbingo.save
-import io.future.laboratories.anilistbingo.ui.Bingo
+import io.future.laboratories.common.loadSingle
+import io.future.laboratories.common.save
+import io.future.laboratories.ui.components.Bingo
 
 @Composable
-internal fun BingoPage(
+public fun BingoPage(
     context: Context,
     bingoData: BingoData,
     animeData: MediaList,

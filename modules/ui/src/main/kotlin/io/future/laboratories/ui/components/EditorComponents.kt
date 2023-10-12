@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo.ui
+package io.future.laboratories.ui.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -24,12 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.future.laboratories.anilistbingo.R
-import io.future.laboratories.anilistbingo.colon
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.data.FieldData
 import io.future.laboratories.anilistbingo.data.RowData
-import io.future.laboratories.anilistbingo.textColor
+import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.R
+import io.future.laboratories.ui.colon
 
 @Composable
 internal fun BingoOptionToggle(

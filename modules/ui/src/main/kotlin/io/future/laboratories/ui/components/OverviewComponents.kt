@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo.ui
+package io.future.laboratories.ui.components
 
 import android.content.Context
 import android.content.Intent
@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -31,9 +34,9 @@ import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistbingo.R
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.logout
+import io.future.laboratories.common.logout
+import io.future.laboratories.ui.R
 
 @Composable
 internal fun BingoItem(
@@ -60,7 +63,7 @@ internal fun BingoItem(
             PositiveImageButton(
                 onClick = { onEdit(bingoData) },
                 contentDescription = stringResource(id = R.string.edit),
-                imageResId = R.drawable.edit,
+                imageVector = Icons.Rounded.Edit,
             )
 
             DefaultSpacer()
@@ -121,7 +124,7 @@ internal fun DeleteDialog(
     NegativeImageButton(
         onClick = { showDeleteDialog = true },
         contentDescription = stringResource(id = R.string.delete),
-        imageResId = R.drawable.delete_forever,
+        imageVector = Icons.Rounded.Delete,
     )
 
     if (showDeleteDialog) {

@@ -22,3 +22,5 @@ dependencyResolutionManagement {
 rootProject.name = "AniListBingo"
 include(":app")
 include(":modules:anilistapi")
+include(":modules:common")
+include(":modules:ui")

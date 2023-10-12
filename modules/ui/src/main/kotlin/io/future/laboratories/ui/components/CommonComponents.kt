@@ -1,6 +1,5 @@
-package io.future.laboratories.anilistbingo.ui
+package io.future.laboratories.ui.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -11,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.future.laboratories.anilistbingo.textColor
+import io.future.laboratories.common.textColor
 
 //region Divider & Spacer
 
@@ -51,7 +51,7 @@ internal fun DefaultHeader(title: String) {
 }
 
 @Composable
-internal fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.size(4.dp))
+public fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.size(4.dp))
 
 //endregion
 
@@ -71,10 +71,10 @@ internal fun PositiveImageButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     contentDescription: String,
-    imageResId: Int,
+    imageVector: ImageVector,
     content: @Composable RowScope.() -> Unit = {
-        Image(
-            painter = painterResource(id = imageResId),
+        Icon(
+            imageVector = imageVector,
             contentDescription = contentDescription,
         )
     },
@@ -91,10 +91,10 @@ internal fun NegativeImageButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     contentDescription: String,
-    imageResId: Int,
+    imageVector: ImageVector,
     content: @Composable RowScope.() -> Unit = {
-        Image(
-            painter = painterResource(id = imageResId),
+        Icon(
+            imageVector = imageVector,
             contentDescription = contentDescription,
         )
     },
@@ -107,7 +107,7 @@ internal fun NegativeImageButton(
 )
 
 @Composable
-internal fun PositiveButton(
+public fun PositiveButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     content: @Composable RowScope.() -> Unit,

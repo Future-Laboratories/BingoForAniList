@@ -12,6 +12,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/modules" />
             <option value="$PROJECT_DIR$/modules/anilistapi" />
+            <option value="$PROJECT_DIR$/modules/common" />
+            <option value="$PROJECT_DIR$/modules/ui" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

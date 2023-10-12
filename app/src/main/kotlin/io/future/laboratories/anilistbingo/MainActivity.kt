@@ -4,7 +4,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,33 +26,33 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_USER_ID
+import io.future.laboratories.Companion.TEMP_PATH
+import io.future.laboratories.Companion.storagePath
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollectionData
 import io.future.laboratories.anilistapi.enqueue
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
-import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
-import io.future.laboratories.anilistbingo.Companion.TEMP_PATH
-import io.future.laboratories.anilistbingo.Companion.storagePath
 import io.future.laboratories.anilistbingo.MainActivity.Page.OVERVIEW.previousPage
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.pages.BingoPage
-import io.future.laboratories.anilistbingo.pages.EditorPage
-import io.future.laboratories.anilistbingo.pages.OverviewPage
-import io.future.laboratories.anilistbingo.ui.DefaultSpacer
-import io.future.laboratories.anilistbingo.ui.PositiveButton
-import io.future.laboratories.anilistbingo.ui.theme.AniListBingoTheme
+import io.future.laboratories.common.deleteSingle
+import io.future.laboratories.common.loadAllBingoData
+import io.future.laboratories.common.loadSingle
+import io.future.laboratories.common.logout
+import io.future.laboratories.common.save
+import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.components.DefaultSpacer
+import io.future.laboratories.ui.components.PositiveButton
+import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
     private val preferences: SharedPreferences by lazy {
@@ -95,7 +98,7 @@ public class MainActivity : ComponentActivity() {
                 json = AniListBody(
                     query = API.aniListListQuery,
                     variables = mapOf(
-                        "userId" to userId
+                        "userId" to userId,
                     )
                 ),
             ).enqueue(onFailure = { _, _ -> dataFetchCompleted = true }) { _, listResponse ->
@@ -154,7 +157,7 @@ public class MainActivity : ComponentActivity() {
                     ) {
                         Column {
                             when (currentPage) {
-                                is Page.OVERVIEW -> OverviewPage(
+                                is Page.OVERVIEW -> io.future.laboratories.ui.pages.OverviewPage(
                                     context = this@MainActivity,
                                     preferences = preferences,
                                     bingoDataList = runtimeData,
@@ -168,7 +171,7 @@ public class MainActivity : ComponentActivity() {
                                         currentPage = Page.EDITOR(bingoData = data)
                                     },
                                     onDelete = { data ->
-                                        deleteSingle(data.id)
+                                        deleteSingle(storagePath("${data.id}"))
                                         runtimeData.remove(data)
                                     },
                                 ) { bingoData, animeData ->
@@ -178,14 +181,14 @@ public class MainActivity : ComponentActivity() {
                                     )
                                 }
 
-                                is Page.BINGO -> BingoPage(
+                                is Page.BINGO -> io.future.laboratories.ui.pages.BingoPage(
                                     context = this@MainActivity,
                                     bingoData = (currentPage as Page.BINGO).bingoData,
                                     animeData = (currentPage as Page.BINGO).animeData,
                                 )
 
                                 is Page.EDITOR -> {
-                                    EditorPage(
+                                    io.future.laboratories.ui.pages.EditorPage(
                                         preferences = preferences,
                                         bingoData = (currentPage as Page.EDITOR).bingoData,
                                     ) { bingoData, isNew ->
@@ -206,10 +209,10 @@ public class MainActivity : ComponentActivity() {
                             }) {
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     val backString = stringResource(id = R.string.back)
-                                    Image(
-                                        painter = painterResource(id = R.drawable.arrow_back),
+                                    Icon(
+                                        imageVector = Icons.Rounded.ArrowBack,
                                         contentDescription = backString,
-                                        colorFilter = ColorFilter.tint(color = textColor)
+                                        tint = textColor,
                                     )
                                     Text(text = backString)
                                 }
@@ -226,12 +229,12 @@ public class MainActivity : ComponentActivity() {
                                 shape = RoundedCornerShape(32.dp),
                                 containerColor = MaterialTheme.colorScheme.primary,
                             ) {
-                                Image(
-                                    painter = painterResource(id = R.drawable.checked),
+                                Icon(
+                                    imageVector = Icons.Rounded.Add,
                                     contentDescription = null,
+                                    tint = textColor,
                                     modifier = Modifier
-                                        .fillMaxSize(0.8f)
-                                        .rotate(45f)
+                                        .fillMaxSize(0.9f),
                                 )
                             }
                         }

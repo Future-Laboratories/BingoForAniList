@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo.ui.theme
+package io.future.laboratories.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
