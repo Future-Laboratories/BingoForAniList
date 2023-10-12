@@ -105,7 +105,7 @@ public class MainActivity : ComponentActivity() {
             }
         }
 
-        val splashScreen = installSplashScreen().setKeepOnScreenCondition {
+        installSplashScreen().setKeepOnScreenCondition {
             return@setKeepOnScreenCondition !dataFetchCompleted
         }
 
@@ -125,7 +125,7 @@ public class MainActivity : ComponentActivity() {
                 authorization = authorization,
                 json = AniListBody(
                     API.aniListUserQuery,
-                    emptyMap()
+                    emptyMap(),
                 ),
             ).enqueue { _, userResponse ->
                 preferences.edit {

@@ -73,7 +73,7 @@ dependencies {
     // Moshi & Retrofit
     implementation(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
-    implementation(project(":anilistapi"))
+    implementation(project(":modules:anilistapi"))
 
     // Coil
     implementation(libs.coil.compose)
