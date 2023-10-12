@@ -12,6 +12,7 @@ import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
+import io.future.laboratories.anilistbingo.Companion.TEMP_PATH
 import io.future.laboratories.anilistbingo.Companion.storagePath
 import io.future.laboratories.anilistbingo.data.BingoData
 import java.io.BufferedReader
@@ -25,38 +26,46 @@ import java.io.FileWriter
 internal val BUILDER
     get() = Moshi.Builder().build()
 
-internal val ADAPTER = BUILDER.adapter(BingoData::class.java)
+internal inline fun <reified T> getAdapter() = BUILDER.adapter(T::class.java)
 
-internal fun Context.save(data: BingoData, subPath: String = "${data.id}") {
-    val file = File(filesDir, storagePath(subPath))
+internal fun Context.delete(storagePath: String) {
+    val file = File(filesDir, storagePath)
+
+    file.delete()
+}
+
+internal inline fun <reified T> Context.save(data: T, storagePath: String) {
+    val file = File(filesDir, storagePath)
     if (!file.exists()) {
         file.parentFile?.mkdir()
     }
     val fileWriter = FileWriter(file)
     BufferedWriter(fileWriter).use {
-        it.write(ADAPTER.toJson(data).toString())
+        it.write(getAdapter<T>().toJson(data).toString())
     }
 }
 
-internal fun Context.loadAll(): SnapshotStateList<BingoData> {
+internal fun Context.loadAllBingoData(): SnapshotStateList<BingoData> {
     val bingoDataList = SnapshotStateList<BingoData>()
     val file = File(filesDir, storagePath())
 
     file.walkTopDown().maxDepth(1).forEach {
         if (!it.isDirectory) {
-            bingoDataList.add(loadSingle(it.name.toInt()) ?: return@forEach)
+            bingoDataList.add(loadSingleBingoData(it.name.toInt()) ?: return@forEach)
         }
     }
 
     return bingoDataList
 }
 
-internal fun Context.loadSingle(bingoId: Int): BingoData? = loadSingle("$bingoId")
+internal fun Context.loadSingleBingoData(bingoId: Int): BingoData? = loadSingle(
+    storagePath = storagePath("$bingoId"),
+)
 
-internal fun Context.loadSingle(subPath: String): BingoData? {
-    var data: BingoData? = null
+internal inline fun <reified T> Context.loadSingle(storagePath: String): T? {
+    var data: T? = null
 
-    val file = File(filesDir, storagePath(subPath))
+    val file = File(filesDir, storagePath)
     if (file.exists()) {
         val fileReader = FileReader(file)
         val stringBuilder = StringBuilder()
@@ -72,7 +81,7 @@ internal fun Context.loadSingle(subPath: String): BingoData? {
             }
         }
 
-        data = ADAPTER.fromJson(stringBuilder.toString())
+        data = getAdapter<T>().fromJson(stringBuilder.toString())
     }
 
     return data
@@ -97,7 +106,9 @@ internal val textColor: Color
 
 //region logout
 
-internal fun SharedPreferences.logout() {
+internal fun SharedPreferences.logout(context: Context) {
+    context.delete(TEMP_PATH)
+
     edit {
         putString(PREFERENCE_ACCESS_TOKEN, null)
         putString(PREFERENCE_ACCESS_TYPE, null)

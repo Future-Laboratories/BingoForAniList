@@ -171,7 +171,7 @@ internal fun LoginButton(
     } else {
         PositiveButton(
             onClick = {
-                preferences.logout()
+                preferences.logout(context = context)
                 onLogout()
             },
         ) {

@@ -18,26 +18,30 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.MediaListCollectionData
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.anilistbingo.Companion.PREFERENCE_ACCESS_USER_ID
+import io.future.laboratories.anilistbingo.Companion.TEMP_PATH
+import io.future.laboratories.anilistbingo.Companion.storagePath
 import io.future.laboratories.anilistbingo.MainActivity.Page.OVERVIEW.previousPage
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.pages.BingoPage
@@ -55,37 +59,54 @@ public class MainActivity : ComponentActivity() {
         )
     }
 
-    private val runtimeAniListData: SnapshotStateList<MediaList> = mutableStateListOf()
-    private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAll() }
     private val authorization
         get() = "" +
                 "${preferences.getString(PREFERENCE_ACCESS_TYPE, null)} " +
                 "${preferences.getString(PREFERENCE_ACCESS_TOKEN, null)}" +
                 ""
 
+    private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
+
+    private var dataFetchCompleted: Boolean = false
+
     private var currentPage: Page by mutableStateOf(Page.OVERVIEW)
     private var isLoggedIn: Boolean by mutableStateOf(false)
+    private var runtimeAniListData: MediaListCollectionData? by mutableStateOf(null)
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        fun fetchAniList() {
+        dataFetchCompleted = savedInstanceState?.getBoolean(BUNDLE_IS_FETCHED) ?: false
+        runtimeAniListData = loadSingle(TEMP_PATH)
+
+        fun fetchAniList(forced: Boolean = false) {
+            if (dataFetchCompleted && !forced) return
+
+            val userId = preferences.getLong(
+                PREFERENCE_ACCESS_USER_ID,
+                -1L,
+            )
+
+            if (userId == -1L) {
+                dataFetchCompleted = true
+                return
+            }
+
             api.postAniList(
                 authorization = authorization,
                 json = AniListBody(
                     query = API.aniListListQuery,
                     variables = mapOf(
-                        "userId" to preferences.getLong(
-                            PREFERENCE_ACCESS_USER_ID,
-                            -1L,
-                        )
+                        "userId" to userId
                     )
                 ),
-            ).enqueue { _, listResponse ->
-                runtimeAniListData.clear()
+            ).enqueue(onFailure = { _, _ -> dataFetchCompleted = true }) { _, listResponse ->
+                runtimeAniListData = listResponse.body()?.data
 
-                listResponse.body()?.data?.mediaListCollection?.lists?.firstOrNull {
-                    it.name == "Watching"
-                }?.entries?.forEach { runtimeAniListData.add(it) }
+                dataFetchCompleted = true
             }
+        }
+
+        val splashScreen = installSplashScreen().setKeepOnScreenCondition {
+            return@setKeepOnScreenCondition !dataFetchCompleted
         }
 
         super.onCreate(savedInstanceState)
@@ -111,7 +132,7 @@ public class MainActivity : ComponentActivity() {
                     putLong(PREFERENCE_ACCESS_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)
                 }
 
-                fetchAniList()
+                fetchAniList(forced = true)
             }
         }
 
@@ -124,7 +145,7 @@ public class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.background,
                 ) {
                     Box(
                         modifier = Modifier
@@ -137,9 +158,12 @@ public class MainActivity : ComponentActivity() {
                                     context = this@MainActivity,
                                     preferences = preferences,
                                     bingoDataList = runtimeData,
-                                    animeDataList = runtimeAniListData,
+                                    animeDataList = runtimeAniListData?.mediaListCollection,
                                     isLoggedIn = isLoggedIn,
-                                    onLogout = { isLoggedIn = false },
+                                    onLogout = {
+                                        isLoggedIn = false
+                                        runtimeAniListData = null
+                                    },
                                     onEdit = { data ->
                                         currentPage = Page.EDITOR(bingoData = data)
                                     },
@@ -159,12 +183,13 @@ public class MainActivity : ComponentActivity() {
                                     bingoData = (currentPage as Page.BINGO).bingoData,
                                     animeData = (currentPage as Page.BINGO).animeData,
                                 )
+
                                 is Page.EDITOR -> {
                                     EditorPage(
                                         preferences = preferences,
                                         bingoData = (currentPage as Page.EDITOR).bingoData,
                                     ) { bingoData, isNew ->
-                                        save(bingoData)
+                                        save(bingoData, storagePath("${bingoData.id}"))
                                         if (isNew) {
                                             runtimeData.add(bingoData)
                                         }
@@ -176,12 +201,15 @@ public class MainActivity : ComponentActivity() {
 
                             DefaultSpacer()
 
-                            PositiveButton(onClick = { currentPage = previousPage?.previousPage ?: Page.OVERVIEW }) {
-                                Row(verticalAlignment= Alignment.CenterVertically) {
+                            PositiveButton(onClick = {
+                                currentPage = previousPage?.previousPage ?: Page.OVERVIEW
+                            }) {
+                                Row(verticalAlignment = Alignment.CenterVertically) {
                                     val backString = stringResource(id = R.string.back)
                                     Image(
                                         painter = painterResource(id = R.drawable.arrow_back),
                                         contentDescription = backString,
+                                        colorFilter = ColorFilter.tint(color = textColor)
                                     )
                                     Text(text = backString)
                                 }
@@ -213,11 +241,18 @@ public class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(BUNDLE_IS_FETCHED, dataFetchCompleted)
+        save(runtimeAniListData, TEMP_PATH)
+
+        super.onSaveInstanceState(outState)
+    }
+
     private fun validateKey() {
         isLoggedIn =
             System.currentTimeMillis() <= preferences.getLong(PREFERENCE_ACCESS_EXPIRED, -1L)
         if (!isLoggedIn) {
-            preferences.logout()
+            preferences.logout(context = this)
         }
     }
 
@@ -230,6 +265,7 @@ public class MainActivity : ComponentActivity() {
     }
 
     private companion object {
+        private const val BUNDLE_IS_FETCHED = "IS_FETCHED"
         private const val PREFERENCE_BASE_KEY = "BINGO_PREFERENCE_KEY"
     }
 }

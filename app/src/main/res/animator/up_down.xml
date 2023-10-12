@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:duration="400"
+    android:propertyName="translateY"
+    android:repeatMode="reverse"
+    android:scaleY="0.51056606"
+    android:scaleX="0.51056606"
+    android:interpolator="@android:anim/accelerate_decelerate_interpolator"
+    android:valueFrom="46.496227"
+    android:repeatCount="infinite"
+    android:valueTo="42"
+    android:valueType="floatType" />

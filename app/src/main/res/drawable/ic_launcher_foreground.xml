@@ -3,7 +3,9 @@
     android:height="108dp"
     android:viewportWidth="190"
     android:viewportHeight="190">
-  <group android:scaleX="0.51056606"
+    <group
+        android:name="rotationGroup"
+        android:scaleX="0.51056606"
       android:scaleY="0.51056606"
       android:translateX="46.04712"
       android:translateY="46.496227">

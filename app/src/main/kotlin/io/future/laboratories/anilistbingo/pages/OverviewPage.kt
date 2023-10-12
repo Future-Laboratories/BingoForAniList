@@ -17,6 +17,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.MediaListCollection
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.anilistbingo.ui.AnimeItem
 import io.future.laboratories.anilistbingo.ui.BingoItem
@@ -27,14 +28,14 @@ internal fun OverviewPage(
     context: Context,
     preferences: SharedPreferences,
     bingoDataList: SnapshotStateList<BingoData>,
-    animeDataList: SnapshotStateList<MediaList>,
+    animeDataList: MediaListCollection?,
     isLoggedIn: Boolean,
     onLogout: () -> Unit,
     onEdit: (BingoData) -> Unit,
     onDelete: (BingoData) -> Unit,
     onClickField: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
-    var mode : Mode by remember {
+    var mode: Mode by remember {
         mutableStateOf(Mode.BINGO)
     }
 
@@ -42,12 +43,14 @@ internal fun OverviewPage(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        when(mode) {
+        when (mode) {
             is Mode.BINGO -> {
                 items(bingoDataList) { bingoData ->
                     BingoItem(
                         bingoData = bingoData,
-                        onClick = { localBingoData -> mode = Mode.ANIME(bingoData = localBingoData) },
+                        onClick = { localBingoData ->
+                            mode = Mode.ANIME(bingoData = localBingoData)
+                        },
                         onEdit = onEdit,
                         onDelete = onDelete,
                     )
@@ -55,7 +58,13 @@ internal fun OverviewPage(
             }
 
             is Mode.ANIME -> {
-                items(animeDataList) { animeData ->
+                items(
+                    items = animeDataList
+                        ?.lists
+                        ?.firstOrNull { it.name == "Watching" }
+                        ?.entries
+                        .orEmpty()
+                ) { animeData ->
                     AnimeItem(
                         animeData = animeData,
                         bingoData = (mode as Mode.ANIME).bingoData,

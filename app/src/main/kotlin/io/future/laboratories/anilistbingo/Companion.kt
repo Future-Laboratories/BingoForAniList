@@ -10,6 +10,7 @@ internal object Companion {
     internal const val PREFERENCE_ACCESS_TYPE: String = "${PREFIX}_BINGO_TYPE"
     internal const val PREFERENCE_ACCESS_EXPIRED: String = "${PREFIX}_BINGO_EXPIRED"
     internal const val PREFERENCE_ACCESS_USER_ID: String = "${PREFIX}_USER_ID"
+    internal const val TEMP_PATH = "TEMP_DATA"
 
     internal var MOCK_DATA: BingoData = BingoData(
         id = 2070,
