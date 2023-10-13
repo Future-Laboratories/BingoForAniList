@@ -1,12 +1,16 @@
 package io.future.laboratories.ui.pages
 
 import android.content.SharedPreferences
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
@@ -18,12 +22,14 @@ import io.future.laboratories.ui.components.BingoEditor
 import io.future.laboratories.ui.components.BingoNameField
 import io.future.laboratories.ui.components.BingoOptionToggle
 import io.future.laboratories.ui.components.DefaultHeader
+import io.future.laboratories.ui.components.DismissDialog
 import io.future.laboratories.ui.components.PositiveButton
 
 @Composable
 public fun EditorPage(
     preferences: SharedPreferences,
     bingoData: BingoData? = null,
+    onBackButtonPress: () -> Unit,
     onClickSave: (BingoData, isNew: Boolean) -> Unit,
 ) {
     var lastId = preferences.getInt("LAST_USED_ID", 0)
@@ -46,42 +52,58 @@ public fun EditorPage(
         )
     }
 
-    Column {
-        DefaultHeader(title = stringResource(id = R.string.name))
+    LazyColumn {
+        item {
+            DefaultHeader(title = stringResource(id = R.string.name))
 
-        BingoNameField(bingoData = localBingoData)
+            BingoNameField(bingoData = localBingoData)
+        }
 
-        DefaultHeader(title = stringResource(id = R.string.bingo))
+        item {
+            DefaultHeader(title = stringResource(id = R.string.bingo))
 
-        BingoEditor(bingoData = localBingoData)
-
-        DefaultHeader(title = stringResource(id = R.string.options))
+            BingoEditor(bingoData = localBingoData)
+        }
 
         var shuffle = false
-        BingoOptionToggle(optionName = stringResource(id = R.string.shuffle)) { value ->
-            shuffle = value
-        }
-        if (bingoData != null) {
-            Text(
-                text = stringResource(id = R.string.shuffle_hint),
-                fontSize = 14.sp,
-            )
-        }
+        item {
+            DefaultHeader(title = stringResource(id = R.string.options))
 
-        DefaultHeader(title = stringResource(id = R.string.complete))
+            BingoOptionToggle(optionName = stringResource(id = R.string.shuffle)) { value ->
+                shuffle = value
+            }
 
-        PositiveButton(
-            onClick = {
-                validateDataAndSave(
-                    preferences = preferences,
-                    bingoData = localBingoData,
-                    isNewDataSet = bingoData == null,
-                    shuffle = shuffle,
-                    onClickSave = onClickSave,
+            if (bingoData != null) {
+                Text(
+                    text = stringResource(id = R.string.shuffle_hint),
+                    fontSize = 14.sp,
                 )
-            },
-        ) {
-            Text(text = stringResource(id = R.string.done))
+            }
+        }
+
+        item {
+            DefaultHeader(title = stringResource(id = R.string.complete))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                DismissDialog(onAccept = onBackButtonPress)
+
+                PositiveButton(
+                    onClick = {
+                        validateDataAndSave(
+                            preferences = preferences,
+                            bingoData = localBingoData,
+                            isNewDataSet = bingoData == null,
+                            shuffle = shuffle,
+                            onClickSave = onClickSave,
+                        )
+                    },
+                ) {
+                    Text(text = stringResource(id = R.string.done))
+                }
+            }
         }
     }
 }

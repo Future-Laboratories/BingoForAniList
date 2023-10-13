@@ -2,15 +2,18 @@
 <resources>
 
     <string name="anilistUrl" translatable="false">https://anilist.co/api/v2/oauth/authorize?client_id=14752&amp;response_type=token"</string>
+    <string name="back">Back</string>
     <string name="bingo">Bingo</string>
     <string name="complete">Completion</string>
     <string name="delete">Delete</string>
     <string name="delete_permanently">Are you really sure, that you want to delete this bingo permanently?</string>
     <string name="done">Done</string>
     <string name="edit">Edit</string>
+    <string name="edit_dismiss">Are you sure you want to cancel? All changes will be gone permanently!</string>
     <string name="name">Name</string>
     <string name="options">Options</string>
     <string name="shuffle">Shuffle</string>
     <string name="shuffle_hint">Info: Shuffle in edit-mode only apply to <u>NEW</u> created Bingo\'s</string>
+    <string name="yes">Yes</string>
 
 </resources>

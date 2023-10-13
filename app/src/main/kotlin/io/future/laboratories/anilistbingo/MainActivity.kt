@@ -6,7 +6,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -14,19 +13,16 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -42,7 +38,6 @@ import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollectionData
 import io.future.laboratories.anilistapi.enqueue
-import io.future.laboratories.anilistbingo.MainActivity.Page.OVERVIEW.previousPage
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.common.deleteSingle
 import io.future.laboratories.common.loadAllBingoData
@@ -50,29 +45,34 @@ import io.future.laboratories.common.loadSingle
 import io.future.laboratories.common.logout
 import io.future.laboratories.common.save
 import io.future.laboratories.common.textColor
-import io.future.laboratories.ui.components.DefaultSpacer
-import io.future.laboratories.ui.components.PositiveButton
+import io.future.laboratories.ui.pages.BingoPage
+import io.future.laboratories.ui.pages.EditorPage
+import io.future.laboratories.ui.pages.Mode
+import io.future.laboratories.ui.pages.OverviewPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
+    // val
     private val preferences: SharedPreferences by lazy {
         getSharedPreferences(
             PREFERENCE_BASE_KEY,
             MODE_PRIVATE,
         )
     }
-
     private val authorization
         get() = "" +
                 "${preferences.getString(PREFERENCE_ACCESS_TYPE, null)} " +
                 "${preferences.getString(PREFERENCE_ACCESS_TOKEN, null)}" +
                 ""
 
+    // compose val
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
 
+    // var
     private var dataFetchCompleted: Boolean = false
 
-    private var currentPage: Page by mutableStateOf(Page.OVERVIEW)
+    // compose var
+    private var currentPage: Page by mutableStateOf(Page.OVERVIEW())
     private var isLoggedIn: Boolean by mutableStateOf(false)
     private var runtimeAniListData: MediaListCollectionData? by mutableStateOf(null)
 
@@ -157,11 +157,12 @@ public class MainActivity : ComponentActivity() {
                     ) {
                         Column {
                             when (currentPage) {
-                                is Page.OVERVIEW -> io.future.laboratories.ui.pages.OverviewPage(
+                                is Page.OVERVIEW -> OverviewPage(
                                     context = this@MainActivity,
                                     preferences = preferences,
                                     bingoDataList = runtimeData,
                                     animeDataList = runtimeAniListData?.mediaListCollection,
+                                    defaultMode = (currentPage as Page.OVERVIEW).mode,
                                     isLoggedIn = isLoggedIn,
                                     onLogout = {
                                         isLoggedIn = false
@@ -181,40 +182,33 @@ public class MainActivity : ComponentActivity() {
                                     )
                                 }
 
-                                is Page.BINGO -> io.future.laboratories.ui.pages.BingoPage(
+                                is Page.BINGO -> BingoPage(
                                     context = this@MainActivity,
                                     bingoData = (currentPage as Page.BINGO).bingoData,
                                     animeData = (currentPage as Page.BINGO).animeData,
-                                )
+                                ) { bingoData ->
+                                    currentPage = Page.OVERVIEW(
+                                        mode = Mode.ANIME(
+                                            bingoData = bingoData,
+                                        )
+                                    )
+                                }
 
                                 is Page.EDITOR -> {
-                                    io.future.laboratories.ui.pages.EditorPage(
+                                    EditorPage(
                                         preferences = preferences,
                                         bingoData = (currentPage as Page.EDITOR).bingoData,
+                                        onBackButtonPress = {
+                                            currentPage = Page.OVERVIEW()
+                                        }
                                     ) { bingoData, isNew ->
                                         save(bingoData, storagePath("${bingoData.id}"))
                                         if (isNew) {
                                             runtimeData.add(bingoData)
                                         }
 
-                                        currentPage = Page.OVERVIEW
+                                        currentPage = Page.OVERVIEW()
                                     }
-                                }
-                            }
-
-                            DefaultSpacer()
-
-                            PositiveButton(onClick = {
-                                currentPage = previousPage?.previousPage ?: Page.OVERVIEW
-                            }) {
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    val backString = stringResource(id = R.string.back)
-                                    Icon(
-                                        imageVector = Icons.Rounded.ArrowBack,
-                                        contentDescription = backString,
-                                        tint = textColor,
-                                    )
-                                    Text(text = backString)
                                 }
                             }
                         }
@@ -259,8 +253,8 @@ public class MainActivity : ComponentActivity() {
         }
     }
 
-    private sealed class Page(val previousPage: Page? = OVERVIEW) {
-        data object OVERVIEW : Page(null)
+    private sealed class Page {
+        class OVERVIEW(val mode: Mode = Mode.BINGO) : Page()
 
         class EDITOR(var bingoData: BingoData? = null) : Page()
 

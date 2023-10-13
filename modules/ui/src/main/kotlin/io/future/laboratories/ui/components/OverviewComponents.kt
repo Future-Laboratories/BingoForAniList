@@ -5,18 +5,14 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -29,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -52,9 +47,7 @@ internal fun BingoItem(
                 onClick(bingoData)
             },
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = bingoData.name,
@@ -89,9 +82,7 @@ internal fun AnimeItem(
                 onClick(bingoData, animeData)
             },
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(animeData.media.coverImage.large)
@@ -119,7 +110,6 @@ internal fun DeleteDialog(
     var showDeleteDialog by remember {
         mutableStateOf(false)
     }
-    val onDismiss = { showDeleteDialog = false }
 
     NegativeImageButton(
         onClick = { showDeleteDialog = true },
@@ -128,28 +118,13 @@ internal fun DeleteDialog(
     )
 
     if (showDeleteDialog) {
-        Dialog(onDismissRequest = onDismiss) {
-            Card {
-                Column(modifier = Modifier.padding(8.dp)) {
-                    Text(text = stringResource(id = R.string.delete_permanently))
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.End,
-                    ) {
-                        PositiveButton(onClick = onDismiss) {
-                            Text(text = stringResource(id = android.R.string.cancel))
-                        }
-                        DefaultSpacer()
-                        NegativeButton(onClick = {
-                            onDelete(bingoData)
-                            onDismiss()
-                        }) {
-                            Text(text = stringResource(id = R.string.delete))
-                        }
-                    }
-                }
-            }
-        }
+        DefaultDialog(
+            text = stringResource(id = R.string.delete_permanently),
+            actionButtonText = stringResource(id = R.string.delete),
+            abortText = stringResource(id = android.R.string.cancel),
+            onDismiss = { showDeleteDialog = false },
+            onAction = { onDelete(bingoData) },
+        )
     }
 }
 

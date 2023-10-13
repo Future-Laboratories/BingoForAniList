@@ -79,9 +79,7 @@ internal fun BingoEditor(
 ) {
     Column {
         bingoData.rowData.take(5).forEach { rowData ->
-            BingoEditorRow(
-                rowData = rowData,
-            )
+            BingoEditorRow(rowData = rowData)
         }
     }
 }
@@ -92,9 +90,7 @@ private fun BingoEditorRow(
 ) {
     Row {
         rowData.fieldData.take(5).forEach { fieldData ->
-            BingoEditorField(
-                fieldData = fieldData,
-            )
+            BingoEditorField(fieldData = fieldData)
         }
     }
 }
@@ -127,5 +123,26 @@ private fun RowScope.BingoEditorField(
                 innerTextField()
             }
         }
+    }
+}
+
+@Composable
+internal fun DismissDialog(
+    onAccept: () -> Unit,
+) {
+    var showDialog by remember {
+        mutableStateOf(false)
+    }
+
+    BackButton(onClick = { showDialog = true })
+
+    if (showDialog) {
+        DefaultDialog(
+            text = stringResource(id = R.string.edit_dismiss),
+            actionButtonText = stringResource(id = R.string.yes),
+            abortText = stringResource(id = android.R.string.cancel),
+            onDismiss = { showDialog = false },
+            onAction = onAccept,
+        )
     }
 }

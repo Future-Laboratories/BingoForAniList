@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Bingo für AniList</string>
 
-    <string name="back">Zurück</string>
+<string name="app_name">Bingo für AniList</string>
 
 </resources>

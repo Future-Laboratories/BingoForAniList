@@ -20,6 +20,7 @@ import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollection
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.ui.components.AnimeItem
+import io.future.laboratories.ui.components.BackButton
 import io.future.laboratories.ui.components.BingoItem
 import io.future.laboratories.ui.components.LoginButton
 
@@ -29,6 +30,7 @@ public fun OverviewPage(
     preferences: SharedPreferences,
     bingoDataList: SnapshotStateList<BingoData>,
     animeDataList: MediaListCollection?,
+    defaultMode: Mode,
     isLoggedIn: Boolean,
     onLogout: () -> Unit,
     onEdit: (BingoData) -> Unit,
@@ -36,7 +38,7 @@ public fun OverviewPage(
     onClickField: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
     var mode: Mode by remember {
-        mutableStateOf(Mode.BINGO)
+        mutableStateOf(defaultMode)
     }
 
     LazyColumn(
@@ -71,6 +73,14 @@ public fun OverviewPage(
                         onClick = onClickField,
                     )
                 }
+
+                item {
+                    BackButton(
+                        onClick = {
+                            mode = Mode.BINGO
+                        }
+                    )
+                }
             }
         }
 
@@ -87,8 +97,8 @@ public fun OverviewPage(
     }
 }
 
-private sealed class Mode {
-    data object BINGO : Mode()
+public sealed class Mode {
+    public data object BINGO : Mode()
 
-    class ANIME(val bingoData: BingoData) : Mode()
+    public class ANIME(internal val bingoData: BingoData) : Mode()
 }
