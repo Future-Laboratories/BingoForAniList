@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="anilistUrl" translatable="false">https://anilist.co/api/v2/oauth/authorize?client_id=14752&amp;response_type=token"</string>
     <string name="back">Back</string>
     <string name="bingo">Bingo</string>
     <string name="complete">Completion</string>

@@ -1,42 +1,47 @@
 package io.future.laboratories.anilistbingo
 
+import android.content.Intent
 import android.content.SharedPreferences
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
+import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
-import io.future.laboratories.Companion.PREFERENCE_ACCESS_USER_ID
+import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.storagePath
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistapi.data.MediaListCollectionData
+import io.future.laboratories.anilistapi.data.MediaListCollectionAndUserData
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.common.deleteSingle
@@ -45,9 +50,12 @@ import io.future.laboratories.common.loadSingle
 import io.future.laboratories.common.logout
 import io.future.laboratories.common.save
 import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.components.DropdownRow
+import io.future.laboratories.ui.components.ProfileButton
 import io.future.laboratories.ui.pages.BingoPage
 import io.future.laboratories.ui.pages.EditorPage
 import io.future.laboratories.ui.pages.Mode
+import io.future.laboratories.ui.pages.OptionsPage
 import io.future.laboratories.ui.pages.OverviewPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
@@ -74,8 +82,9 @@ public class MainActivity : ComponentActivity() {
     // compose var
     private var currentPage: Page by mutableStateOf(Page.OVERVIEW())
     private var isLoggedIn: Boolean by mutableStateOf(false)
-    private var runtimeAniListData: MediaListCollectionData? by mutableStateOf(null)
+    private var runtimeAniListData: MediaListCollectionAndUserData? by mutableStateOf(null)
 
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         dataFetchCompleted = savedInstanceState?.getBoolean(BUNDLE_IS_FETCHED) ?: false
         runtimeAniListData = loadSingle(TEMP_PATH)
@@ -84,7 +93,7 @@ public class MainActivity : ComponentActivity() {
             if (dataFetchCompleted && !forced) return
 
             val userId = preferences.getLong(
-                PREFERENCE_ACCESS_USER_ID,
+                PREFERENCE_USER_ID,
                 -1L,
             )
 
@@ -132,7 +141,7 @@ public class MainActivity : ComponentActivity() {
                 ),
             ).enqueue { _, userResponse ->
                 preferences.edit {
-                    putLong(PREFERENCE_ACCESS_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)
+                    putLong(PREFERENCE_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)
                 }
 
                 fetchAniList(forced = true)
@@ -145,91 +154,130 @@ public class MainActivity : ComponentActivity() {
 
         setContent {
             AniListBingoTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
+                Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background,
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp)
-                    ) {
-                        Column {
-                            when (currentPage) {
-                                is Page.OVERVIEW -> OverviewPage(
-                                    context = this@MainActivity,
-                                    preferences = preferences,
-                                    bingoDataList = runtimeData,
-                                    animeDataList = runtimeAniListData?.mediaListCollection,
-                                    defaultMode = (currentPage as Page.OVERVIEW).mode,
+                    topBar = {
+                        TopAppBar(
+                            title = { Text(text = stringResource(id = currentPage.nameResId)) },
+                            colors = TopAppBarDefaults.topAppBarColors(
+                                containerColor = MaterialTheme.colorScheme.primary,
+                                titleContentColor = textColor,
+                            ),
+                            actions = {
+                                var showMenu by remember { mutableStateOf(false) }
+                                ProfileButton(
+                                    url = runtimeAniListData?.user?.avatar?.medium,
                                     isLoggedIn = isLoggedIn,
-                                    onLogout = {
-                                        isLoggedIn = false
-                                        runtimeAniListData = null
-                                    },
-                                    onEdit = { data ->
-                                        currentPage = Page.EDITOR(bingoData = data)
-                                    },
-                                    onDelete = { data ->
-                                        deleteSingle(storagePath("${data.id}"))
-                                        runtimeData.remove(data)
-                                    },
-                                ) { bingoData, animeData ->
-                                    currentPage = Page.BINGO(
-                                        bingoData = bingoData,
-                                        animeData = animeData,
-                                    )
-                                }
-
-                                is Page.BINGO -> BingoPage(
-                                    context = this@MainActivity,
-                                    bingoData = (currentPage as Page.BINGO).bingoData,
-                                    animeData = (currentPage as Page.BINGO).animeData,
-                                ) { bingoData ->
-                                    currentPage = Page.OVERVIEW(
-                                        mode = Mode.ANIME(
-                                            bingoData = bingoData,
-                                        )
-                                    )
-                                }
-
-                                is Page.EDITOR -> {
-                                    EditorPage(
-                                        preferences = preferences,
-                                        bingoData = (currentPage as Page.EDITOR).bingoData,
-                                        onBackButtonPress = {
-                                            currentPage = Page.OVERVIEW()
-                                        }
-                                    ) { bingoData, isNew ->
-                                        save(bingoData, storagePath("${bingoData.id}"))
-                                        if (isNew) {
-                                            runtimeData.add(bingoData)
-                                        }
-
-                                        currentPage = Page.OVERVIEW()
+                                    onClick = {
+                                        showMenu = !showMenu
                                     }
+                                )
+
+                                DropdownMenu(
+                                    expanded = showMenu,
+                                    onDismissRequest = { showMenu = false }
+                                ) {
+                                    if (currentPage !is Page.OPTIONS) {
+                                        val optionsString = stringResource(id = R.string.options)
+                                        DropdownRow(
+                                            text = optionsString,
+                                            imageVector = Icons.Rounded.Settings,
+                                            contentDescription = stringResource(id = R.string.options),
+                                            onClick = {
+                                                currentPage =
+                                                    Page.OPTIONS(previousPage = currentPage)
+                                                showMenu = false
+                                            },
+                                        )
+                                    }
+                                    DropdownRow(
+                                        text = stringResource(if (isLoggedIn) R.string.logout else R.string.login),
+                                        imageVector = Icons.Rounded.AccountCircle,
+                                        contentDescription = "",
+                                        onClick = {
+                                            if (isLoggedIn) {
+                                                preferences.logout(this@MainActivity)
+                                                isLoggedIn = false
+
+                                                showMenu = false
+                                            } else {
+                                                val url = getString(R.string.anilistUrl)
+                                                val intent = Intent(Intent.ACTION_VIEW)
+                                                intent.setData(Uri.parse(url))
+                                                startActivity(
+                                                    intent,
+                                                    null,
+                                                )
+                                            }
+                                        }
+                                    )
                                 }
                             }
-                        }
-
-                        if (currentPage is Page.OVERVIEW) {
-                            FloatingActionButton(
-                                modifier = Modifier
-                                    .width(64.dp)
-                                    .aspectRatio(1f)
-                                    .align(Alignment.BottomEnd),
-                                onClick = { currentPage = Page.EDITOR() },
-                                shape = RoundedCornerShape(32.dp),
-                                containerColor = MaterialTheme.colorScheme.primary,
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Rounded.Add,
-                                    contentDescription = null,
-                                    tint = textColor,
-                                    modifier = Modifier
-                                        .fillMaxSize(0.9f),
+                        )
+                    },
+                    contentWindowInsets = WindowInsets(
+                        left = 10.dp,
+                        top = 10.dp,
+                        right = 10.dp,
+                        bottom = 10.dp,
+                    ),
+                ) { padding ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(padding)
+                            .padding(top = 10.dp),
+                    ) {
+                        when (currentPage) {
+                            is Page.OVERVIEW -> OverviewPage(
+                                bingoDataList = runtimeData,
+                                animeDataList = runtimeAniListData?.mediaListCollection,
+                                defaultMode = (currentPage as Page.OVERVIEW).mode,
+                                onEdit = { data ->
+                                    currentPage = Page.EDITOR(bingoData = data)
+                                },
+                                onDelete = { data ->
+                                    deleteSingle(storagePath("${data.id}"))
+                                    runtimeData.remove(data)
+                                },
+                            ) { bingoData, animeData ->
+                                currentPage = Page.BINGO(
+                                    bingoData = bingoData,
+                                    animeData = animeData,
                                 )
+                            }
+
+                            is Page.BINGO -> BingoPage(
+                                context = this@MainActivity,
+                                bingoData = (currentPage as Page.BINGO).bingoData,
+                                animeData = (currentPage as Page.BINGO).animeData,
+                            ) { bingoData ->
+                                currentPage = Page.OVERVIEW(
+                                    mode = Mode.ANIME(
+                                        bingoData = bingoData,
+                                    )
+                                )
+                            }
+
+                            is Page.EDITOR -> {
+                                EditorPage(
+                                    preferences = preferences,
+                                    bingoData = (currentPage as Page.EDITOR).bingoData,
+                                    onBackButtonPress = {
+                                        currentPage = Page.OVERVIEW()
+                                    },
+                                ) { bingoData, isNew ->
+                                    save(bingoData, storagePath("${bingoData.id}"))
+                                    if (isNew) {
+                                        runtimeData.add(bingoData)
+                                    }
+
+                                    currentPage = Page.OVERVIEW()
+                                }
+                            }
+
+                            is Page.OPTIONS -> OptionsPage {
+                                currentPage = (currentPage as Page.OPTIONS).previousPage
                             }
                         }
                     }
@@ -253,12 +301,14 @@ public class MainActivity : ComponentActivity() {
         }
     }
 
-    private sealed class Page {
-        class OVERVIEW(val mode: Mode = Mode.BINGO) : Page()
+    private sealed class Page(@StringRes val nameResId: Int) {
+        class OVERVIEW(val mode: Mode = Mode.BINGO) : Page(R.string.overview)
 
-        class EDITOR(var bingoData: BingoData? = null) : Page()
+        class EDITOR(var bingoData: BingoData? = null) : Page(R.string.editor)
 
-        class BINGO(var bingoData: BingoData, var animeData: MediaList) : Page()
+        class BINGO(var bingoData: BingoData, var animeData: MediaList) : Page(R.string.bingo)
+
+        class OPTIONS(val previousPage: Page) : Page(R.string.options)
     }
 
     private companion object {

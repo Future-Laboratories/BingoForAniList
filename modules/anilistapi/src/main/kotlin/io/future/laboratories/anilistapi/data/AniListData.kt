@@ -31,8 +31,19 @@ public data class Viewer(
 //region ListData
 
 @JsonClass(generateAdapter = true)
-public data class MediaListCollectionData(
-    @Json(name = "MediaListCollection") val mediaListCollection : MediaListCollection,
+public data class MediaListCollectionAndUserData(
+    @Json(name = "MediaListCollection") val mediaListCollection: MediaListCollection,
+    @Json(name = "User") val user: User,
+)
+
+@JsonClass(generateAdapter = true)
+public data class User(
+    val avatar: UserAvatar,
+)
+
+@JsonClass(generateAdapter = true)
+public data class UserAvatar(
+    val medium: String,
 )
 
 @JsonClass(generateAdapter = true)

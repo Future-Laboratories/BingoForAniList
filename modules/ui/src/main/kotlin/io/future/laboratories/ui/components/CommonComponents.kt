@@ -1,6 +1,9 @@
 package io.future.laboratories.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -9,13 +12,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,10 +31,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.RenderVectorGroup
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.R
 
@@ -192,6 +204,99 @@ internal fun DefaultDialog(
             }
         }
     }
+}
+
+//endregion
+
+//region appBar
+
+@Composable
+public fun ProfileButton(
+    url: String?,
+    isLoggedIn: Boolean,
+    onClick: () -> Unit,
+) {
+    val accountCircle = rememberVectorPainter(
+        image = Icons.Rounded.AccountCircle,
+        tint = MaterialTheme.colorScheme.primary,
+    )
+
+    val requestURL = if (!isLoggedIn) null else url
+
+    Box(
+        modifier = Modifier
+            .padding(end = 4.dp)
+            .background(textColor, CircleShape)
+            .size(44.dp)
+            .clip(CircleShape),
+        contentAlignment = Alignment.Center,
+    ) {
+        AsyncImage(
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(requestURL)
+                .crossfade(true)
+                .transformations(CircleCropTransformation())
+                .build(),
+            placeholder = accountCircle,
+            fallback = accountCircle,
+            contentDescription = null,
+            modifier = Modifier
+                .size(size = 40.dp)
+                .clickable {
+                    onClick()
+                },
+        )
+    }
+}
+
+@Composable
+private fun rememberVectorPainter(
+    image: ImageVector,
+    tint: Color,
+) = rememberVectorPainter(
+    defaultWidth = image.defaultWidth,
+    defaultHeight = image.defaultHeight,
+    viewportWidth = image.viewportWidth,
+    viewportHeight = image.viewportHeight,
+    name = image.name,
+    tintColor = tint,
+    tintBlendMode = image.tintBlendMode,
+    autoMirror = image.autoMirror,
+    content = { _, _ -> RenderVectorGroup(group = image.root) }
+)
+
+@Composable
+private fun DefaultAppBarIcon(
+    imageVector: ImageVector,
+    contentDescription: String,
+) {
+    Icon(
+        imageVector = imageVector,
+        contentDescription = contentDescription,
+        modifier = Modifier.size(20.dp),
+        tint = textColor,
+    )
+}
+
+@Composable
+public fun DropdownRow(
+    text: String,
+    imageVector: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
+    DropdownMenuItem(
+        text = {
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                DefaultAppBarIcon(
+                    imageVector = imageVector,
+                    contentDescription = contentDescription,
+                )
+                Text(text = text)
+            }
+        },
+        onClick = onClick,
+    )
 }
 
 //endregion

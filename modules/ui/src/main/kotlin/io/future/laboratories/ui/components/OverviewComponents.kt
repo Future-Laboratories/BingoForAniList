@@ -1,9 +1,5 @@
 package io.future.laboratories.ui.components
 
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
-import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,12 +21,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.common.logout
 import io.future.laboratories.ui.R
 
 @Composable
@@ -125,35 +119,5 @@ internal fun DeleteDialog(
             onDismiss = { showDeleteDialog = false },
             onAction = { onDelete(bingoData) },
         )
-    }
-}
-
-@Composable
-internal fun LoginButton(
-    context: Context,
-    preferences: SharedPreferences,
-    isLoggedIn: Boolean,
-    onLogout: () -> Unit,
-) {
-    if (!isLoggedIn) {
-        PositiveButton(
-            onClick = {
-                val url = context.getString(R.string.anilistUrl)
-                val intent = Intent(Intent.ACTION_VIEW)
-                intent.setData(Uri.parse(url))
-                ContextCompat.startActivity(context, intent, null)
-            },
-        ) {
-            Text(text = "Login")
-        }
-    } else {
-        PositiveButton(
-            onClick = {
-                preferences.logout(context = context)
-                onLogout()
-            },
-        ) {
-            Text(text = "Logout")
-        }
     }
 }

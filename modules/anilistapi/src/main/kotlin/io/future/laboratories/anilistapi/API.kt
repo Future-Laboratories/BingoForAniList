@@ -2,7 +2,7 @@ package io.future.laboratories.anilistapi
 
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.DataHolder
-import io.future.laboratories.anilistapi.data.MediaListCollectionData
+import io.future.laboratories.anilistapi.data.MediaListCollectionAndUserData
 import io.future.laboratories.anilistapi.data.ViewerData
 import retrofit2.Call
 import retrofit2.Callback
@@ -38,7 +38,7 @@ public interface API {
         @Header("Authorization") authorization: String,
         @Query("response_type") token: String = "token",
         @Body json: AniListBody,
-    ): DataHolderCall<MediaListCollectionData>
+    ): DataHolderCall<MediaListCollectionAndUserData>
 
     public companion object {
         public val aniListUserQuery: String = """
@@ -51,6 +51,11 @@ public interface API {
 
         public val aniListListQuery: String = """
                 query(${'$'}userId: Int) {
+                  User(id: ${'$'}userId) {
+                    avatar {
+                      medium
+                      }
+                  }
                   MediaListCollection(userId: ${'$'}userId, type: ANIME, status: CURRENT) {
                     lists {
                       name

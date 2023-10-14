@@ -12,7 +12,7 @@ import io.future.laboratories.Companion.BUILDER
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
-import io.future.laboratories.Companion.PREFERENCE_ACCESS_USER_ID
+import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.storagePath
 import io.future.laboratories.anilistbingo.data.BingoData
@@ -105,7 +105,7 @@ public fun SharedPreferences.logout(context: Context) {
         putString(PREFERENCE_ACCESS_TOKEN, null)
         putString(PREFERENCE_ACCESS_TYPE, null)
         putLong(PREFERENCE_ACCESS_EXPIRED, -1L)
-        putLong(PREFERENCE_ACCESS_USER_ID, -1L)
+        putLong(PREFERENCE_USER_ID, -1L)
     }
 }
 
