@@ -1,7 +1,6 @@
 package io.future.laboratories.anilistbingo
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -29,20 +28,11 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
-import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
-import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
-import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.storagePath
-import io.future.laboratories.anilistapi.API
-import io.future.laboratories.anilistapi.api
-import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistapi.data.MediaListCollectionAndUserData
-import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.common.deleteSingle
 import io.future.laboratories.common.loadAllBingoData
@@ -60,97 +50,46 @@ import io.future.laboratories.ui.pages.OverviewPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
-    // val
-    private val preferences: SharedPreferences by lazy {
-        getSharedPreferences(
-            PREFERENCE_BASE_KEY,
-            MODE_PRIVATE,
-        )
-    }
-    private val authorization
-        get() = "" +
-                "${preferences.getString(PREFERENCE_ACCESS_TYPE, null)} " +
-                "${preferences.getString(PREFERENCE_ACCESS_TOKEN, null)}" +
-                ""
-
     // compose val
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
-
-    // var
-    private var dataFetchCompleted: Boolean = false
 
     // compose var
     private var currentPage: Page by mutableStateOf(Page.OVERVIEW())
     private var isLoggedIn: Boolean by mutableStateOf(false)
-    private var runtimeAniListData: MediaListCollectionAndUserData? by mutableStateOf(null)
+    private var runtimeAPIData: APIController.RuntimeData by mutableStateOf(
+        APIController.RuntimeData(
+            false,
+            null
+        )
+    )
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        dataFetchCompleted = savedInstanceState?.getBoolean(BUNDLE_IS_FETCHED) ?: false
-        runtimeAniListData = loadSingle(TEMP_PATH)
-
-        fun fetchAniList(forced: Boolean = false) {
-            if (dataFetchCompleted && !forced) return
-
-            val userId = preferences.getLong(
-                PREFERENCE_USER_ID,
-                -1L,
+        val apiController = APIController(
+            preferences = getSharedPreferences(
+                PREFERENCE_BASE_KEY,
+                MODE_PRIVATE,
             )
+        )
 
-            if (userId == -1L) {
-                dataFetchCompleted = true
-                return
-            }
-
-            api.postAniList(
-                authorization = authorization,
-                json = AniListBody(
-                    query = API.aniListListQuery,
-                    variables = mapOf(
-                        "userId" to userId,
-                    )
-                ),
-            ).enqueue(onFailure = { _, _ -> dataFetchCompleted = true }) { _, listResponse ->
-                runtimeAniListData = listResponse.body()?.data
-
-                dataFetchCompleted = true
-            }
-        }
+        runtimeAPIData = APIController.RuntimeData(
+            dataFetchCompleted = savedInstanceState?.getBoolean(BUNDLE_IS_FETCHED) ?: false,
+            initialRuntimeAniListData = loadSingle(TEMP_PATH)
+        )
 
         installSplashScreen().setKeepOnScreenCondition {
-            return@setKeepOnScreenCondition !dataFetchCompleted
+            return@setKeepOnScreenCondition !runtimeAPIData.dataFetchCompleted
         }
 
         super.onCreate(savedInstanceState)
 
-        intent.data?.fragment?.let {
-            preferences.edit {
-                val sub1 = it.substringAfter("access_token=")
-                putString(PREFERENCE_ACCESS_TOKEN, sub1.substringBefore("&"))
-                val sub2 = it.substringAfter("&token_type=")
-                putString(PREFERENCE_ACCESS_TYPE, sub2.substringBefore("&"))
-                val sub3 = it.substringAfter("&expires_in=").substringBefore("&")
-                putLong(PREFERENCE_ACCESS_EXPIRED, System.currentTimeMillis() + sub3.toInt() * 1000)
-            }
+        with(apiController) {
+            intent.data?.processFragmentData(runtimeAPIData)
 
-            api.postAniListUser(
-                authorization = authorization,
-                json = AniListBody(
-                    API.aniListUserQuery,
-                    emptyMap(),
-                ),
-            ).enqueue { _, userResponse ->
-                preferences.edit {
-                    putLong(PREFERENCE_USER_ID, userResponse.body()?.data?.viewer?.id ?: -1L)
-                }
+            validateKey()
 
-                fetchAniList(forced = true)
-            }
+            runtimeAPIData.fetchAniList()
         }
-
-        validateKey()
-
-        fetchAniList()
 
         setContent {
             AniListBingoTheme {
@@ -166,7 +105,7 @@ public class MainActivity : ComponentActivity() {
                             actions = {
                                 var showMenu by remember { mutableStateOf(false) }
                                 ProfileButton(
-                                    url = runtimeAniListData?.user?.avatar?.medium,
+                                    url = runtimeAPIData.runtimeAniListData?.user?.avatar?.medium,
                                     isLoggedIn = isLoggedIn,
                                     onClick = {
                                         showMenu = !showMenu
@@ -196,7 +135,10 @@ public class MainActivity : ComponentActivity() {
                                         contentDescription = "",
                                         onClick = {
                                             if (isLoggedIn) {
-                                                preferences.logout(this@MainActivity)
+                                                with(apiController) {
+                                                    preferences.logout(this@MainActivity)
+                                                }
+                                                runtimeAPIData.runtimeAniListData = null
                                                 isLoggedIn = false
 
                                                 showMenu = false
@@ -231,7 +173,7 @@ public class MainActivity : ComponentActivity() {
                         when (currentPage) {
                             is Page.OVERVIEW -> OverviewPage(
                                 bingoDataList = runtimeData,
-                                animeDataList = runtimeAniListData?.mediaListCollection,
+                                animeDataList = runtimeAPIData.runtimeAniListData?.mediaListCollection,
                                 defaultMode = (currentPage as Page.OVERVIEW).mode,
                                 onEdit = { data ->
                                     currentPage = Page.EDITOR(bingoData = data)
@@ -261,7 +203,7 @@ public class MainActivity : ComponentActivity() {
 
                             is Page.EDITOR -> {
                                 EditorPage(
-                                    preferences = preferences,
+                                    preferences = with(apiController) { preferences },
                                     bingoData = (currentPage as Page.EDITOR).bingoData,
                                     onBackButtonPress = {
                                         currentPage = Page.OVERVIEW()
@@ -286,19 +228,19 @@ public class MainActivity : ComponentActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(BUNDLE_IS_FETCHED, dataFetchCompleted)
-        save(runtimeAniListData, TEMP_PATH)
-
-        super.onSaveInstanceState(outState)
-    }
-
-    private fun validateKey() {
+    private fun APIController.validateKey() {
         isLoggedIn =
             System.currentTimeMillis() <= preferences.getLong(PREFERENCE_ACCESS_EXPIRED, -1L)
         if (!isLoggedIn) {
-            preferences.logout(context = this)
+            preferences.logout(context = this@MainActivity)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putBoolean(BUNDLE_IS_FETCHED, runtimeAPIData.dataFetchCompleted)
+        save(runtimeAPIData.runtimeAniListData, TEMP_PATH)
+
+        super.onSaveInstanceState(outState)
     }
 
     private sealed class Page(@StringRes val nameResId: Int) {
