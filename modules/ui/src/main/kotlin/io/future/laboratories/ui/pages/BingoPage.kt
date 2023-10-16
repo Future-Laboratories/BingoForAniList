@@ -9,7 +9,6 @@ import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.data.BingoData
 import io.future.laboratories.common.loadSingle
 import io.future.laboratories.common.save
-import io.future.laboratories.ui.components.BackButton
 import io.future.laboratories.ui.components.Bingo
 
 @Composable
@@ -17,7 +16,6 @@ public fun BingoPage(
     context: Context,
     bingoData: BingoData,
     animeData: MediaList,
-    onBackButtonPress: (bingoData: BingoData) -> Unit,
 ) {
     LazyColumn(
         verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -28,14 +26,6 @@ public fun BingoPage(
             Bingo(bingoData = data) {
                 context.save(data, "${animeData.media.id}/${bingoData.id}")
             }
-        }
-
-        item {
-            BackButton(
-                onClick = {
-                    onBackButtonPress(data)
-                },
-            )
         }
     }
 }

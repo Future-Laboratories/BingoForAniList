@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,13 +41,14 @@ import io.future.laboratories.common.loadSingle
 import io.future.laboratories.common.logout
 import io.future.laboratories.common.save
 import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.components.DefaultNavIcon
 import io.future.laboratories.ui.components.DropdownRow
 import io.future.laboratories.ui.components.ProfileButton
+import io.future.laboratories.ui.pages.AnimeOverviewPage
+import io.future.laboratories.ui.pages.BingoOverviewPage
 import io.future.laboratories.ui.pages.BingoPage
 import io.future.laboratories.ui.pages.EditorPage
-import io.future.laboratories.ui.pages.Mode
 import io.future.laboratories.ui.pages.OptionsPage
-import io.future.laboratories.ui.pages.OverviewPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
@@ -54,7 +56,7 @@ public class MainActivity : ComponentActivity() {
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
 
     // compose var
-    private var currentPage: Page by mutableStateOf(Page.OVERVIEW())
+    private var currentPage: Page by mutableStateOf(Page.BINGO_OVERVIEW())
     private var isLoggedIn: Boolean by mutableStateOf(false)
     private var runtimeAPIData: APIController.RuntimeData by mutableStateOf(
         APIController.RuntimeData(
@@ -98,6 +100,16 @@ public class MainActivity : ComponentActivity() {
                     topBar = {
                         TopAppBar(
                             title = { Text(text = stringResource(id = currentPage.nameResId)) },
+                            navigationIcon = {
+                                if (currentPage !is Page.BINGO_OVERVIEW) {
+                                    DefaultNavIcon(
+                                        imageVector = Icons.Rounded.ArrowBack,
+                                        contentDescription = stringResource(id = io.future.laboratories.ui.R.string.back)
+                                    ) {
+                                        currentPage = currentPage.previousPage
+                                    }
+                                }
+                            },
                             colors = TopAppBarDefaults.topAppBarColors(
                                 containerColor = MaterialTheme.colorScheme.primary,
                                 titleContentColor = textColor,
@@ -123,8 +135,7 @@ public class MainActivity : ComponentActivity() {
                                             imageVector = Icons.Rounded.Settings,
                                             contentDescription = stringResource(id = R.string.options),
                                             onClick = {
-                                                currentPage =
-                                                    Page.OPTIONS(previousPage = currentPage)
+                                                currentPage = Page.OPTIONS(sourcePage = currentPage)
                                                 showMenu = false
                                             },
                                         )
@@ -171,42 +182,50 @@ public class MainActivity : ComponentActivity() {
                             .padding(top = 10.dp),
                     ) {
                         when (currentPage) {
-                            is Page.OVERVIEW -> OverviewPage(
-                                bingoDataList = runtimeData,
+                            is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
+                                bingoData = (currentPage as Page.ANIME_OVERVIEW).bingoData,
                                 animeDataList = runtimeAPIData.runtimeAniListData?.mediaListCollection,
-                                defaultMode = (currentPage as Page.OVERVIEW).mode,
+                                onSelectAnime = { bingoData, animeData ->
+                                    currentPage = Page.BINGO(
+                                        bingoData = bingoData,
+                                        animeData = animeData,
+                                        sourcePage = currentPage,
+                                    )
+                                },
+                            )
+
+                            is Page.BINGO_OVERVIEW -> BingoOverviewPage(
+                                bingoDataList = runtimeData,
                                 onEdit = { data ->
-                                    currentPage = Page.EDITOR(bingoData = data)
+                                    currentPage = Page.EDITOR(
+                                        bingoData = data,
+                                        sourcePage = currentPage,
+                                    )
                                 },
                                 onDelete = { data ->
                                     deleteSingle(storagePath("${data.id}"))
                                     runtimeData.remove(data)
                                 },
-                            ) { bingoData, animeData ->
-                                currentPage = Page.BINGO(
-                                    bingoData = bingoData,
-                                    animeData = animeData,
-                                )
-                            }
+                                onSelectBingo = { bingoData ->
+                                    currentPage = Page.ANIME_OVERVIEW(
+                                        bingoData = bingoData,
+                                        sourcePage = currentPage,
+                                    )
+                                },
+                            )
 
                             is Page.BINGO -> BingoPage(
                                 context = this@MainActivity,
                                 bingoData = (currentPage as Page.BINGO).bingoData,
                                 animeData = (currentPage as Page.BINGO).animeData,
-                            ) { bingoData ->
-                                currentPage = Page.OVERVIEW(
-                                    mode = Mode.ANIME(
-                                        bingoData = bingoData,
-                                    )
-                                )
-                            }
+                            )
 
                             is Page.EDITOR -> {
                                 EditorPage(
                                     preferences = with(apiController) { preferences },
                                     bingoData = (currentPage as Page.EDITOR).bingoData,
                                     onBackButtonPress = {
-                                        currentPage = Page.OVERVIEW()
+                                        currentPage = Page.BINGO_OVERVIEW()
                                     },
                                 ) { bingoData, isNew ->
                                     save(bingoData, storagePath("${bingoData.id}"))
@@ -214,13 +233,11 @@ public class MainActivity : ComponentActivity() {
                                         runtimeData.add(bingoData)
                                     }
 
-                                    currentPage = Page.OVERVIEW()
+                                    currentPage = Page.BINGO_OVERVIEW()
                                 }
                             }
 
-                            is Page.OPTIONS -> OptionsPage {
-                                currentPage = (currentPage as Page.OPTIONS).previousPage
-                            }
+                            is Page.OPTIONS -> OptionsPage()
                         }
                     }
                 }
@@ -243,14 +260,26 @@ public class MainActivity : ComponentActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    private sealed class Page(@StringRes val nameResId: Int) {
-        class OVERVIEW(val mode: Mode = Mode.BINGO) : Page(R.string.overview)
+    @Suppress("ClassName")
+    private sealed class Page(@StringRes val nameResId: Int, private var sourcePage: Page?) {
+        val previousPage
+            get() = previousPage()
 
-        class EDITOR(var bingoData: BingoData? = null) : Page(R.string.editor)
+        private fun previousPage(): Page = sourcePage ?: BINGO_OVERVIEW()
 
-        class BINGO(var bingoData: BingoData, var animeData: MediaList) : Page(R.string.bingo)
+        class BINGO_OVERVIEW(sourcePage: Page? = null) :
+            Page(R.string.overview_bingo, sourcePage)
 
-        class OPTIONS(val previousPage: Page) : Page(R.string.options)
+        class ANIME_OVERVIEW(val bingoData: BingoData, sourcePage: Page) :
+            Page(R.string.overview_anime, sourcePage)
+
+        class EDITOR(val bingoData: BingoData? = null, sourcePage: Page) :
+            Page(R.string.editor, sourcePage)
+
+        class BINGO(val bingoData: BingoData, val animeData: MediaList, sourcePage: Page) :
+            Page(R.string.bingo, sourcePage)
+
+        class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
     }
 
     private companion object {

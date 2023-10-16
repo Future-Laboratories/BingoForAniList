@@ -266,7 +266,23 @@ private fun rememberVectorPainter(
 )
 
 @Composable
-private fun DefaultAppBarIcon(
+public fun DefaultNavIcon(
+    imageVector: ImageVector,
+    contentDescription: String,
+    onClick: () -> Unit,
+) {
+    Icon(
+        imageVector = imageVector,
+        contentDescription = contentDescription,
+        modifier = Modifier
+            .size(32.dp)
+            .clickable { onClick() },
+        tint = textColor,
+    )
+}
+
+@Composable
+private fun DefaultDropdownIcon(
     imageVector: ImageVector,
     contentDescription: String,
 ) {
@@ -288,7 +304,7 @@ public fun DropdownRow(
     DropdownMenuItem(
         text = {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                DefaultAppBarIcon(
+                DefaultDropdownIcon(
                     imageVector = imageVector,
                     contentDescription = contentDescription,
                 )

@@ -11,6 +11,7 @@ internal fun String.colon(): String = "$this:"
 
 //region Transformations
 
+@Suppress("FunctionName")
 internal fun RoundedCornersTransformation(all: Float): Transformation =
     RoundedCornersTransformation(all, all, all, all)
 

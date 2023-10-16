@@ -8,6 +8,7 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="options">Options</string>
-    <string name="overview">Overview</string>
+    <string name="overview_bingo">Bingo Overview</string>
+    <string name="overview_anime">Anime Overview</string>
 
 </resources>
