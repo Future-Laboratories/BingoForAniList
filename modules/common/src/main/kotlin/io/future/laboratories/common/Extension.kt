@@ -110,3 +110,12 @@ public fun SharedPreferences.logout(context: Context) {
 }
 
 //endregion
+
+//region lambda
+
+public operator fun (() -> Unit).plus(rhs: () -> Unit): () -> Unit = {
+    this()
+    rhs()
+}
+
+//endregion

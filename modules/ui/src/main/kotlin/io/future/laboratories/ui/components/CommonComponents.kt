@@ -211,7 +211,7 @@ internal fun DefaultDialog(
 //region appBar
 
 @Composable
-public fun ProfileButton(
+internal fun ProfileButton(
     url: String?,
     isLoggedIn: Boolean,
     onClick: () -> Unit,
@@ -266,7 +266,7 @@ private fun rememberVectorPainter(
 )
 
 @Composable
-public fun DefaultNavIcon(
+internal fun DefaultNavIcon(
     imageVector: ImageVector,
     contentDescription: String,
     onClick: () -> Unit,
@@ -295,7 +295,7 @@ private fun DefaultDropdownIcon(
 }
 
 @Composable
-public fun DropdownRow(
+internal fun DropdownRow(
     text: String,
     imageVector: ImageVector,
     contentDescription: String,
