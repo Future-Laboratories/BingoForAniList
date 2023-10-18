@@ -16,7 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.R
 
 @Composable

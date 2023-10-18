@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo.data
+package io.future.laboratories.common
 
 import com.squareup.moshi.JsonClass
 

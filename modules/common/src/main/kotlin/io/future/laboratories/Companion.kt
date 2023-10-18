@@ -13,7 +13,7 @@ public object Companion {
     public val BUILDER: Moshi
         get() = Moshi.Builder().build()
 
-    public fun storagePath(subPath: String? = null): String {
+    public fun bingoStoragePath(subPath: String? = null): String {
         return if (subPath != null) "Bingo/${subPath}" else "Bingo"
     }
 }

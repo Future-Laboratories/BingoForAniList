@@ -33,18 +33,18 @@ public data class DropDownItemData(
     private val textId: () -> Int,
     private val contentDescription: String? = null,
     private val imageVector: ImageVector,
-    private val isVisible: Boolean = true,
+    private val isVisible: () -> Boolean,
     private val onClick: () -> Unit,
 ) {
     @Composable
     public operator fun invoke(onDismiss: () -> Unit) {
-        if (isVisible) {
+        if (isVisible()) {
             val text = stringResource(textId())
             DropdownRow(
                 text = text,
                 imageVector = imageVector,
                 contentDescription = contentDescription ?: text,
-                onClick = onClick + onDismiss
+                onClick = onClick + onDismiss,
             )
         }
     }

@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.loadSingle
 import io.future.laboratories.common.save
 import io.future.laboratories.ui.components.Bingo

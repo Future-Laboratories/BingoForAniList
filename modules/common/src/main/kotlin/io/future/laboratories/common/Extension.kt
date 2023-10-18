@@ -14,8 +14,7 @@ import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.Companion.TEMP_PATH
-import io.future.laboratories.Companion.storagePath
-import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.Companion.bingoStoragePath
 import java.io.BufferedReader
 import java.io.BufferedWriter
 import java.io.File
@@ -39,7 +38,7 @@ public inline fun <reified T> Context.save(data: T, storagePath: String) {
 
 public fun Context.loadAllBingoData(): SnapshotStateList<BingoData> {
     val bingoDataList = SnapshotStateList<BingoData>()
-    val file = File(filesDir, storagePath())
+    val file = File(filesDir, bingoStoragePath())
 
     file.walkTopDown().maxDepth(1).forEach {
         if (!it.isDirectory) {
@@ -51,7 +50,7 @@ public fun Context.loadAllBingoData(): SnapshotStateList<BingoData> {
 }
 
 private fun Context.loadSingleBingoData(bingoId: Int): BingoData? = loadSingle(
-    storagePath = storagePath("$bingoId"),
+    storagePath = bingoStoragePath("$bingoId"),
 )
 
 public inline fun <reified T> Context.loadSingle(storagePath: String): T? {

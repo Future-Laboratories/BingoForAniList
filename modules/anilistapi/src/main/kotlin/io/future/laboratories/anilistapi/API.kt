@@ -56,7 +56,7 @@ public interface API {
                       medium
                       }
                   }
-                  MediaListCollection(userId: ${'$'}userId, type: ANIME, status: CURRENT) {
+                  MediaListCollection(userId: ${'$'}userId, type: ANIME) {
                     lists {
                       name
                       entries {

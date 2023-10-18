@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.RoundedCornersTransformation
 
 @Composable

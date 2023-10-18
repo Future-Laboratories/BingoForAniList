@@ -1,5 +1,6 @@
 package io.future.laboratories.anilistbingo
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.compose.runtime.getValue
@@ -12,6 +13,7 @@ import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MediaListCollectionAndUserData
 import io.future.laboratories.anilistapi.enqueue
+import io.future.laboratories.common.logout
 
 internal class APIController(internal val preferences: SharedPreferences) {
     private val authorization
@@ -29,7 +31,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
             val sub3 = it.substringAfter("&expires_in=").substringBefore("&")
             putLong(
                 Companion.PREFERENCE_ACCESS_EXPIRED,
-                System.currentTimeMillis() + sub3.toInt() * 1000
+                System.currentTimeMillis() + sub3.toInt() * 1000,
             )
         }
 
@@ -79,6 +81,19 @@ internal class APIController(internal val preferences: SharedPreferences) {
 
             dataFetchCompleted = true
         }
+    }
+
+    internal fun Context.validateKey(): Boolean {
+        val isLoggedIn = System.currentTimeMillis() <= preferences.getLong(
+            Companion.PREFERENCE_ACCESS_EXPIRED,
+            -1L
+        )
+
+        if (!isLoggedIn) {
+            preferences.logout(context = this)
+        }
+
+        return isLoggedIn
     }
 
     internal data class RuntimeData(

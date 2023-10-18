@@ -5,14 +5,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -24,34 +22,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.FieldData
-import io.future.laboratories.anilistbingo.data.RowData
+import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.FieldData
+import io.future.laboratories.common.RowData
 import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
 
-@Composable
-internal fun BingoOptionToggle(
-    optionName: String,
-    onCheckedChange: (Boolean) -> Unit,
-) {
-    var checked by remember { mutableStateOf(false) }
-
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = optionName.colon())
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Switch(
-            checked = checked,
-            onCheckedChange = { value ->
-                checked = value
-                onCheckedChange(value)
-            },
-        )
-    }
-}
 
 @Composable
 internal fun BingoNameField(

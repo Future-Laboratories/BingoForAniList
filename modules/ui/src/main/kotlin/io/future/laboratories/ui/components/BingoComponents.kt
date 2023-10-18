@@ -23,9 +23,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.FieldData
-import io.future.laboratories.anilistbingo.data.RowData
+import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.FieldData
+import io.future.laboratories.common.RowData
 
 @Composable
 internal fun Bingo(

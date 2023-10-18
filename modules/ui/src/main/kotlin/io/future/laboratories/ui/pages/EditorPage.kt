@@ -14,15 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
 import androidx.core.content.edit
-import io.future.laboratories.anilistbingo.data.BingoData
-import io.future.laboratories.anilistbingo.data.FieldData
-import io.future.laboratories.anilistbingo.data.RowData
+import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.FieldData
+import io.future.laboratories.common.RowData
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.BingoEditor
 import io.future.laboratories.ui.components.BingoNameField
-import io.future.laboratories.ui.components.BingoOptionToggle
 import io.future.laboratories.ui.components.DefaultHeader
 import io.future.laboratories.ui.components.DismissDialog
+import io.future.laboratories.ui.components.OptionToggle
 import io.future.laboratories.ui.components.PositiveButton
 
 @Composable
@@ -69,7 +69,10 @@ public fun EditorPage(
         item {
             DefaultHeader(title = stringResource(id = R.string.options))
 
-            BingoOptionToggle(optionName = stringResource(id = R.string.shuffle)) { value ->
+            OptionToggle(
+                optionName = stringResource(id = R.string.shuffle),
+                initialValue = false,
+            ) { value ->
                 shuffle = value
             }
 

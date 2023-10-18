@@ -13,12 +13,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.TEMP_PATH
-import io.future.laboratories.Companion.storagePath
+import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
+import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.deleteSingle
 import io.future.laboratories.common.loadAllBingoData
 import io.future.laboratories.common.loadSingle
@@ -26,6 +27,7 @@ import io.future.laboratories.common.logout
 import io.future.laboratories.common.save
 import io.future.laboratories.ui.CustomScaffold
 import io.future.laboratories.ui.DropDownItemData
+import io.future.laboratories.ui.components.OptionGroup
 import io.future.laboratories.ui.pages.AnimeOverviewPage
 import io.future.laboratories.ui.pages.BingoOverviewPage
 import io.future.laboratories.ui.pages.BingoPage
@@ -34,6 +36,13 @@ import io.future.laboratories.ui.pages.OptionsPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
+    private val preferences by lazy {
+        getSharedPreferences(
+            PREFERENCE_BASE_KEY,
+            MODE_PRIVATE,
+        )
+    }
+
     // compose val
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
 
@@ -49,10 +58,11 @@ public class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         val apiController = APIController(
-            preferences = getSharedPreferences(
-                PREFERENCE_BASE_KEY,
-                MODE_PRIVATE,
-            )
+            preferences = preferences,
+        )
+
+        val options = Options.getInstance(
+            preferences = preferences,
         )
 
         runtimeAPIData = APIController.RuntimeData(
@@ -69,7 +79,7 @@ public class MainActivity : ComponentActivity() {
         with(apiController) {
             intent.data?.processFragmentData(runtimeAPIData)
 
-            validateKey()
+            isLoggedIn = validateKey()
 
             runtimeAPIData.fetchAniList()
         }
@@ -79,7 +89,7 @@ public class MainActivity : ComponentActivity() {
                 textId = { R.string.options },
                 contentDescription = null,
                 imageVector = Icons.Rounded.Settings,
-                isVisible = currentPage !is Page.OPTIONS,
+                isVisible = { currentPage !is Page.OPTIONS },
                 onClick = {
                     currentPage = Page.OPTIONS(sourcePage = currentPage)
                 },
@@ -88,12 +98,11 @@ public class MainActivity : ComponentActivity() {
                 textId = { if (isLoggedIn) R.string.logout else R.string.login },
                 contentDescription = null,
                 imageVector = Icons.Rounded.AccountCircle,
-                isVisible = currentPage !is Page.OPTIONS,
+                isVisible = { true },
                 onClick = {
                     if (isLoggedIn) {
-                        with(apiController) {
-                            preferences.logout(this@MainActivity)
-                        }
+                        preferences.logout(this@MainActivity)
+
                         runtimeAPIData.runtimeAniListData = null
                         isLoggedIn = false
                     } else {
@@ -113,7 +122,7 @@ public class MainActivity : ComponentActivity() {
             AniListBingoTheme {
                 CustomScaffold(
                     titleId = { currentPage.nameResId },
-                    isNavVisible = { currentPage !is Page.BINGO_OVERVIEW },
+                    isNavVisible = { currentPage !is Page.BINGO_OVERVIEW && currentPage !is Page.EDITOR },
                     onNavPress = { currentPage = currentPage.previousPage },
                     profilePictureUrl = runtimeAPIData.runtimeAniListData?.user?.avatar?.medium,
                     isLoggedIn = isLoggedIn,
@@ -122,6 +131,7 @@ public class MainActivity : ComponentActivity() {
                     when (currentPage) {
                         is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
                             bingoData = (currentPage as Page.ANIME_OVERVIEW).bingoData,
+                            showFinished = options[SHOW_FINISHED_ANIME],
                             animeDataList = runtimeAPIData.runtimeAniListData?.mediaListCollection,
                             onSelectAnime = { bingoData, animeData ->
                                 currentPage = Page.BINGO(
@@ -141,7 +151,7 @@ public class MainActivity : ComponentActivity() {
                                 )
                             },
                             onDelete = { data ->
-                                deleteSingle(storagePath("${data.id}"))
+                                deleteSingle(bingoStoragePath("${data.id}"))
                                 runtimeData.remove(data)
                             },
                             onSelectBingo = { bingoData ->
@@ -160,13 +170,13 @@ public class MainActivity : ComponentActivity() {
 
                         is Page.EDITOR -> {
                             EditorPage(
-                                preferences = with(apiController) { preferences },
+                                preferences = preferences,
                                 bingoData = (currentPage as Page.EDITOR).bingoData,
                                 onBackButtonPress = {
                                     currentPage = Page.BINGO_OVERVIEW()
                                 },
                                 onClickSave = { bingoData, isNew ->
-                                    save(bingoData, storagePath("${bingoData.id}"))
+                                    save(bingoData, bingoStoragePath("${bingoData.id}"))
                                     if (isNew) {
                                         runtimeData.add(bingoData)
                                     }
@@ -176,18 +186,19 @@ public class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        is Page.OPTIONS -> OptionsPage()
+                        is Page.OPTIONS -> OptionsPage(
+                            options = arrayOf(
+                                OptionGroup(
+                                    text = stringResource(id = R.string.options_general),
+                                    options = listOfNotNull(
+                                        options[SHOW_FINISHED_ANIME],
+                                    )
+                                ),
+                            )
+                        )
                     }
                 }
             }
-        }
-    }
-
-    private fun APIController.validateKey() {
-        isLoggedIn =
-            System.currentTimeMillis() <= preferences.getLong(PREFERENCE_ACCESS_EXPIRED, -1L)
-        if (!isLoggedIn) {
-            preferences.logout(context = this@MainActivity)
         }
     }
 

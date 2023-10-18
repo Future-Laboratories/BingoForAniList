@@ -18,7 +18,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.future.laboratories.anilistbingo.data.BingoData
+import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.components.BingoItem
 
