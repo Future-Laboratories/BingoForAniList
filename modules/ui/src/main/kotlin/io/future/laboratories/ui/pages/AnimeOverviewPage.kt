@@ -15,12 +15,14 @@ import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DefaultHeader
+import io.future.laboratories.ui.components.DropdownOption
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun AnimeOverviewPage(
     bingoData: BingoData,
     showFinished: BooleanOption,
+    pinned: DropdownOption,
     animeDataList: MediaListCollection?,
     onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
@@ -34,6 +36,7 @@ public fun AnimeOverviewPage(
                 ?.filter {
                     if (showFinished.currentValue) true else it.name == "Watching"
                 }
+                ?.sortedByDescending { it.name == pinned.currentValue }
                 .orEmpty()
                 .forEach { animeList ->
                     stickyHeader(

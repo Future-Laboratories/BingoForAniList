@@ -1,23 +1,35 @@
 package io.future.laboratories.anilistbingo
 
 import android.content.SharedPreferences
+import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import io.future.laboratories.ui.components.BooleanOption
+import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionData
 import io.future.laboratories.ui.components.OptionKey
 
 public class Options private constructor(preferences: SharedPreferences) {
     private val showFinishedAnime: BooleanOption = BooleanOption(
-        preferences,
-        SHOW_FINISHED_ANIME,
-        { stringResource(id = R.string.option_visibility) },
-        false,
+        preferences = preferences,
+        key = SHOW_FINISHED_ANIME,
+        name = { stringResource(id = R.string.option_visibility) },
+        defaultValue = false,
+    )
+    private val pinnedCategory: DropdownOption = DropdownOption(
+        preferences = preferences,
+        key = PINNED_CATEGORY,
+        name = { stringResource(id = R.string.option_pinned_category) },
+        defaultValue = "Completed",
+        values = {
+            stringArrayResource(id = R.array.option_pinned_category_values).associateWith { it }
+        },
     )
 
     @PublishedApi
     @RestrictedApi
     internal val options: Map<OptionKey, OptionData<*>> = mapOf(
         showFinishedAnime.toPair(),
+        pinnedCategory.toPair(),
     )
 
     @PublishedApi
@@ -35,6 +47,7 @@ public class Options private constructor(preferences: SharedPreferences) {
 
     public companion object {
         internal val SHOW_FINISHED_ANIME = OptionKey("SHOW_FINISHED_ANIME")
+        internal val PINNED_CATEGORY = OptionKey("PINNED_CATEGORY")
 
         @Volatile
         private var instance: Options? = null

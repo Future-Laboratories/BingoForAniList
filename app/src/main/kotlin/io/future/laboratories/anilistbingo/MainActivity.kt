@@ -18,6 +18,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.deleteSingle
@@ -132,6 +133,7 @@ public class MainActivity : ComponentActivity() {
                         is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
                             bingoData = (currentPage as Page.ANIME_OVERVIEW).bingoData,
                             showFinished = options[SHOW_FINISHED_ANIME],
+                            pinned = options[PINNED_CATEGORY],
                             animeDataList = runtimeAPIData.runtimeAniListData?.mediaListCollection,
                             onSelectAnime = { bingoData, animeData ->
                                 currentPage = Page.BINGO(
@@ -192,6 +194,7 @@ public class MainActivity : ComponentActivity() {
                                     text = stringResource(id = R.string.options_general),
                                     options = listOfNotNull(
                                         options[SHOW_FINISHED_ANIME],
+                                        options[PINNED_CATEGORY],
                                     )
                                 ),
                             )

@@ -10,17 +10,21 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -40,6 +44,7 @@ import androidx.compose.ui.graphics.vector.RenderVectorGroup
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -348,6 +353,91 @@ internal fun OptionToggle(
             },
         )
     }
+}
+
+//endregion
+
+//region Dropdown
+
+@Composable
+internal fun OptionDropdown(
+    optionName: String,
+    values: Map<String, String>,
+    initialValue: String,
+    onCheckedChange: (String) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text = optionName.colon())
+
+        DropdownBox(
+            values = values,
+            initialValue = initialValue,
+            onCheckedChange = onCheckedChange,
+        )
+    }
+}
+
+@Composable
+private fun DropdownBox(
+    values: Map<String, String>,
+    initialValue: String,
+    onCheckedChange: (String) -> Unit,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var currentOptionText by remember { mutableStateOf(if (initialValue in values) initialValue else "") }
+    PositiveButton(
+        onClick = { expanded = !expanded },
+    ) {
+        Icon(
+            imageVector = Icons.Rounded.ArrowDropDown,
+            contentDescription = null,
+        )
+        Text(
+            text = currentOptionText,
+            textAlign = TextAlign.End,
+            modifier = Modifier.widthIn(min = 52.dp),
+        )
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+            },
+            modifier = Modifier
+                .heightIn(
+                    min = 40.dp,
+                    max = 200.dp,
+                )
+                .clickable {
+                    expanded = true
+                }
+        ) {
+            values.forEach { stringValue ->
+                DropdownMenuItem(
+                    text = { DropdownText(text = stringValue.key) },
+                    onClick = {
+                        currentOptionText = stringValue.key
+                        expanded = false
+
+                        onCheckedChange(stringValue.value)
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DropdownText(text: String) {
+    Text(
+        text = text,
+        textAlign = TextAlign.End,
+        modifier = Modifier.fillMaxWidth(),
+    )
 }
 
 //endregion
