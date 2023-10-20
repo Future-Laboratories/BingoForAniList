@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -81,9 +80,6 @@ internal fun DefaultHeader(title: String) {
         DefaultDivider()
     }
 }
-
-@Composable
-internal fun DefaultSpacer(): Unit = Spacer(modifier = Modifier.size(4.dp))
 
 //endregion
 
@@ -193,10 +189,11 @@ internal fun DefaultDialog(
     onAbort: () -> Unit = onDismiss,
 ): Unit = Dialog(onDismissRequest = onDismiss) {
     Card {
-        Column(modifier = Modifier.padding(8.dp)) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Text(text = text)
-
-            DefaultSpacer()
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

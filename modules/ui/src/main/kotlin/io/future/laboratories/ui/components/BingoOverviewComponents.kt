@@ -1,6 +1,7 @@
 package io.future.laboratories.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.R
 
@@ -33,7 +35,10 @@ internal fun BingoItem(
                 onClick(bingoData)
             },
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Text(
                 modifier = Modifier.weight(1f),
                 text = bingoData.name,
@@ -44,8 +49,6 @@ internal fun BingoItem(
                 contentDescription = stringResource(id = R.string.edit),
                 imageVector = Icons.Rounded.Edit,
             )
-
-            DefaultSpacer()
 
             DeleteDialog(
                 bingoData = bingoData,
