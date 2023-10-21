@@ -135,6 +135,7 @@ public class MainActivity : ComponentActivity() {
                             showFinished = options[SHOW_FINISHED_ANIME],
                             pinned = options[PINNED_CATEGORY],
                             animeDataList = runtimeAPIData.runtimeAniListData?.mediaListCollection,
+                            mediaTags = runtimeAPIData.runtimeAniListData?.mediaTagCollection,
                             onSelectAnime = { bingoData, animeData ->
                                 currentPage = Page.BINGO(
                                     bingoData = bingoData,

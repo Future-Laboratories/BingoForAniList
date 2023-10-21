@@ -11,6 +11,8 @@
     <string name="edit_dismiss">Sind Sie sich sicher, dass Sie alle Änderungen verwerfen wollen?</string>
     <string name="name">Name</string>
     <string name="options">Einstellungen</string>
+    <string name="search_anime">Suche Title</string>
+    <string name="search_tag">Suche Tag</string>
     <string name="shuffle">Mischen</string>
     <string name="shuffle_hint">Info: Mischen im Bearbeitungsmodus wird nur auf <u>NEUE</u> Bingo\'s angewendet</string>
     <string name="yes">Ja</string>

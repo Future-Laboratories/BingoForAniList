@@ -11,7 +11,7 @@ import io.future.laboratories.Companion
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
-import io.future.laboratories.anilistapi.data.MediaListCollectionAndUserData
+import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.common.logout
 
@@ -35,10 +35,10 @@ internal class APIController(internal val preferences: SharedPreferences) {
             )
         }
 
-        api.postAniListUser(
+        api.postAniListViewer(
             authorization = authorization,
             json = AniListBody(
-                API.aniListUserQuery,
+                API.aniListViewerQuery,
                 emptyMap(),
             ),
         ).enqueue { _, userResponse ->
@@ -71,7 +71,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
         api.postAniList(
             authorization = authorization,
             json = AniListBody(
-                query = API.aniListListQuery,
+                query = API.aniListMainQuery,
                 variables = mapOf(
                     "userId" to userId,
                 )
@@ -98,9 +98,9 @@ internal class APIController(internal val preferences: SharedPreferences) {
 
     internal data class RuntimeData(
         var dataFetchCompleted: Boolean,
-        private val initialRuntimeAniListData: MediaListCollectionAndUserData? = null,
+        private val initialRuntimeAniListData: MainData? = null,
     ) {
-        var runtimeAniListData: MediaListCollectionAndUserData? by mutableStateOf(
+        var runtimeAniListData: MainData? by mutableStateOf(
             initialRuntimeAniListData
         )
     }

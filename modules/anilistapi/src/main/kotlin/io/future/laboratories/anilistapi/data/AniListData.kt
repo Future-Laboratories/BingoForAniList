@@ -28,12 +28,18 @@ public data class Viewer(
 
 //endregion
 
-//region ListData
+//region MainData
 
 @JsonClass(generateAdapter = true)
-public data class MediaListCollectionAndUserData(
-    @Json(name = "MediaListCollection") val mediaListCollection: MediaListCollection,
+public data class MainData(
+    @Json(name = "MediaTagCollection") val mediaTagCollection: List<MediaTag>,
     @Json(name = "User") val user: User,
+    @Json(name = "MediaListCollection") val mediaListCollection: MediaListCollection,
+)
+
+@JsonClass(generateAdapter = true)
+public data class MediaTag(
+    val name: String,
 )
 
 @JsonClass(generateAdapter = true)
@@ -67,6 +73,7 @@ public data class Media(
     val id: Long,
     val title: MediaTitle,
     val coverImage: MediaCoverImage,
+    val tags: List<MediaTag>,
 )
 
 @JsonClass(generateAdapter = true)
