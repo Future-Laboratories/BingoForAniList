@@ -20,6 +20,7 @@ import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
+import io.future.laboratories.anilistbingo.ShareController.receive
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.deleteSingle
 import io.future.laboratories.common.loadAllBingoData
@@ -85,6 +86,18 @@ public class MainActivity : ComponentActivity() {
             runtimeAPIData.fetchAniList()
         }
 
+        if (intent.scheme == "content") {
+            intent.data.let {
+                if (it != null) {
+                    currentPage = Page.EDITOR(
+                        bingoData = receive(it),
+                        isImported = true,
+                        sourcePage = currentPage,
+                    )
+                }
+            }
+        }
+
         val dropDownItems = arrayOf(
             DropDownItemData(
                 textId = { R.string.options },
@@ -147,15 +160,20 @@ public class MainActivity : ComponentActivity() {
 
                         is Page.BINGO_OVERVIEW -> BingoOverviewPage(
                             bingoDataList = runtimeData,
-                            onEdit = { data ->
+                            onShare = { bingoData ->
+                                with(ShareController) {
+                                    share(bingoData)
+                                }
+                            },
+                            onEdit = { bingoData ->
                                 currentPage = Page.EDITOR(
-                                    bingoData = data,
+                                    bingoData = bingoData,
                                     sourcePage = currentPage,
                                 )
                             },
-                            onDelete = { data ->
-                                deleteSingle(bingoStoragePath("${data.id}"))
-                                runtimeData.remove(data)
+                            onDelete = { bingoData ->
+                                deleteSingle(bingoStoragePath("${bingoData.id}"))
+                                runtimeData.remove(bingoData)
                             },
                             onSelectBingo = { bingoData ->
                                 currentPage = Page.ANIME_OVERVIEW(
@@ -175,6 +193,7 @@ public class MainActivity : ComponentActivity() {
                             EditorPage(
                                 preferences = preferences,
                                 bingoData = (currentPage as Page.EDITOR).bingoData,
+                                isImported = (currentPage as Page.EDITOR).isImported,
                                 onBackButtonPress = {
                                     currentPage = Page.BINGO_OVERVIEW()
                                 },
@@ -223,14 +242,22 @@ public class MainActivity : ComponentActivity() {
         class BINGO_OVERVIEW(sourcePage: Page? = null) :
             Page(R.string.overview_bingo, sourcePage)
 
-        class ANIME_OVERVIEW(val bingoData: BingoData, sourcePage: Page) :
-            Page(R.string.overview_anime, sourcePage)
+        class ANIME_OVERVIEW(
+            val bingoData: BingoData,
+            sourcePage: Page,
+        ) : Page(R.string.overview_anime, sourcePage)
 
-        class EDITOR(val bingoData: BingoData? = null, sourcePage: Page) :
-            Page(R.string.editor, sourcePage)
+        class EDITOR(
+            val bingoData: BingoData? = null,
+            val isImported: Boolean = false,
+            sourcePage: Page,
+        ) : Page(R.string.editor, sourcePage)
 
-        class BINGO(val bingoData: BingoData, val animeData: MediaList, sourcePage: Page) :
-            Page(R.string.bingo, sourcePage)
+        class BINGO(
+            val bingoData: BingoData,
+            val animeData: MediaList,
+            sourcePage: Page,
+        ) : Page(R.string.bingo, sourcePage)
 
         class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
     }

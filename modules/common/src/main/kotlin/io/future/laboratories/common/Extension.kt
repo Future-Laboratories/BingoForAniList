@@ -2,6 +2,7 @@ package io.future.laboratories.common
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
@@ -20,6 +21,7 @@ import java.io.BufferedWriter
 import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
+import java.io.InputStreamReader
 
 //region save & load
 
@@ -59,6 +61,30 @@ public inline fun <reified T> Context.loadSingle(storagePath: String): T? {
     val file = File(filesDir, storagePath)
     if (file.exists()) {
         val fileReader = FileReader(file)
+        val stringBuilder = StringBuilder()
+
+        var line: String?
+
+        BufferedReader(fileReader).use {
+            line = it.readLine()
+
+            while (line != null) {
+                stringBuilder.append(line).append("\n")
+                line = it.readLine()
+            }
+        }
+
+        data = getAdapter<T>().fromJson(stringBuilder.toString())
+    }
+
+    return data
+}
+
+public inline fun <reified T> Context.loadSingle(uri: Uri): T? {
+    var data: T? = null
+
+    contentResolver.openInputStream(uri)?.use { inputStream ->
+        val fileReader = InputStreamReader(inputStream)
         val stringBuilder = StringBuilder()
 
         var line: String?

@@ -25,6 +25,7 @@ import io.future.laboratories.ui.components.BingoItem
 @Composable
 public fun BingoOverviewPage(
     bingoDataList: SnapshotStateList<BingoData>,
+    onShare: (BingoData) -> Unit,
     onEdit: (BingoData?) -> Unit,
     onDelete: (BingoData) -> Unit,
     onSelectBingo: (bingoData: BingoData) -> Unit,
@@ -38,6 +39,7 @@ public fun BingoOverviewPage(
                 BingoItem(
                     bingoData = bingoData,
                     onClick = onSelectBingo,
+                    onShare = onShare,
                     onEdit = onEdit,
                     onDelete = onDelete,
                 )

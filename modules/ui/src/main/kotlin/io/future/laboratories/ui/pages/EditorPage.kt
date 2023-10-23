@@ -29,26 +29,31 @@ import io.future.laboratories.ui.components.PositiveButton
 public fun EditorPage(
     preferences: SharedPreferences,
     bingoData: BingoData? = null,
+    isImported: Boolean,
     onBackButtonPress: () -> Unit,
     onClickSave: (BingoData, isNew: Boolean) -> Unit,
 ) {
     var lastId = preferences.getInt("LAST_USED_ID", 0)
     val localBingoData by remember {
         mutableStateOf(
-            bingoData ?: BingoData(
-                id = ++lastId,
-                name = "",
-                rowData = List(5) {
-                    RowData(
-                        fieldData = List(5) {
-                            FieldData(
-                                text = "",
-                                isMarked = false
-                            )
-                        }
-                    )
-                }
-            )
+            when {
+                bingoData != null && isImported -> bingoData.copy(id = ++lastId)
+                bingoData != null && !isImported -> bingoData
+                else -> BingoData(
+                    id = ++lastId,
+                    name = "",
+                    rowData = List(5) {
+                        RowData(
+                            fieldData = List(5) {
+                                FieldData(
+                                    text = "",
+                                    isMarked = false
+                                )
+                            }
+                        )
+                    }
+                )
+            }
         )
     }
 
@@ -76,7 +81,7 @@ public fun EditorPage(
                 shuffle = value
             }
 
-            if (bingoData != null) {
+            if (bingoData != null && !isImported) {
                 Text(
                     text = stringResource(id = R.string.shuffle_hint),
                     fontSize = 14.sp,
@@ -98,7 +103,7 @@ public fun EditorPage(
                         validateDataAndSave(
                             preferences = preferences,
                             bingoData = localBingoData,
-                            isNewDataSet = bingoData == null,
+                            isNewDataSet = bingoData == null || isImported,
                             shuffle = shuffle,
                             onClickSave = onClickSave,
                         )

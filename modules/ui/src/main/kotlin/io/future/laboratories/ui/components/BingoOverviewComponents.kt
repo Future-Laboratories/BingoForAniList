@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +26,7 @@ import io.future.laboratories.ui.R
 internal fun BingoItem(
     bingoData: BingoData,
     onClick: (BingoData) -> Unit,
+    onShare: (BingoData) -> Unit,
     onEdit: (BingoData) -> Unit,
     onDelete: (BingoData) -> Unit,
 ) {
@@ -42,6 +44,12 @@ internal fun BingoItem(
             Text(
                 modifier = Modifier.weight(1f),
                 text = bingoData.name,
+            )
+
+            PositiveImageButton(
+                onClick = { onShare(bingoData) },
+                contentDescription = stringResource(id = R.string.share),
+                imageVector = Icons.Rounded.Share,
             )
 
             PositiveImageButton(
