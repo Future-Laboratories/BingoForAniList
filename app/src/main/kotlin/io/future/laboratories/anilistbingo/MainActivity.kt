@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
@@ -97,6 +98,8 @@ public class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        setupBackpressHandle()
 
         val dropDownItems = arrayOf(
             DropDownItemData(
@@ -223,6 +226,27 @@ public class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun setupBackpressHandle() {
+        val callback = object : OnBackPressedCallback(
+            enabled = true,
+        ) {
+            override fun handleOnBackPressed() {
+                if (currentPage !is Page.BINGO_OVERVIEW) {
+                    currentPage = currentPage.previousPage
+                } else {
+                    isEnabled = false
+
+                    finish()
+                }
+            }
+        }
+
+        onBackPressedDispatcher.addCallback(
+            owner = this,
+            onBackPressedCallback = callback,
+        )
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

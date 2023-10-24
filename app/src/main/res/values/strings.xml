@@ -14,6 +14,7 @@
     <string name="option_visibility">Show all anime</string>
     <string name="overview_bingo">Bingo Overview</string>
     <string name="overview_anime">Anime Overview</string>
+    <string name="share_message">Checkout my new Bingo!</string>
 
     <!--Names returned by AniList + "No Selection"-->
     <string-array name="option_pinned_category_values" tools:ignore="ExtraTranslation">

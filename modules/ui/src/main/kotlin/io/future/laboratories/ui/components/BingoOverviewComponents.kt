@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,12 +9,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
+import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,26 +44,41 @@ internal fun BingoItem(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            var expended by rememberSaveable { mutableStateOf(false) }
+
             Text(
                 modifier = Modifier.weight(1f),
                 text = bingoData.name,
             )
 
-            PositiveImageButton(
-                onClick = { onShare(bingoData) },
-                contentDescription = stringResource(id = R.string.share),
-                imageVector = Icons.Rounded.Share,
-            )
+            AnimatedVisibility(visible = expended) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PositiveImageButton(
+                        onClick = { onShare(bingoData) },
+                        contentDescription = stringResource(id = R.string.share),
+                        imageVector = Icons.Rounded.Share,
+                    )
+
+                    PositiveImageButton(
+                        onClick = { onEdit(bingoData) },
+                        contentDescription = stringResource(id = R.string.edit),
+                        imageVector = Icons.Rounded.Edit,
+                    )
+
+                    DeleteDialog(
+                        bingoData = bingoData,
+                        onDelete = onDelete,
+                    )
+                }
+            }
 
             PositiveImageButton(
-                onClick = { onEdit(bingoData) },
-                contentDescription = stringResource(id = R.string.edit),
-                imageVector = Icons.Rounded.Edit,
-            )
-
-            DeleteDialog(
-                bingoData = bingoData,
-                onDelete = onDelete,
+                onClick = { expended = !expended },
+                contentDescription = "null",
+                imageVector = Icons.Rounded.MoreVert,
             )
         }
     }

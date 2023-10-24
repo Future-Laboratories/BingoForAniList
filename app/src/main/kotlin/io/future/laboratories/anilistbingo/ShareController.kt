@@ -16,13 +16,13 @@ import java.io.File
 
 
 internal object ShareController {
-    internal const val READ_STORAGE_PERMISSION_CODE = 2205
+    private const val READ_STORAGE_PERMISSION_CODE = 2205
 
     fun Context.share(bingoData: BingoData) {
         val shareIntent = Intent(Intent.ACTION_SEND)
         val sharedFile = File(filesDir, bingoStoragePath("${bingoData.id}"))
             .copyTo(
-                target = File(filesDir, "SHARE_TMP.aniJson"),
+                target = File(filesDir, "Bingo_${bingoData.id}.aniJson"),
                 overwrite = true,
             )
 
@@ -33,11 +33,14 @@ internal object ShareController {
                 FileProvider.getUriForFile(this, getString(R.string.provider_name), sharedFile)
             )
 
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, "Sharing File...")
-            shareIntent.putExtra(Intent.EXTRA_TEXT, "Sharing File...")
+            val extraString = getString(R.string.share_message)
+            shareIntent.putExtra(Intent.EXTRA_SUBJECT, extraString)
+            shareIntent.putExtra(Intent.EXTRA_TEXT, extraString)
 
             startActivity(Intent.createChooser(shareIntent, "Share File"))
         }
+
+        sharedFile.delete()
     }
 
     fun Activity.receive(uri: Uri): BingoData? {
