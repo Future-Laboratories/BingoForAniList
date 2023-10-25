@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
@@ -16,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.ViewModel
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
@@ -38,6 +40,7 @@ import io.future.laboratories.ui.pages.EditorPage
 import io.future.laboratories.ui.pages.OptionsPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
+
 public class MainActivity : ComponentActivity() {
     private val preferences by lazy {
         getSharedPreferences(
@@ -49,16 +52,6 @@ public class MainActivity : ComponentActivity() {
     // compose val
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
 
-    // compose var
-    private var currentPage: Page by mutableStateOf(Page.BINGO_OVERVIEW())
-    private var isLoggedIn: Boolean by mutableStateOf(false)
-    private var runtimeAPIData: APIController.RuntimeData by mutableStateOf(
-        APIController.RuntimeData(
-            dataFetchCompleted = false,
-            initialRuntimeAniListData = null,
-        )
-    )
-
     override fun onCreate(savedInstanceState: Bundle?) {
         val apiController = APIController(
             preferences = preferences,
@@ -68,60 +61,62 @@ public class MainActivity : ComponentActivity() {
             preferences = preferences,
         )
 
-        runtimeAPIData = APIController.RuntimeData(
-            dataFetchCompleted = savedInstanceState?.getBoolean(BUNDLE_IS_FETCHED) ?: false,
+        val viewModel: AniListBingoViewModel by viewModels()
+
+        viewModel.runtimeAPIData = APIController.RuntimeData(
+            dataFetchCompleted = viewModel.runtimeAPIData.dataFetchCompleted,
             initialRuntimeAniListData = loadSingle(TEMP_PATH),
         )
 
         installSplashScreen().setKeepOnScreenCondition {
-            return@setKeepOnScreenCondition !runtimeAPIData.dataFetchCompleted
+            return@setKeepOnScreenCondition !viewModel.runtimeAPIData.dataFetchCompleted
         }
 
         super.onCreate(savedInstanceState)
 
         with(apiController) {
-            intent.data?.processFragmentData(runtimeAPIData)
+            intent.data?.processFragmentData(data = viewModel.runtimeAPIData)
 
-            isLoggedIn = validateKey()
+            viewModel.isLoggedIn = validateKey()
 
-            runtimeAPIData.fetchAniList()
+            viewModel.runtimeAPIData.fetchAniList()
         }
 
         if (intent.scheme == "content") {
             intent.data.let {
                 if (it != null) {
-                    currentPage = Page.EDITOR(
+                    viewModel.currentPage = Page.EDITOR(
                         bingoData = receive(it),
                         isImported = true,
-                        sourcePage = currentPage,
+                        sourcePage = viewModel.currentPage,
                     )
                 }
             }
         }
 
-        setupBackpressHandle()
+        setupBackpressHandle(viewModel)
 
         val dropDownItems = arrayOf(
             DropDownItemData(
                 textId = { R.string.options },
                 contentDescription = null,
                 imageVector = Icons.Rounded.Settings,
-                isVisible = { currentPage !is Page.OPTIONS },
+                isVisible = { viewModel.currentPage !is Page.OPTIONS },
                 onClick = {
-                    currentPage = Page.OPTIONS(sourcePage = currentPage)
+                    viewModel.currentPage = Page.OPTIONS(sourcePage = viewModel.currentPage)
                 },
             ),
             DropDownItemData(
-                textId = { if (isLoggedIn) R.string.logout else R.string.login },
+                textId = { if (viewModel.isLoggedIn) R.string.logout else R.string.login },
                 contentDescription = null,
                 imageVector = Icons.Rounded.AccountCircle,
                 isVisible = { true },
                 onClick = {
-                    if (isLoggedIn) {
+                    if (viewModel.isLoggedIn) {
                         preferences.logout(this@MainActivity)
 
-                        runtimeAPIData.runtimeAniListData = null
-                        isLoggedIn = false
+                        viewModel.runtimeAPIData.runtimeAniListData = null
+                        viewModel.isLoggedIn = false
                     } else {
                         val url = getString(R.string.anilistUrl)
                         val intent = Intent(Intent.ACTION_VIEW)
@@ -138,25 +133,25 @@ public class MainActivity : ComponentActivity() {
         setContent {
             AniListBingoTheme {
                 CustomScaffold(
-                    titleId = { currentPage.nameResId },
-                    isNavVisible = { currentPage !is Page.BINGO_OVERVIEW && currentPage !is Page.EDITOR },
-                    onNavPress = { currentPage = currentPage.previousPage },
-                    profilePictureUrl = runtimeAPIData.runtimeAniListData?.user?.avatar?.medium,
-                    isLoggedIn = isLoggedIn,
+                    titleId = { viewModel.currentPage.nameResId },
+                    isNavVisible = { viewModel.currentPage !is Page.BINGO_OVERVIEW && viewModel.currentPage !is Page.EDITOR },
+                    onNavPress = { viewModel.currentPage = viewModel.currentPage.previousPage },
+                    profilePictureUrl = viewModel.runtimeAPIData.runtimeAniListData?.user?.avatar?.medium,
+                    isLoggedIn = viewModel.isLoggedIn,
                     dropDownItems = dropDownItems,
                 ) {
-                    when (currentPage) {
+                    when (viewModel.currentPage) {
                         is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
-                            bingoData = (currentPage as Page.ANIME_OVERVIEW).bingoData,
+                            bingoData = (viewModel.currentPage as Page.ANIME_OVERVIEW).bingoData,
                             showFinished = options[SHOW_FINISHED_ANIME],
                             pinned = options[PINNED_CATEGORY],
-                            animeDataList = runtimeAPIData.runtimeAniListData?.mediaListCollection,
-                            mediaTags = runtimeAPIData.runtimeAniListData?.mediaTagCollection,
+                            animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
+                            mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
                             onSelectAnime = { bingoData, animeData ->
-                                currentPage = Page.BINGO(
+                                viewModel.currentPage = Page.BINGO(
                                     bingoData = bingoData,
                                     animeData = animeData,
-                                    sourcePage = currentPage,
+                                    sourcePage = viewModel.currentPage,
                                 )
                             },
                         )
@@ -169,9 +164,9 @@ public class MainActivity : ComponentActivity() {
                                 }
                             },
                             onEdit = { bingoData ->
-                                currentPage = Page.EDITOR(
+                                viewModel.currentPage = Page.EDITOR(
                                     bingoData = bingoData,
-                                    sourcePage = currentPage,
+                                    sourcePage = viewModel.currentPage,
                                 )
                             },
                             onDelete = { bingoData ->
@@ -179,26 +174,26 @@ public class MainActivity : ComponentActivity() {
                                 runtimeData.remove(bingoData)
                             },
                             onSelectBingo = { bingoData ->
-                                currentPage = Page.ANIME_OVERVIEW(
+                                viewModel.currentPage = Page.ANIME_OVERVIEW(
                                     bingoData = bingoData,
-                                    sourcePage = currentPage,
+                                    sourcePage = viewModel.currentPage,
                                 )
                             },
                         )
 
                         is Page.BINGO -> BingoPage(
                             context = this@MainActivity,
-                            bingoData = (currentPage as Page.BINGO).bingoData,
-                            animeData = (currentPage as Page.BINGO).animeData,
+                            bingoData = (viewModel.currentPage as Page.BINGO).bingoData,
+                            animeData = (viewModel.currentPage as Page.BINGO).animeData,
                         )
 
                         is Page.EDITOR -> {
                             EditorPage(
                                 preferences = preferences,
-                                bingoData = (currentPage as Page.EDITOR).bingoData,
-                                isImported = (currentPage as Page.EDITOR).isImported,
+                                bingoData = (viewModel.currentPage as Page.EDITOR).bingoData,
+                                isImported = (viewModel.currentPage as Page.EDITOR).isImported,
                                 onBackButtonPress = {
-                                    currentPage = Page.BINGO_OVERVIEW()
+                                    viewModel.currentPage = Page.BINGO_OVERVIEW()
                                 },
                                 onClickSave = { bingoData, isNew ->
                                     save(bingoData, bingoStoragePath("${bingoData.id}"))
@@ -206,7 +201,7 @@ public class MainActivity : ComponentActivity() {
                                         runtimeData.add(bingoData)
                                     }
 
-                                    currentPage = Page.BINGO_OVERVIEW()
+                                    viewModel.currentPage = Page.BINGO_OVERVIEW()
                                 },
                             )
                         }
@@ -228,13 +223,13 @@ public class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setupBackpressHandle() {
+    private fun setupBackpressHandle(viewModel: AniListBingoViewModel) {
         val callback = object : OnBackPressedCallback(
             enabled = true,
         ) {
             override fun handleOnBackPressed() {
-                if (currentPage !is Page.BINGO_OVERVIEW) {
-                    currentPage = currentPage.previousPage
+                if (viewModel.currentPage !is Page.BINGO_OVERVIEW) {
+                    viewModel.currentPage = viewModel.currentPage.previousPage
                 } else {
                     isEnabled = false
 
@@ -249,45 +244,48 @@ public class MainActivity : ComponentActivity() {
         )
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBoolean(BUNDLE_IS_FETCHED, runtimeAPIData.dataFetchCompleted)
-        save(runtimeAPIData.runtimeAniListData, TEMP_PATH)
-
-        super.onSaveInstanceState(outState)
-    }
-
-    @Suppress("ClassName")
-    private sealed class Page(@StringRes val nameResId: Int, private var sourcePage: Page?) {
-        val previousPage
-            get() = previousPage()
-
-        private fun previousPage(): Page = sourcePage ?: BINGO_OVERVIEW()
-
-        class BINGO_OVERVIEW(sourcePage: Page? = null) :
-            Page(R.string.overview_bingo, sourcePage)
-
-        class ANIME_OVERVIEW(
-            val bingoData: BingoData,
-            sourcePage: Page,
-        ) : Page(R.string.overview_anime, sourcePage)
-
-        class EDITOR(
-            val bingoData: BingoData? = null,
-            val isImported: Boolean = false,
-            sourcePage: Page,
-        ) : Page(R.string.editor, sourcePage)
-
-        class BINGO(
-            val bingoData: BingoData,
-            val animeData: MediaList,
-            sourcePage: Page,
-        ) : Page(R.string.bingo, sourcePage)
-
-        class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
-    }
-
     private companion object {
-        private const val BUNDLE_IS_FETCHED = "IS_FETCHED"
         private const val PREFERENCE_BASE_KEY = "BINGO_PREFERENCE_KEY"
     }
+}
+
+public class AniListBingoViewModel : ViewModel() {
+    // compose var
+    internal var currentPage: Page by mutableStateOf(Page.BINGO_OVERVIEW())
+    internal var isLoggedIn: Boolean by mutableStateOf(false)
+    internal var runtimeAPIData: APIController.RuntimeData by mutableStateOf(
+        APIController.RuntimeData(
+            dataFetchCompleted = false,
+            initialRuntimeAniListData = null,
+        )
+    )
+}
+
+@Suppress("ClassName")
+internal sealed class Page(@StringRes val nameResId: Int, private var sourcePage: Page?) {
+    val previousPage
+        get() = previousPage()
+
+    private fun previousPage(): Page = sourcePage ?: BINGO_OVERVIEW()
+
+    class BINGO_OVERVIEW(sourcePage: Page? = null) : Page(R.string.overview_bingo, sourcePage)
+
+    class ANIME_OVERVIEW(
+        val bingoData: BingoData,
+        sourcePage: Page,
+    ) : Page(R.string.overview_anime, sourcePage)
+
+    class EDITOR(
+        val bingoData: BingoData? = null,
+        val isImported: Boolean = false,
+        sourcePage: Page,
+    ) : Page(R.string.editor, sourcePage)
+
+    class BINGO(
+        val bingoData: BingoData,
+        val animeData: MediaList,
+        sourcePage: Page,
+    ) : Page(R.string.bingo, sourcePage)
+
+    class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
 }
