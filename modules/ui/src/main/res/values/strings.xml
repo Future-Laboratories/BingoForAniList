@@ -9,10 +9,12 @@
     <string name="bingo_vertical">Vertical</string>
     <string name="complete">Completion</string>
     <string name="delete">Delete</string>
-    <string name="delete_permanently">Are you really sure, that you want to delete this bingo permanently?</string>
+    <string name="delete_permanently_body">Are you really sure, that you want to delete this bingo permanently?</string>
+    <string name="delete_permanently_header">Delete in progress</string>
     <string name="done">Done</string>
     <string name="edit">Edit</string>
-    <string name="edit_dismiss">Are you sure you want to cancel? All changes will be gone permanently!</string>
+    <string name="edit_dismiss_body">Are you sure you want to cancel? All changes will be gone permanently!</string>
+    <string name="edit_dismiss_header">Cancel in progress</string>
     <string name="name">Name</string>
     <string name="options">Options</string>
     <string name="search_anime">Search title</string>

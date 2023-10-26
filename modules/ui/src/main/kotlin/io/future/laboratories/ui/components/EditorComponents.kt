@@ -115,8 +115,9 @@ internal fun DismissDialog(
     BackButton(onClick = { showDialog = true })
 
     if (showDialog) {
-        DefaultDialog(
-            text = stringResource(id = R.string.edit_dismiss),
+        DefaultWarningDialog(
+            header = stringResource(id = R.string.delete_permanently_header),
+            body = stringResource(id = R.string.edit_dismiss_body),
             actionButtonText = stringResource(id = R.string.yes),
             abortText = stringResource(id = android.R.string.cancel),
             onDismiss = { showDialog = false },

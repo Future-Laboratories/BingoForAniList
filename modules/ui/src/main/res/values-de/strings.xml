@@ -9,10 +9,12 @@
     <string name="bingo_vertical">Vertikal</string>
     <string name="complete">Abschluss</string>
     <string name="delete">Löschen</string>
-    <string name="delete_permanently">Sind Sie sich sicher, dass Sie dieses Bingo Löschen möchten?</string>
+    <string name="delete_permanently_body">Sind Sie sich sicher, dass Sie dieses Bingo Löschen möchten?</string>
+    <string name="delete_permanently_header">Löschung im Gange</string>
     <string name="done">Fertig</string>
     <string name="edit">Bearbeiten</string>
-    <string name="edit_dismiss">Sind Sie sich sicher, dass Sie alle Änderungen verwerfen wollen?</string>
+    <string name="edit_dismiss_body">Sind Sie sich sicher, dass Sie alle Änderungen verwerfen wollen?</string>
+    <string name="edit_dismiss_header">Abbruch im Gange</string>
     <string name="name">Name</string>
     <string name="options">Einstellungen</string>
     <string name="search_anime">Suche Title</string>

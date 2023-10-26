@@ -99,8 +99,9 @@ internal fun DeleteDialog(
     )
 
     if (showDeleteDialog) {
-        DefaultDialog(
-            text = stringResource(id = R.string.delete_permanently),
+        DefaultWarningDialog(
+            header = stringResource(id = R.string.delete_permanently_header),
+            body = stringResource(id = R.string.delete_permanently_body),
             actionButtonText = stringResource(id = R.string.delete),
             abortText = stringResource(id = android.R.string.cancel),
             onDismiss = { showDeleteDialog = false },

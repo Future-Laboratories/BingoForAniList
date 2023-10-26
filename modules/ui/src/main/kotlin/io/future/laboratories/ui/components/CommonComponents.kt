@@ -1,5 +1,8 @@
 package io.future.laboratories.ui.components
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +22,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowDropDown
+import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -30,12 +34,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -180,8 +188,9 @@ internal fun NegativeButton(
 //region Dialog
 
 @Composable
-internal fun DefaultDialog(
-    text: String,
+internal fun DefaultWarningDialog(
+    header: String,
+    body: String,
     actionButtonText: String,
     abortText: String,
     onDismiss: () -> Unit,
@@ -193,7 +202,38 @@ internal fun DefaultDialog(
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(text = text)
+            DefaultHeader(title = header)
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                var target by remember {
+                    mutableFloatStateOf(1f)
+                }
+                val alpha by animateFloatAsState(
+                    targetValue = target,
+                    animationSpec = tween(durationMillis = 600, easing = LinearEasing),
+                    label = "blink"
+                ) { value ->
+                    target = if (value != 1f) 1f else 0.3f
+                }
+
+                LaunchedEffect(key1 = "blink", block = {
+                    target = 0.1f
+                })
+
+                Icon(
+                    modifier = Modifier
+                        .size(48.dp)
+                        .alpha(alpha),
+                    imageVector = Icons.Rounded.Warning,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+
+                Text(text = body)
+            }
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
