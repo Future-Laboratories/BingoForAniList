@@ -3,6 +3,10 @@
 
     <string name="back">Zurück</string>
     <string name="bingo">Bingo</string>
+    <string name="bingo_diagonal">Diagonal</string>
+    <string name="bingo_horizontal">Horizontal</string>
+    <string name="bingo_stats">Statistiken</string>
+    <string name="bingo_vertical">Vertikal</string>
     <string name="complete">Abschluss</string>
     <string name="delete">Löschen</string>
     <string name="delete_permanently">Sind Sie sich sicher, dass Sie dieses Bingo Löschen möchten?</string>

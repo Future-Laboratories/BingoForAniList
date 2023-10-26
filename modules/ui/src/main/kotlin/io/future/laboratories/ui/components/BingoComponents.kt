@@ -2,12 +2,14 @@ package io.future.laboratories.ui.components
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Icon
@@ -26,6 +28,23 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.ui.colon
+
+@Composable
+internal fun BingoStat(
+    name: String,
+    outOf: Int,
+    max: Int,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(text = name.colon())
+
+        Text(text = "$outOf/$max")
+    }
+}
 
 @Composable
 internal fun Bingo(
@@ -44,7 +63,7 @@ internal fun Bingo(
 }
 
 @Composable
-internal fun BingoRow(
+private fun BingoRow(
     rowData: RowData,
     bingoData: BingoData,
     onValueChanged: ((BingoData) -> Unit)? = null,

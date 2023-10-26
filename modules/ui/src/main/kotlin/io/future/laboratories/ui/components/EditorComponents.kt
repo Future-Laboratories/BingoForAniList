@@ -34,7 +34,7 @@ import io.future.laboratories.ui.colon
 internal fun BingoNameField(
     bingoData: BingoData,
 ) {
-    var bingoName by rememberSaveable(key = "Name") { mutableStateOf(bingoData.name) }
+    var bingoName by rememberSaveable { mutableStateOf(bingoData.name) }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(text = stringResource(id = R.string.name).colon())

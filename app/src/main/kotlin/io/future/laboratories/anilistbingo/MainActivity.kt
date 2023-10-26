@@ -166,9 +166,12 @@ public class MainActivity : ComponentActivity() {
                         )
 
                         is Page.BINGO -> BingoPage(
-                            context = this@MainActivity,
-                            bingoData = (viewModel.currentPage as Page.BINGO).bingoData,
-                            animeData = (viewModel.currentPage as Page.BINGO).animeData,
+                            bingoData = loadSingle<BingoData>(
+                                storagePath = (viewModel.currentPage as Page.BINGO).bingoPath,
+                            ) ?: (viewModel.currentPage as Page.BINGO).bingoData,
+                            onDataChange = { bingoData ->
+                                save(bingoData, (viewModel.currentPage as Page.BINGO).bingoPath)
+                            }
                         )
 
                         is Page.EDITOR -> {
@@ -298,7 +301,9 @@ internal sealed class Page(@StringRes val nameResId: Int, private var sourcePage
         val bingoData: BingoData,
         val animeData: MediaList,
         sourcePage: Page,
-    ) : Page(R.string.bingo, sourcePage)
+    ) : Page(R.string.bingo, sourcePage) {
+        val bingoPath = "${animeData.media.id}/${bingoData.id}"
+    }
 
     class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
 }
