@@ -11,8 +11,8 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistbingo.R
+import io.future.laboratories.anilistbingo.loadSingle
 import io.future.laboratories.common.BingoData
-import io.future.laboratories.common.loadSingle
 import java.io.File
 
 

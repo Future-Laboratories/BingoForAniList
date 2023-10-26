@@ -13,7 +13,7 @@ import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.enqueue
-import io.future.laboratories.common.logout
+import io.future.laboratories.anilistbingo.logout
 
 internal class APIController(internal val preferences: SharedPreferences) {
     private val authorization

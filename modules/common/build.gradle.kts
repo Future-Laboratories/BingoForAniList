@@ -55,6 +55,6 @@ dependencies {
     implementation(libs.androidx.compose.foundation)
 
     // Moshi
-    implementation(libs.moshi.kotlin)
+    api(libs.moshi.kotlin)
     ksp(libs.moshi.kotlin.codegen)
 }
