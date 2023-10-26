@@ -211,7 +211,9 @@ public class MainActivity : ComponentActivity() {
         ) {
             override fun handleOnBackPressed() {
                 if (viewModel.currentPage !is Page.BINGO_OVERVIEW) {
-                    viewModel.currentPage = viewModel.currentPage.previousPage
+                    if (viewModel.currentPage !is Page.EDITOR) {
+                        viewModel.currentPage = viewModel.currentPage.previousPage
+                    }
                 } else {
                     isEnabled = false
 
