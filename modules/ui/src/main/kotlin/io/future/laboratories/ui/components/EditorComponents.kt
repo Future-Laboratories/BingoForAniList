@@ -16,7 +16,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,10 +34,10 @@ import io.future.laboratories.ui.colon
 internal fun BingoNameField(
     bingoData: BingoData,
 ) {
+    var bingoName by rememberSaveable(key = "Name") { mutableStateOf(bingoData.name) }
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(text = stringResource(id = R.string.name).colon())
-
-        var bingoName by remember { mutableStateOf(bingoData.name) }
 
         TextField(
             value = bingoName,
@@ -76,7 +76,8 @@ private fun BingoEditorRow(
 private fun RowScope.BingoEditorField(
     fieldData: FieldData,
 ) {
-    var fieldText by remember { mutableStateOf(fieldData.text) }
+    var fieldText by rememberSaveable { mutableStateOf(fieldData.text) }
+
     Box(
         modifier = Modifier
             .weight(1f)
@@ -107,7 +108,7 @@ private fun RowScope.BingoEditorField(
 internal fun DismissDialog(
     onAccept: () -> Unit,
 ) {
-    var showDialog by remember {
+    var showDialog by rememberSaveable {
         mutableStateOf(false)
     }
 

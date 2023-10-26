@@ -32,7 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -333,7 +333,7 @@ internal fun OptionToggle(
     initialValue: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
-    var checked by remember { mutableStateOf(initialValue) }
+    var checked by rememberSaveable { mutableStateOf(initialValue) }
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -384,8 +384,8 @@ private fun DropdownBox(
     initialValue: String,
     onCheckedChange: (String) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    var currentOptionText by remember { mutableStateOf(if (initialValue in values) initialValue else "") }
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    var currentOptionText by rememberSaveable { mutableStateOf(if (initialValue in values) initialValue else "") }
     PositiveButton(
         onClick = { expanded = !expanded },
     ) {

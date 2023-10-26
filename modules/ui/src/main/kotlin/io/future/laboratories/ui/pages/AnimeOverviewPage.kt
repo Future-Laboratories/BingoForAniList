@@ -60,6 +60,7 @@ public fun AnimeOverviewPage(
     var tagSearchActive by rememberSaveable { mutableStateOf(false) }
 
     // TagFilter
+    // TODO: Custom Saver
     val selectedTags = remember { mutableStateListOf<MediaTag>() }
 
     DefaultSearchBar(
