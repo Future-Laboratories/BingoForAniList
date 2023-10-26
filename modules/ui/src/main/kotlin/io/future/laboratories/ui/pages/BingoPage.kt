@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
@@ -17,6 +18,7 @@ import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.Bingo
 import io.future.laboratories.ui.components.BingoStat
 import io.future.laboratories.ui.components.DefaultHeader
+import io.future.laboratories.ui.theme.AniListBingoTheme
 
 @Composable
 public fun BingoPage(
@@ -101,15 +103,17 @@ public fun BingoPage(
     }
 }
 
-@Preview
+@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
 @Composable
 public fun BingoPagePreview() {
-    BingoPage(
-        bingoData = BingoData(2070, "TestBingo", List(5) {
-            RowData(List(5) {
-                FieldData("TestField", false)
-            })
-        }),
-        onDataChange = {},
-    )
+    AniListBingoTheme(darkTheme = true) {
+        BingoPage(
+            bingoData = BingoData(2070, "TestBingo", List(5) {
+                RowData(List(5) {
+                    FieldData("TestField", false)
+                })
+            }),
+            onDataChange = {},
+        )
+    }
 }

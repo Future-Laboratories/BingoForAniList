@@ -15,3 +15,5 @@ internal fun String.colon(): String = "$this:"
 internal fun RoundedCornersTransformation(all: Float): Transformation =
     RoundedCornersTransformation(all, all, all, all)
 
+//endregion
+
