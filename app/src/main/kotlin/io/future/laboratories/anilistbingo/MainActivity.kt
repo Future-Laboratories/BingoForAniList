@@ -1,5 +1,6 @@
 package io.future.laboratories.anilistbingo
 
+import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -23,7 +24,9 @@ import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
-import io.future.laboratories.anilistbingo.ShareController.receive
+import io.future.laboratories.anilistbingo.controller.APIController
+import io.future.laboratories.anilistbingo.controller.ShareController
+import io.future.laboratories.anilistbingo.controller.ShareController.receive
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.deleteSingle
 import io.future.laboratories.common.loadAllBingoData
@@ -63,9 +66,10 @@ public class MainActivity : ComponentActivity() {
 
         val viewModel: AniListBingoViewModel by viewModels()
 
-        viewModel.runtimeAPIData = APIController.RuntimeData(
-            dataFetchCompleted = viewModel.runtimeAPIData.dataFetchCompleted,
-            initialRuntimeAniListData = loadSingle(TEMP_PATH),
+        viewModel.setupViewModelData(
+            apiController = apiController,
+            intent = intent,
+            activity = this,
         )
 
         installSplashScreen().setKeepOnScreenCondition {
@@ -73,26 +77,6 @@ public class MainActivity : ComponentActivity() {
         }
 
         super.onCreate(savedInstanceState)
-
-        with(apiController) {
-            intent.data?.processFragmentData(data = viewModel.runtimeAPIData)
-
-            viewModel.isLoggedIn = validateKey()
-
-            viewModel.runtimeAPIData.fetchAniList()
-        }
-
-        if (intent.scheme == "content") {
-            intent.data.let {
-                if (it != null) {
-                    viewModel.currentPage = Page.EDITOR(
-                        bingoData = receive(it),
-                        isImported = true,
-                        sourcePage = viewModel.currentPage,
-                    )
-                }
-            }
-        }
 
         setupBackpressHandle(viewModel)
 
@@ -259,6 +243,35 @@ public class AniListBingoViewModel : ViewModel() {
             initialRuntimeAniListData = null,
         )
     )
+
+    internal fun setupViewModelData(
+        apiController: APIController,
+        intent: Intent,
+        activity: Activity,
+    ) = with(apiController) {
+        runtimeAPIData = APIController.RuntimeData(
+            dataFetchCompleted = runtimeAPIData.dataFetchCompleted,
+            initialRuntimeAniListData = activity.loadSingle(TEMP_PATH),
+        )
+
+        intent.data?.processFragmentData(data = runtimeAPIData)
+
+        isLoggedIn = activity.validateKey()
+
+        runtimeAPIData.fetchAniList()
+
+        if (intent.scheme == "content") {
+            intent.data.let {
+                if (it != null) {
+                    currentPage = Page.EDITOR(
+                        bingoData = activity.receive(it),
+                        isImported = true,
+                        sourcePage = currentPage,
+                    )
+                }
+            }
+        }
+    }
 }
 
 @Suppress("ClassName")

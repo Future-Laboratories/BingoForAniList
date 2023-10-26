@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo
+package io.future.laboratories.anilistbingo.annotation
 
 @RequiresOptIn(
     level = RequiresOptIn.Level.ERROR,

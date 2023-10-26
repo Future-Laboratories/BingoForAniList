@@ -1,4 +1,4 @@
-package io.future.laboratories.anilistbingo
+package io.future.laboratories.anilistbingo.controller
 
 import android.content.Context
 import android.content.SharedPreferences

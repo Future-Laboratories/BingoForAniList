@@ -3,6 +3,7 @@ package io.future.laboratories.anilistbingo
 import android.content.SharedPreferences
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import io.future.laboratories.anilistbingo.annotation.RestrictedApi
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionData
