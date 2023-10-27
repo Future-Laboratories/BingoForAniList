@@ -67,7 +67,11 @@ public fun AnimeOverviewPage(
     val saver = object : Saver<SnapshotStateList<MediaTag>, String> {
         private val separator = ", "
         override fun restore(value: String): SnapshotStateList<MediaTag> {
-            return value.split(separator).map { MediaTag(name = it) }.toMutableStateList()
+            return value
+                .split(separator)
+                .filter { it.isNotBlank() }
+                .map { MediaTag(name = it) }
+                .toMutableStateList()
         }
 
         override fun SaverScope.save(value: SnapshotStateList<MediaTag>): String {
