@@ -72,10 +72,10 @@ internal fun AnimeItem(
 @Composable
 internal fun SheetItem(
     item: MediaTag,
-    intialValue: Boolean,
+    initialValue: Boolean,
     onClick: (isChecked: Boolean, tag: MediaTag) -> Unit,
 ) {
-    var checked by rememberSaveable { mutableStateOf(intialValue) }
+    var checked by rememberSaveable { mutableStateOf(initialValue) }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         Checkbox(

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -162,7 +163,9 @@ public fun AnimeOverviewPage(
             Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(
-                modifier = Modifier.padding(all = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(all = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 for (letter in 'a'..'z') {
@@ -181,7 +184,7 @@ public fun AnimeOverviewPage(
                     ) { tag ->
                         SheetItem(
                             item = tag,
-                            intialValue = tag in selectedTags,
+                            initialValue = tag in selectedTags,
                             onClick = { change, value ->
                                 selectedTags.apply {
                                     if (change) add(value) else remove(value)

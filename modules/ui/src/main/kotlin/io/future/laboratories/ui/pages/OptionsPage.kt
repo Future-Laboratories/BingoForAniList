@@ -13,7 +13,7 @@ public fun OptionsPage(
     LazyColumn {
         options.forEach { group ->
             item {
-                DefaultHeader(group.text)
+                DefaultHeader(title = group.text)
             }
 
             items(items = group.options) { item ->
