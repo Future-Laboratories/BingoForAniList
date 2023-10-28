@@ -9,8 +9,10 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="options">Options</string>
+    <string name="options_appearance">Appearance</string>
     <string name="options_general">General</string>
     <string name="option_pinned_category">Pinned category</string>
+    <string name="option_use_cards">Use cards</string>
     <string name="option_visibility">Show all anime</string>
     <string name="overview_bingo">Bingo Overview</string>
     <string name="overview_anime">Anime Overview</string>

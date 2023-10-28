@@ -25,13 +25,20 @@ public class Options private constructor(preferences: SharedPreferences) {
             stringArrayResource(id = R.array.option_pinned_category_values).associateWith { it }
         },
     )
+    private val useCards: BooleanOption = BooleanOption(
+        preferences = preferences,
+        key = USE_CARDS,
+        name = { stringResource(id = R.string.option_use_cards) },
+        defaultValue = true,
+    )
 
     @PublishedApi
     @RestrictedApi
-    internal val options: Map<OptionKey, OptionData<*>> = mapOf(
-        showFinishedAnime.toPair(),
-        pinnedCategory.toPair(),
-    )
+    internal val options: Map<OptionKey, OptionData<*>> = listOf(
+        showFinishedAnime,
+        pinnedCategory,
+        useCards,
+    ).associate { it.toPair() }
 
     @PublishedApi
     @RestrictedApi
@@ -49,6 +56,7 @@ public class Options private constructor(preferences: SharedPreferences) {
     public companion object {
         internal val SHOW_FINISHED_ANIME = OptionKey("SHOW_FINISHED_ANIME")
         internal val PINNED_CATEGORY = OptionKey("PINNED_CATEGORY")
+        internal val USE_CARDS = OptionKey("USE_CARDS")
 
         @Volatile
         private var instance: Options? = null

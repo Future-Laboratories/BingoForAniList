@@ -47,6 +47,7 @@ import io.future.laboratories.ui.components.SheetItem
 public fun AnimeOverviewPage(
     bingoData: BingoData,
     showFinished: BooleanOption,
+    useCards: BooleanOption,
     pinned: DropdownOption,
     animeDataList: MediaListCollection?,
     mediaTags: List<MediaTag>?,
@@ -137,6 +138,7 @@ public fun AnimeOverviewPage(
                             }
                     ) { animeData ->
                         AnimeItem(
+                            useCards = useCards,
                             animeData = animeData,
                             bingoData = bingoData,
                             onClick = onSelectAnime,
@@ -146,6 +148,7 @@ public fun AnimeOverviewPage(
         }
     }
 
+    //TODO: Extract
     if (showModalBottomSheet) {
         ModalBottomSheet(
             onDismissRequest = { showModalBottomSheet = false },

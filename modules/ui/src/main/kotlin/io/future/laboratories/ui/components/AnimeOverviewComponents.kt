@@ -4,13 +4,18 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -23,49 +28,89 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.transform.RoundedCornersTransformation
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.common.BingoData
-import io.future.laboratories.ui.RoundedCornersTransformation
+import io.future.laboratories.ui.EvenRoundedCornersTransformation
 
 @Composable
 internal fun AnimeItem(
+    useCards: BooleanOption,
     animeData: MediaList,
     bingoData: BingoData,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick(bingoData, animeData)
-            },
-    ) {
+    val content: @Composable Any.() -> Unit = {
         Row(
+            modifier = Modifier.height(IntrinsicSize.Min),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(animeData.media.coverImage.large)
-                    .transformations(RoundedCornersTransformation(all = 30f))
+                    .transformations(
+                        if (useCards.currentValue) {
+                            RoundedCornersTransformation()
+                        } else {
+                            EvenRoundedCornersTransformation(all = 30f)
+                        },
+                    )
                     .crossfade(true)
                     .build(),
+                contentScale = ContentScale.Crop,
                 contentDescription = "Cover",
                 modifier = Modifier
-                    .width(80.dp)
+                    .heightIn(min = 140.dp)
+                    .width(100.dp),
             )
 
-            Text(
-                modifier = Modifier.weight(1f),
-                text = animeData.media.title.userPreferred,
-            )
+
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = animeData.media.title.userPreferred,
+                    textDecoration = TextDecoration.Underline,
+                )
+
+                Text(
+                    text = animeData.media.tags.joinToString(limit = 10) { it.name },
+                    fontSize = 12.sp,
+                    lineHeight = 12.sp,
+                )
+            }
         }
+    }
+
+    val modifier = Modifier
+        .fillMaxWidth()
+        .clickable {
+            onClick(bingoData, animeData)
+        }
+
+    if (useCards.currentValue) {
+        Card(
+            modifier = modifier,
+            content = content,
+        )
+    } else {
+        Box(
+            modifier = modifier,
+            content = content,
+        )
     }
 }
 

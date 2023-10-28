@@ -24,6 +24,7 @@ import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
+import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
 import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.anilistbingo.controller.ShareController
 import io.future.laboratories.anilistbingo.controller.ShareController.receive
@@ -123,6 +124,7 @@ public class MainActivity : ComponentActivity() {
                         is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
                             bingoData = (viewModel.currentPage as Page.ANIME_OVERVIEW).bingoData,
                             showFinished = options[SHOW_FINISHED_ANIME],
+                            useCards = options[USE_CARDS],
                             pinned = options[PINNED_CATEGORY],
                             animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
                             mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
@@ -136,6 +138,7 @@ public class MainActivity : ComponentActivity() {
                         )
 
                         is Page.BINGO_OVERVIEW -> BingoOverviewPage(
+                            useCards = options[USE_CARDS],
                             bingoDataList = runtimeData,
                             onShare = { bingoData ->
                                 with(ShareController) {
@@ -197,6 +200,12 @@ public class MainActivity : ComponentActivity() {
                                         options[PINNED_CATEGORY],
                                     )
                                 ),
+                                OptionGroup(
+                                    text = stringResource(id = R.string.options_appearance),
+                                    options = listOfNotNull(
+                                        options[USE_CARDS],
+                                    )
+                                )
                             )
                         )
                     }

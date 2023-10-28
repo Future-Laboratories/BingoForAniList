@@ -1,16 +1,19 @@
 package io.future.laboratories.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Share
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,20 +29,16 @@ import io.future.laboratories.ui.R
 
 @Composable
 internal fun BingoItem(
+    useCards: BooleanOption,
     bingoData: BingoData,
     onClick: (BingoData) -> Unit,
     onShare: (BingoData) -> Unit,
     onEdit: (BingoData) -> Unit,
     onDelete: (BingoData) -> Unit,
 ) {
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onClick(bingoData)
-            },
-    ) {
+    val content: @Composable Any.() -> Unit = {
         Row(
+            modifier = if (useCards.currentValue) Modifier.padding(all = 8.dp) else Modifier,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -80,6 +79,25 @@ internal fun BingoItem(
                 imageVector = Icons.Rounded.MoreVert,
             )
         }
+    }
+
+    val modifier = Modifier
+        .fillMaxWidth()
+        .clickable {
+            onClick(bingoData)
+        }
+        .animateContentSize()
+
+    if (useCards.currentValue) {
+        Card(
+            modifier = modifier,
+            content = content,
+        )
+    } else {
+        Box(
+            modifier = modifier,
+            content = content,
+        )
     }
 }
 

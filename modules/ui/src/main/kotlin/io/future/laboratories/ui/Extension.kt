@@ -12,7 +12,7 @@ internal fun String.colon(): String = "$this:"
 //region Transformations
 
 @Suppress("FunctionName")
-internal fun RoundedCornersTransformation(all: Float): Transformation =
+internal fun EvenRoundedCornersTransformation(all: Float): Transformation =
     RoundedCornersTransformation(all, all, all, all)
 
 //endregion

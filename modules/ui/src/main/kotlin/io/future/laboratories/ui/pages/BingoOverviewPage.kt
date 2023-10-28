@@ -21,9 +21,11 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.components.BingoItem
+import io.future.laboratories.ui.components.BooleanOption
 
 @Composable
 public fun BingoOverviewPage(
+    useCards: BooleanOption,
     bingoDataList: SnapshotStateList<BingoData>,
     onShare: (BingoData) -> Unit,
     onEdit: (BingoData?) -> Unit,
@@ -37,6 +39,7 @@ public fun BingoOverviewPage(
         ) {
             items(bingoDataList) { bingoData ->
                 BingoItem(
+                    useCards = useCards,
                     bingoData = bingoData,
                     onClick = onSelectBingo,
                     onShare = onShare,
