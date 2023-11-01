@@ -7,17 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -40,9 +35,9 @@ import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DefaultHeader
 import io.future.laboratories.ui.components.DefaultSearchBar
 import io.future.laboratories.ui.components.DropdownOption
-import io.future.laboratories.ui.components.SheetItem
+import io.future.laboratories.ui.components.ModalBottomSheet
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 public fun AnimeOverviewPage(
     bingoData: BingoData,
@@ -59,11 +54,6 @@ public fun AnimeOverviewPage(
 
     // Modal
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
-    val modalBottomSheetState = rememberModalBottomSheetState()
-
-    // Searchbar - Tags
-    var tagQuery by rememberSaveable { mutableStateOf("") }
-    var tagSearchActive by rememberSaveable { mutableStateOf(false) }
 
     // TagFilter
     val saver = object : Saver<SnapshotStateList<MediaTag>, String> {
@@ -110,9 +100,7 @@ public fun AnimeOverviewPage(
         ) {
             animeDataList
                 ?.lists
-                ?.filter {
-                    if (showFinished.currentValue) true else it.name == "Watching"
-                }
+                ?.filter { if (showFinished.currentValue) true else it.name == "Watching" }
                 ?.sortedByDescending { it.name == pinned.currentValue }
                 .orEmpty()
                 .forEach { animeList ->
@@ -148,55 +136,10 @@ public fun AnimeOverviewPage(
         }
     }
 
-    //TODO: Extract
-    if (showModalBottomSheet) {
-        ModalBottomSheet(
-            onDismissRequest = { showModalBottomSheet = false },
-            sheetState = modalBottomSheetState,
-        ) {
-            DefaultSearchBar(
-                modifier = Modifier.padding(horizontal = 8.dp),
-                query = tagQuery,
-                onQueryChange = { query -> tagQuery = query },
-                isSearchActive = tagSearchActive,
-                onSearch = { active -> tagSearchActive = active },
-                placeholderStringId = R.string.search_tag,
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(all = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                for (letter in 'a'..'z') {
-                    stickyHeader {
-                        DefaultHeader(title = letter.uppercase())
-                    }
-
-                    items(items = mediaTags
-                        .orEmpty()
-                        .filter {
-                            it.name.startsWith(letter, ignoreCase = true) && it.name.contains(
-                                other = tagQuery,
-                                ignoreCase = true,
-                            )
-                        }
-                    ) { tag ->
-                        SheetItem(
-                            item = tag,
-                            initialValue = tag in selectedTags,
-                            onClick = { change, value ->
-                                selectedTags.apply {
-                                    if (change) add(value) else remove(value)
-                                }
-                            }
-                        )
-                    }
-                }
-            }
-        }
-    }
+    ModalBottomSheet(
+        visible = showModalBottomSheet,
+        mediaTags = mediaTags,
+        selectedTags = selectedTags,
+        onDismissRequest = { showModalBottomSheet = false },
+    )
 }
