@@ -116,7 +116,7 @@ internal fun DismissDialog(
 
     if (showDialog) {
         DefaultWarningDialog(
-            header = stringResource(id = R.string.delete_permanently_header),
+            header = stringResource(id = R.string.edit_dismiss_header),
             body = stringResource(id = R.string.edit_dismiss_body),
             actionButtonText = stringResource(id = R.string.yes),
             abortText = stringResource(id = android.R.string.cancel),
