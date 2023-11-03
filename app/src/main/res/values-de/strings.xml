@@ -4,6 +4,8 @@
     <string name="app_name">Bingo für AniList</string>
 
     <string name="bingo">Bingo</string>
+    <string name="delete_success">Löschung der Datei war erfolgreich</string>
+    <string name="delete_error">Fehler beim Löschen der Datei, eventuell existiert die Datei nicht</string>
     <string name="editor">Editor</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>

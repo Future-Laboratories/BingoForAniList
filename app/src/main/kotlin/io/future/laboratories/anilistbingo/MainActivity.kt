@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -128,6 +129,23 @@ public class MainActivity : ComponentActivity() {
                             pinned = options[PINNED_CATEGORY],
                             animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
                             mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
+                            onClickDelete = { bingoData, animeData ->
+                                val deletionSuccessful = deleteSingle(
+                                    (viewModel.currentPage as Page.ANIME_OVERVIEW).bingoPath(
+                                        bingoData,
+                                        animeData,
+                                    )
+                                )
+
+                                val toastText = if (deletionSuccessful) {
+                                    R.string.delete_success
+                                } else {
+                                    R.string.delete_error
+                                }
+
+                                Toast.makeText(this@MainActivity, toastText, Toast.LENGTH_LONG)
+                                    .show()
+                            },
                             onSelectAnime = { bingoData, animeData ->
                                 viewModel.currentPage = Page.BINGO(
                                     bingoData = bingoData,
@@ -165,10 +183,10 @@ public class MainActivity : ComponentActivity() {
 
                         is Page.BINGO -> BingoPage(
                             bingoData = loadSingle<BingoData>(
-                                storagePath = (viewModel.currentPage as Page.BINGO).bingoPath,
+                                storagePath = (viewModel.currentPage as Page.BINGO).bingoPath(),
                             ) ?: (viewModel.currentPage as Page.BINGO).bingoData,
                             onDataChange = { bingoData ->
-                                save(bingoData, (viewModel.currentPage as Page.BINGO).bingoPath)
+                                save(bingoData, (viewModel.currentPage as Page.BINGO).bingoPath())
                             }
                         )
 
@@ -295,7 +313,9 @@ internal sealed class Page(@StringRes val nameResId: Int, private var sourcePage
     class ANIME_OVERVIEW(
         val bingoData: BingoData,
         sourcePage: Page,
-    ) : Page(R.string.overview_anime, sourcePage)
+    ) : Page(R.string.overview_anime, sourcePage), SavableBingo {
+
+    }
 
     class EDITOR(
         val bingoData: BingoData? = null,
@@ -307,9 +327,14 @@ internal sealed class Page(@StringRes val nameResId: Int, private var sourcePage
         val bingoData: BingoData,
         val animeData: MediaList,
         sourcePage: Page,
-    ) : Page(R.string.bingo, sourcePage) {
-        val bingoPath = "${animeData.media.id}/${bingoData.id}"
+    ) : Page(R.string.bingo, sourcePage), SavableBingo {
+        fun bingoPath() = bingoPath(this.bingoData, this.animeData)
     }
 
     class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
+
+    sealed interface SavableBingo {
+        fun bingoPath(bingoData: BingoData, animeData: MediaList) =
+            "${animeData.media.id}/${bingoData.id}"
+    }
 }

@@ -46,6 +46,7 @@ public fun AnimeOverviewPage(
     pinned: DropdownOption,
     animeDataList: MediaListCollection?,
     mediaTags: List<MediaTag>?,
+    onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
     // Searchbar - Anime
@@ -129,6 +130,7 @@ public fun AnimeOverviewPage(
                             useCards = useCards,
                             animeData = animeData,
                             bingoData = bingoData,
+                            onClickDelete = onClickDelete,
                             onClick = onSelectAnime,
                         )
                     }

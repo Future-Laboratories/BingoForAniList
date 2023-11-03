@@ -5,6 +5,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,7 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material3.Card
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,48 +37,54 @@ internal fun BingoItem(
     onEdit: (BingoData) -> Unit,
     onDelete: (BingoData) -> Unit,
 ) {
+    var expended by rememberSaveable { mutableStateOf(false) }
+
     val content: @Composable Any.() -> Unit = {
         Row(
             modifier = if (useCards.currentValue) Modifier.padding(all = 8.dp) else Modifier,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            var expended by rememberSaveable { mutableStateOf(false) }
-
             Text(
                 modifier = Modifier.weight(1f),
                 text = bingoData.name,
             )
 
-            AnimatedVisibility(visible = expended) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    PositiveImageButton(
-                        onClick = { onShare(bingoData) },
-                        contentDescription = stringResource(id = R.string.share),
-                        imageVector = Icons.Rounded.Share,
-                    )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                PositiveImageButton(
+                    onClick = { expended = !expended },
+                    contentDescription = "null",
+                    imageVector = Icons.Rounded.MoreVert,
+                )
 
-                    PositiveImageButton(
-                        onClick = { onEdit(bingoData) },
-                        contentDescription = stringResource(id = R.string.edit),
-                        imageVector = Icons.Rounded.Edit,
-                    )
+                AnimatedVisibility(visible = expended) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        PositiveImageButton(
+                            onClick = { onShare(bingoData) },
+                            contentDescription = stringResource(id = R.string.share),
+                            imageVector = Icons.Rounded.Share,
+                        )
 
-                    DeleteDialog(
-                        bingoData = bingoData,
-                        onDelete = onDelete,
-                    )
+                        PositiveImageButton(
+                            onClick = { onEdit(bingoData) },
+                            contentDescription = stringResource(id = R.string.edit),
+                            imageVector = Icons.Rounded.Edit,
+                        )
+
+                        DeleteDialog(
+                            bingoData = bingoData,
+                            onDelete = onDelete,
+                        )
+                    }
                 }
-            }
 
-            PositiveImageButton(
-                onClick = { expended = !expended },
-                contentDescription = "null",
-                imageVector = Icons.Rounded.MoreVert,
-            )
+            }
         }
     }
 
@@ -89,7 +96,7 @@ internal fun BingoItem(
         .animateContentSize()
 
     if (useCards.currentValue) {
-        Card(
+        ElevatedCard(
             modifier = modifier,
             content = content,
         )

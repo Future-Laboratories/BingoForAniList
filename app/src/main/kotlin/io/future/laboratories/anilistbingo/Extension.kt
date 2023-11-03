@@ -97,10 +97,17 @@ public inline fun <reified T> Context.loadSingle(uri: Uri): T? {
     return data
 }
 
-public fun Context.deleteSingle(storagePath: String) {
+/**
+ * deletes file under given Path
+ * @param storagePath subPath of App file directory
+ * @return true if the file got deleted, false if the file did not exist or could not be deleted
+ */
+public fun Context.deleteSingle(storagePath: String): Boolean {
     val file = File(filesDir, storagePath)
-    if (file.exists()) {
+    return if (file.exists()) {
         file.delete()
+    } else {
+        false
     }
 }
 

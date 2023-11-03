@@ -25,10 +25,10 @@ import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -197,7 +197,7 @@ internal fun DefaultWarningDialog(
     onAction: () -> Unit,
     onAbort: () -> Unit = onDismiss,
 ): Unit = Dialog(onDismissRequest = onDismiss) {
-    Card {
+    ElevatedCard {
         Column(
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -208,29 +208,7 @@ internal fun DefaultWarningDialog(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                var target by remember {
-                    mutableFloatStateOf(1f)
-                }
-                val alpha by animateFloatAsState(
-                    targetValue = target,
-                    animationSpec = tween(durationMillis = 600, easing = LinearEasing),
-                    label = "blink"
-                ) { value ->
-                    target = if (value != 1f) 1f else 0.3f
-                }
-
-                LaunchedEffect(key1 = "blink", block = {
-                    target = 0.1f
-                })
-
-                Icon(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .alpha(alpha),
-                    imageVector = Icons.Rounded.Warning,
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.primary,
-                )
+                WarningSign()
 
                 Text(text = body)
             }
@@ -252,6 +230,33 @@ internal fun DefaultWarningDialog(
             }
         }
     }
+}
+
+@Composable
+private fun WarningSign() {
+    var target by remember {
+        mutableFloatStateOf(1f)
+    }
+    val alpha by animateFloatAsState(
+        targetValue = target,
+        animationSpec = tween(durationMillis = 600, easing = LinearEasing),
+        label = "blink"
+    ) { value ->
+        target = if (value != 1f) 1f else 0.3f
+    }
+
+    LaunchedEffect(key1 = "blink", block = {
+        target = 0.1f
+    })
+
+    Icon(
+        modifier = Modifier
+            .size(48.dp)
+            .alpha(alpha),
+        imageVector = Icons.Rounded.Warning,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary,
+    )
 }
 
 //endregion

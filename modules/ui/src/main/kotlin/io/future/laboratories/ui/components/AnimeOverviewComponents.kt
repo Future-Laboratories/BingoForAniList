@@ -19,12 +19,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
-import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
@@ -41,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -50,11 +53,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import coil.transform.RoundedCornersTransformation
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.common.BingoData
-import io.future.laboratories.ui.EvenRoundedCornersTransformation
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.pxValueToDp
 
@@ -63,10 +64,11 @@ internal fun AnimeItem(
     useCards: BooleanOption,
     animeData: MediaList,
     bingoData: BingoData,
+    onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
     var textHeight by remember { mutableIntStateOf(0) }
-    var extended by remember { mutableStateOf(false) }
+    var expended by remember { mutableStateOf(false) }
 
     val minHeight = 148.dp
     val animatedHeight by animateIntAsState(
@@ -77,20 +79,13 @@ internal fun AnimeItem(
 
     val content: @Composable Any.() -> Unit = {
         Row(
-            modifier = Modifier.animateContentSize(),
+            modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.Top,
         ) {
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
                     .data(animeData.media.coverImage.large)
-                    .transformations(
-                        if (useCards.currentValue) {
-                            RoundedCornersTransformation()
-                        } else {
-                            EvenRoundedCornersTransformation(all = 30f)
-                        },
-                    )
                     .crossfade(true)
                     .build(),
                 contentScale = ContentScale.Crop,
@@ -101,11 +96,13 @@ internal fun AnimeItem(
                             .pxValueToDp()
                             .coerceAtLeast(minHeight)
                     )
-                    .width(100.dp),
+                    .width(100.dp)
+                    .clip(shape = RoundedCornerShape(if (useCards.currentValue) 0.dp else 12.dp)),
             )
 
             Column(
                 modifier = Modifier
+                    .padding(horizontal = 4.dp)
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
                         textHeight = placeable.height.coerceAtLeast(textHeight)
@@ -117,46 +114,60 @@ internal fun AnimeItem(
                     .heightIn(minHeight),
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column(modifier = Modifier) {
+                Column {
                     Text(
                         text = animeData.media.title.userPreferred,
                         textDecoration = TextDecoration.Underline,
                     )
 
                     Text(
-                        text = animeData.media.tags.joinToString(limit = if (extended) -1 else 10) { it.name },
+                        text = animeData.media.tags.joinToString(limit = if (expended) -1 else 10) { it.name },
                         fontSize = 12.sp,
                         lineHeight = 12.sp,
                     )
                 }
 
-                if (animeData.media.tags.count() > 10) {
-                    Icon(
-                        imageVector = if (extended) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
-                        contentDescription = null,
+                if (expended) {
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable {
-                                extended = !extended
-
-                                if (!extended) {
-                                    textHeight = 0
-                                }
-                            }
-                    )
+                            .padding(4.dp),
+                        horizontalArrangement = Arrangement.End,
+                    ) {
+                        DeleteDialog(
+                            bingoData = bingoData,
+                            animeData = animeData,
+                            onDelete = onClickDelete,
+                        )
+                    }
                 }
+
+                Icon(
+                    imageVector = if (expended) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            expended = !expended
+
+                            if (!expended) {
+                                textHeight = 0
+                            }
+                        }
+                )
             }
         }
     }
 
     val modifier = Modifier
         .fillMaxWidth()
+        .animateContentSize()
         .clickable {
             onClick(bingoData, animeData)
         }
 
     if (useCards.currentValue) {
-        Card(
+        ElevatedCard(
             modifier = modifier,
             content = content,
         )
@@ -201,6 +212,34 @@ internal fun DefaultSearchBar(
         content = content
         // TODO: Implement recommendations?
     )
+}
+
+@Composable
+private fun DeleteDialog(
+    bingoData: BingoData,
+    animeData: MediaList,
+    onDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
+) {
+    var showDeleteDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    NegativeImageButton(
+        onClick = { showDeleteDialog = true },
+        contentDescription = stringResource(id = R.string.delete),
+        imageVector = Icons.Rounded.Delete,
+    )
+
+    if (showDeleteDialog) {
+        DefaultWarningDialog(
+            header = stringResource(id = R.string.delete_permanently_header),
+            body = stringResource(id = R.string.delete_permanently_body),
+            actionButtonText = stringResource(id = R.string.delete),
+            abortText = stringResource(id = android.R.string.cancel),
+            onDismiss = { showDeleteDialog = false },
+            onAction = { onDelete(bingoData, animeData) },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
