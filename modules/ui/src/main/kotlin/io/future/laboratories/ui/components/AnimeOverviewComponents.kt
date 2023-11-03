@@ -251,6 +251,7 @@ internal fun ModalBottomSheet(
     onDismissRequest: () -> Unit,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState()
+    val preFilteredTags = mediaTags?.filterNot { it.isAdult }
 
     // Searchbar - Tags
     var tagQuery by rememberSaveable { mutableStateOf("") }
@@ -283,7 +284,8 @@ internal fun ModalBottomSheet(
                         DefaultHeader(title = letter.uppercase())
                     }
 
-                    items(items = mediaTags
+                    items(
+                        items = preFilteredTags
                         .orEmpty()
                         .filter {
                             it.name.startsWith(letter, ignoreCase = true) && it.name.contains(

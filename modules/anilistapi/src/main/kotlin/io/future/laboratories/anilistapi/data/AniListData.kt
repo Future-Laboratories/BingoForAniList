@@ -40,6 +40,7 @@ public data class MainData(
 @JsonClass(generateAdapter = true)
 public data class MediaTag(
     val name: String,
+    val isAdult: Boolean = false,
 )
 
 @JsonClass(generateAdapter = true)

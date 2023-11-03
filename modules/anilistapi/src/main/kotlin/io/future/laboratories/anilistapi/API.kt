@@ -53,6 +53,7 @@ public interface API {
                 query(${'$'}userId: Int) {
                   MediaTagCollection {
                     name
+                    isAdult
                   }
                   User(id: ${'$'}userId) {
                     avatar {

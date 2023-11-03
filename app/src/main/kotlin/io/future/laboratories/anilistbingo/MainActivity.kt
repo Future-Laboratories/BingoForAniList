@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -88,6 +89,21 @@ public class MainActivity : ComponentActivity() {
                 },
             ),
             DropDownItemData(
+                textId = { R.string.donate },
+                contentDescription = null,
+                imageVector = Icons.Rounded.Favorite,
+                isVisible = { true },
+                onClick = {
+                    val url = getString(R.string.donation_url)
+                    val intent = Intent(Intent.ACTION_VIEW)
+                    intent.setData(Uri.parse(url))
+                    startActivity(
+                        intent,
+                        null,
+                    )
+                }
+            ),
+            DropDownItemData(
                 textId = { if (viewModel.isLoggedIn) R.string.logout else R.string.login },
                 contentDescription = null,
                 imageVector = Icons.Rounded.AccountCircle,
@@ -99,7 +115,7 @@ public class MainActivity : ComponentActivity() {
                         viewModel.runtimeAPIData.runtimeAniListData = null
                         viewModel.isLoggedIn = false
                     } else {
-                        val url = getString(R.string.anilistUrl)
+                        val url = getString(R.string.anilist_url)
                         val intent = Intent(Intent.ACTION_VIEW)
                         intent.setData(Uri.parse(url))
                         startActivity(

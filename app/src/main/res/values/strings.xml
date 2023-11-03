@@ -3,10 +3,12 @@
     <string name="app_name">Bingo for AniList</string>
     <string name="provider_name" translatable="false">io.future.laboratories.anilistbingo.fileprovider</string>
 
-    <string name="anilistUrl" translatable="false">https://anilist.co/api/v2/oauth/authorize?client_id=14752&amp;response_type=token"</string>
+    <string name="anilist_url" translatable="false">https://anilist.co/api/v2/oauth/authorize?client_id=14752&amp;response_type=token"</string>
     <string name="bingo">Bingo</string>
     <string name="delete_success">Delete of file was successful</string>
     <string name="delete_error">Error while deletion, maybe the file doesn\'t exist</string>
+    <string name="donate">Donate</string>
+    <string name="donation_url" translatable="false">https://ko-fi.com/L3L6QSI1Z</string>
     <string name="editor">Editor</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
