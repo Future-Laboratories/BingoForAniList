@@ -258,8 +258,8 @@ public class MainActivity : ComponentActivity() {
         ) {
             override fun handleOnBackPressed() {
                 if (viewModel.currentPage !is Page.BINGO_OVERVIEW) {
-                    if (viewModel.currentPage !is Page.EDITOR) {
-                        viewModel.currentPage = viewModel.currentPage.previousPage
+                    with(viewModel.currentPage) {
+                        viewModel.onBackPress()
                     }
                 } else {
                     isEnabled = false
@@ -322,9 +322,13 @@ public class AniListBingoViewModel : ViewModel() {
 }
 
 @Suppress("ClassName")
-internal sealed class Page(@StringRes val nameResId: Int, private var sourcePage: Page?) {
+internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage: Page?) {
     val previousPage
         get() = previousPage()
+
+    internal open fun AniListBingoViewModel.onBackPress() {
+        currentPage = currentPage.previousPage
+    }
 
     private fun previousPage(): Page = sourcePage ?: BINGO_OVERVIEW()
 
@@ -333,15 +337,17 @@ internal sealed class Page(@StringRes val nameResId: Int, private var sourcePage
     class ANIME_OVERVIEW(
         val bingoData: BingoData,
         sourcePage: Page,
-    ) : Page(R.string.overview_anime, sourcePage), SavableBingo {
-
-    }
+    ) : Page(R.string.overview_anime, sourcePage), SavableBingo
 
     class EDITOR(
         val bingoData: BingoData? = null,
         val isImported: Boolean = false,
         sourcePage: Page,
-    ) : Page(R.string.editor, sourcePage)
+    ) : Page(R.string.editor, sourcePage) {
+        override fun AniListBingoViewModel.onBackPress() {
+            // No-Op
+        }
+    }
 
     class BINGO(
         val bingoData: BingoData,
