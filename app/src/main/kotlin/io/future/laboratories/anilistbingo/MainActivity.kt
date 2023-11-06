@@ -136,111 +136,116 @@ public class MainActivity : ComponentActivity() {
                     isLoggedIn = viewModel.isLoggedIn,
                     dropDownItems = dropDownItems,
                 ) {
-                    when (viewModel.currentPage) {
-                        is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
-                            bingoData = (viewModel.currentPage as Page.ANIME_OVERVIEW).bingoData,
-                            showFinished = options[SHOW_FINISHED_ANIME],
-                            useCards = options[USE_CARDS],
-                            pinned = options[PINNED_CATEGORY],
-                            animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
-                            mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
-                            onClickDelete = { bingoData, animeData ->
-                                val deletionSuccessful = deleteSingle(
-                                    (viewModel.currentPage as Page.ANIME_OVERVIEW).bingoPath(
-                                        bingoData,
-                                        animeData,
+                    with(viewModel.currentPage) {
+                        when (this) {
+                            is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
+                                bingoData = bingoData,
+                                showFinished = options[SHOW_FINISHED_ANIME],
+                                useCards = options[USE_CARDS],
+                                pinned = options[PINNED_CATEGORY],
+                                animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
+                                mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
+                                onClickDelete = { bingoData, animeData ->
+                                    val deletionSuccessful = deleteSingle(
+                                        bingoPath(
+                                            bingoData = bingoData,
+                                            animeData = animeData,
+                                        )
                                     )
-                                )
 
-                                val toastText = if (deletionSuccessful) {
-                                    R.string.delete_success
-                                } else {
-                                    R.string.delete_error
-                                }
-
-                                Toast.makeText(this@MainActivity, toastText, Toast.LENGTH_LONG)
-                                    .show()
-                            },
-                            onSelectAnime = { bingoData, animeData ->
-                                viewModel.currentPage = Page.BINGO(
-                                    bingoData = bingoData,
-                                    animeData = animeData,
-                                    sourcePage = viewModel.currentPage,
-                                )
-                            },
-                        )
-
-                        is Page.BINGO_OVERVIEW -> BingoOverviewPage(
-                            useCards = options[USE_CARDS],
-                            bingoDataList = runtimeData,
-                            onShare = { bingoData ->
-                                with(ShareController) {
-                                    share(bingoData)
-                                }
-                            },
-                            onEdit = { bingoData ->
-                                viewModel.currentPage = Page.EDITOR(
-                                    bingoData = bingoData,
-                                    sourcePage = viewModel.currentPage,
-                                )
-                            },
-                            onDelete = { bingoData ->
-                                deleteSingle(bingoStoragePath("${bingoData.id}"))
-                                runtimeData.remove(bingoData)
-                            },
-                            onSelectBingo = { bingoData ->
-                                viewModel.currentPage = Page.ANIME_OVERVIEW(
-                                    bingoData = bingoData,
-                                    sourcePage = viewModel.currentPage,
-                                )
-                            },
-                        )
-
-                        is Page.BINGO -> BingoPage(
-                            bingoData = loadSingle<BingoData>(
-                                storagePath = (viewModel.currentPage as Page.BINGO).bingoPath(),
-                            ) ?: (viewModel.currentPage as Page.BINGO).bingoData,
-                            onDataChange = { bingoData ->
-                                save(bingoData, (viewModel.currentPage as Page.BINGO).bingoPath())
-                            }
-                        )
-
-                        is Page.EDITOR -> {
-                            EditorPage(
-                                preferences = preferences,
-                                bingoData = (viewModel.currentPage as Page.EDITOR).bingoData,
-                                isImported = (viewModel.currentPage as Page.EDITOR).isImported,
-                                onBackButtonPress = {
-                                    viewModel.currentPage = Page.BINGO_OVERVIEW()
-                                },
-                                onClickSave = { bingoData, isNew ->
-                                    save(bingoData, bingoStoragePath("${bingoData.id}"))
-                                    if (isNew) {
-                                        runtimeData.add(bingoData)
+                                    val toastText = if (deletionSuccessful) {
+                                        R.string.delete_success
+                                    } else {
+                                        R.string.delete_error
                                     }
 
-                                    viewModel.currentPage = Page.BINGO_OVERVIEW()
+                                    Toast.makeText(this@MainActivity, toastText, Toast.LENGTH_LONG)
+                                        .show()
+                                },
+                                onSelectAnime = { bingoData, animeData ->
+                                    viewModel.currentPage = Page.BINGO(
+                                        bingoData = bingoData,
+                                        animeData = animeData,
+                                        sourcePage = viewModel.currentPage,
+                                    )
                                 },
                             )
-                        }
 
-                        is Page.OPTIONS -> OptionsPage(
-                            options = arrayOf(
-                                OptionGroup(
-                                    text = stringResource(id = R.string.options_general),
-                                    options = listOfNotNull(
-                                        options[SHOW_FINISHED_ANIME],
-                                        options[PINNED_CATEGORY],
+                            is Page.BINGO_OVERVIEW -> BingoOverviewPage(
+                                useCards = options[USE_CARDS],
+                                bingoDataList = runtimeData,
+                                onShare = { bingoData ->
+                                    with(ShareController) {
+                                        share(bingoData)
+                                    }
+                                },
+                                onEdit = { bingoData ->
+                                    viewModel.currentPage = Page.EDITOR(
+                                        bingoData = bingoData,
+                                        sourcePage = viewModel.currentPage,
                                     )
-                                ),
-                                OptionGroup(
-                                    text = stringResource(id = R.string.options_appearance),
-                                    options = listOfNotNull(
-                                        options[USE_CARDS],
+                                },
+                                onDelete = { bingoData ->
+                                    deleteSingle(bingoStoragePath("${bingoData.id}"))
+                                    runtimeData.remove(bingoData)
+                                },
+                                onSelectBingo = { bingoData ->
+                                    viewModel.currentPage = Page.ANIME_OVERVIEW(
+                                        bingoData = bingoData,
+                                        sourcePage = viewModel.currentPage,
+                                    )
+                                },
+                            )
+
+                            is Page.BINGO -> BingoPage(
+                                bingoData = loadSingle<BingoData>(
+                                    storagePath = bingoPath(),
+                                ) ?: bingoData,
+                                onDataChange = { bingoData ->
+                                    save(
+                                        bingoData,
+                                        bingoPath()
+                                    )
+                                }
+                            )
+
+                            is Page.EDITOR -> {
+                                EditorPage(
+                                    preferences = preferences,
+                                    bingoData = bingoData,
+                                    isImported = isImported,
+                                    onBackButtonPress = {
+                                        viewModel.currentPage = Page.BINGO_OVERVIEW()
+                                    },
+                                    onClickSave = { bingoData, isNew ->
+                                        save(bingoData, bingoStoragePath("${bingoData.id}"))
+                                        if (isNew) {
+                                            runtimeData.add(bingoData)
+                                        }
+
+                                        viewModel.currentPage = Page.BINGO_OVERVIEW()
+                                    },
+                                )
+                            }
+
+                            is Page.OPTIONS -> OptionsPage(
+                                options = arrayOf(
+                                    OptionGroup(
+                                        text = stringResource(id = R.string.options_general),
+                                        options = listOfNotNull(
+                                            options[SHOW_FINISHED_ANIME],
+                                            options[PINNED_CATEGORY],
+                                        )
+                                    ),
+                                    OptionGroup(
+                                        text = stringResource(id = R.string.options_appearance),
+                                        options = listOfNotNull(
+                                            options[USE_CARDS],
+                                        )
                                     )
                                 )
                             )
-                        )
+                        }
                     }
                 }
             }
