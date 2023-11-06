@@ -2,7 +2,7 @@ package io.future.laboratories.ui.components
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -35,7 +35,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,6 +46,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -67,11 +67,13 @@ internal fun AnimeItem(
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
-    var textHeight by remember { mutableIntStateOf(0) }
+    val localDensity = LocalDensity.current
+    val minHeight = 148.dp
+
+    var textHeight by remember { mutableStateOf(minHeight) }
     var expended by remember { mutableStateOf(false) }
 
-    val minHeight = 148.dp
-    val animatedHeight by animateIntAsState(
+    val animatedHeight by animateDpAsState(
         targetValue = textHeight,
         animationSpec = tween(150),
         label = "animatedImageHeight"
@@ -91,11 +93,7 @@ internal fun AnimeItem(
                 contentScale = ContentScale.Crop,
                 contentDescription = "Cover",
                 modifier = Modifier
-                    .height(
-                        animatedHeight
-                            .pxValueToDp()
-                            .coerceAtLeast(minHeight)
-                    )
+                    .height(animatedHeight.coerceAtLeast(minHeight))
                     .width(100.dp)
                     .clip(shape = RoundedCornerShape(if (useCards.currentValue) 0.dp else 12.dp)),
             )
@@ -105,7 +103,9 @@ internal fun AnimeItem(
                     .padding(horizontal = 4.dp)
                     .layout { measurable, constraints ->
                         val placeable = measurable.measure(constraints)
-                        textHeight = placeable.height.coerceAtLeast(textHeight)
+                        textHeight = placeable.height
+                            .pxValueToDp(localDensity)
+                            .coerceAtLeast(textHeight)
 
                         layout(placeable.width, placeable.height) {
                             placeable.placeRelative(0, 0)
@@ -151,7 +151,7 @@ internal fun AnimeItem(
                             expended = !expended
 
                             if (!expended) {
-                                textHeight = 0
+                                textHeight = minHeight
                             }
                         }
                 )
