@@ -24,6 +24,7 @@ public class Options private constructor(preferences: SharedPreferences) {
         values = {
             stringArrayResource(id = R.array.option_pinned_category_values).associateWith { it }
         },
+        isVisible = { showFinishedAnime.currentValue },
     )
     private val useCards: BooleanOption = BooleanOption(
         preferences = preferences,
