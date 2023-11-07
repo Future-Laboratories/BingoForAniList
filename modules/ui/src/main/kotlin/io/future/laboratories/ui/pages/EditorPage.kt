@@ -30,7 +30,9 @@ public fun EditorPage(
     preferences: SharedPreferences,
     bingoData: BingoData? = null,
     isImported: Boolean,
-    onBackButtonPress: () -> Unit,
+    showDialog: Boolean,
+    onBackDialogDismiss: () -> Unit,
+    onBackDialogAccept: () -> Unit,
     onClickSave: (BingoData, isNew: Boolean) -> Unit,
 ) {
     var lastId = preferences.getInt("LAST_USED_ID", 0)
@@ -96,7 +98,11 @@ public fun EditorPage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                DismissDialog(onAccept = onBackButtonPress)
+                DismissDialog(
+                    showDialog = showDialog,
+                    onDismiss = onBackDialogDismiss,
+                    onAccept = onBackDialogAccept,
+                )
 
                 PositiveButton(
                     onClick = {

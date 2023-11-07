@@ -130,8 +130,10 @@ public class MainActivity : ComponentActivity() {
             AniListBingoTheme {
                 CustomScaffold(
                     titleId = { viewModel.currentPage.nameResId },
-                    isNavVisible = { viewModel.currentPage !is Page.BINGO_OVERVIEW && viewModel.currentPage !is Page.EDITOR },
-                    onNavPress = { viewModel.currentPage = viewModel.currentPage.previousPage },
+                    isNavVisible = { viewModel.currentPage !is Page.BINGO_OVERVIEW },
+                    onNavPress = {
+                        viewModel.onBackPress()
+                    },
                     profilePictureUrl = viewModel.runtimeAPIData.runtimeAniListData?.user?.avatar?.medium,
                     isLoggedIn = viewModel.isLoggedIn,
                     dropDownItems = dropDownItems,
@@ -204,7 +206,7 @@ public class MainActivity : ComponentActivity() {
                                 onDataChange = { bingoData ->
                                     save(
                                         bingoData,
-                                        bingoPath()
+                                        bingoPath(),
                                     )
                                 }
                             )
@@ -214,8 +216,14 @@ public class MainActivity : ComponentActivity() {
                                     preferences = preferences,
                                     bingoData = bingoData,
                                     isImported = isImported,
-                                    onBackButtonPress = {
-                                        viewModel.currentPage = Page.BINGO_OVERVIEW()
+                                    showDialog = showDialog,
+                                    onBackDialogDismiss = {
+                                        showDialog = false
+                                    },
+                                    onBackDialogAccept = {
+                                        showDialog = false
+
+                                        viewModel.currentPage = viewModel.currentPage.previousPage
                                     },
                                     onClickSave = { bingoData, isNew ->
                                         save(bingoData, bingoStoragePath("${bingoData.id}"))
@@ -252,15 +260,17 @@ public class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun AniListBingoViewModel.onBackPress() = with(currentPage) {
+        onBackPress()
+    }
+
     private fun setupBackpressHandle(viewModel: AniListBingoViewModel) {
         val callback = object : OnBackPressedCallback(
             enabled = true,
         ) {
             override fun handleOnBackPressed() {
                 if (viewModel.currentPage !is Page.BINGO_OVERVIEW) {
-                    with(viewModel.currentPage) {
-                        viewModel.onBackPress()
-                    }
+                    viewModel.onBackPress()
                 } else {
                     isEnabled = false
 
@@ -323,14 +333,12 @@ public class AniListBingoViewModel : ViewModel() {
 
 @Suppress("ClassName")
 internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage: Page?) {
-    val previousPage
-        get() = previousPage()
+    internal val previousPage
+        get() = sourcePage ?: BINGO_OVERVIEW()
 
     internal open fun AniListBingoViewModel.onBackPress() {
         currentPage = currentPage.previousPage
     }
-
-    private fun previousPage(): Page = sourcePage ?: BINGO_OVERVIEW()
 
     class BINGO_OVERVIEW(sourcePage: Page? = null) : Page(R.string.overview_bingo, sourcePage)
 
@@ -344,8 +352,10 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
         val isImported: Boolean = false,
         sourcePage: Page,
     ) : Page(R.string.editor, sourcePage) {
+        var showDialog: Boolean by mutableStateOf(false)
+
         override fun AniListBingoViewModel.onBackPress() {
-            // No-Op
+            showDialog = true
         }
     }
 
