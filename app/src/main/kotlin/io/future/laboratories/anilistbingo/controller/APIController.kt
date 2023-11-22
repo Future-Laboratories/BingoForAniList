@@ -45,7 +45,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
             preferences.edit {
                 putLong(
                     Companion.PREFERENCE_USER_ID,
-                    userResponse.body()?.data?.viewer?.id ?: -1L
+                    userResponse.body()?.data?.viewer?.id ?: -1L,
                 )
             }
 
@@ -74,7 +74,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
                 query = API.aniListMainQuery,
                 variables = mapOf(
                     "userId" to userId,
-                )
+                ),
             ),
         ).enqueue(onFailure = { _, _ -> dataFetchCompleted = true }) { _, listResponse ->
             runtimeAniListData = listResponse.body()?.data?.copy()
@@ -86,7 +86,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
     internal fun Context.validateKey(): Boolean {
         val isLoggedIn = System.currentTimeMillis() <= preferences.getLong(
             Companion.PREFERENCE_ACCESS_EXPIRED,
-            -1L
+            -1L,
         )
 
         if (!isLoggedIn) {
