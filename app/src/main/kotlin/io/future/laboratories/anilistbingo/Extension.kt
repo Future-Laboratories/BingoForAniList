@@ -100,15 +100,25 @@ public inline fun <reified T> Context.loadSingle(uri: Uri): T? {
 /**
  * deletes file under given Path
  * @param storagePath subPath of App file directory
- * @return true if the file got deleted, false if the file did not exist or could not be deleted
+ * @return Status if the file got either deleted, doesn't exist or couldn't get deleted
  */
-public fun Context.deleteSingle(storagePath: String): Boolean {
+internal fun Context.deleteSingle(storagePath: String): Status {
     val file = File(filesDir, storagePath)
     return if (file.exists()) {
-        file.delete()
+        if (file.delete()) {
+            Status.Success
+        } else {
+            Status.PermissionDenied
+        }
     } else {
-        false
+        Status.FileNotExist
     }
+}
+
+internal enum class Status {
+    Success,
+    FileNotExist,
+    PermissionDenied,
 }
 
 //endregion

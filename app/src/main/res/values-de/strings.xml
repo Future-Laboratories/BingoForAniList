@@ -5,7 +5,8 @@
 
     <string name="bingo">Bingo</string>
     <string name="delete_success">Löschung der Datei war erfolgreich</string>
-    <string name="delete_error">Fehler beim Löschen der Datei, eventuell existiert die Datei nicht</string>
+    <string name="delete_permission_error">Fehler beim Löschen der Datei, stellen Sie sicher, dass die App die nötigen berechtigung hat</string>
+    <string name="delete_file_error">Fehler beim Löschen der Datei, die Datei existiert nicht</string>
     <string name="donate">Spenden</string>
     <string name="editor">Editor</string>
     <string name="login">Login</string>

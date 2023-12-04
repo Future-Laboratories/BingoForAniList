@@ -8,7 +8,8 @@
 
     <string name="bingo">Bingo</string>
     <string name="delete_success">Delete of file was successful</string>
-    <string name="delete_error">Error while deletion, maybe the file doesn\'t exist</string>
+    <string name="delete_permission_error">Error while deletion, make sure the App has the needed permissions</string>
+    <string name="delete_file_error">Error while deletion, the file doesn\'t exist</string>
     <string name="donate">Donate</string>
     <string name="editor">Editor</string>
     <string name="login">Login</string>

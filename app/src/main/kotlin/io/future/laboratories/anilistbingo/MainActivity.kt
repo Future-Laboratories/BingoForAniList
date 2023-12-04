@@ -155,10 +155,10 @@ public class MainActivity : ComponentActivity() {
                                         )
                                     )
 
-                                    val toastText = if (deletionSuccessful) {
-                                        R.string.delete_success
-                                    } else {
-                                        R.string.delete_error
+                                    val toastText = when (deletionSuccessful) {
+                                        Status.Success -> R.string.delete_success
+                                        Status.FileNotExist -> R.string.delete_file_error
+                                        Status.PermissionDenied -> R.string.delete_permission_error
                                     }
 
                                     Toast.makeText(this@MainActivity, toastText, Toast.LENGTH_LONG)
