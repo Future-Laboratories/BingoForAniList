@@ -188,7 +188,7 @@ public class MainActivity : ComponentActivity() {
                                     )
                                 },
                                 onDelete = { bingoData ->
-                                    deleteSingle(bingoStoragePath("${bingoData.id}"))
+                                    deleteAllBingoData(bingoData.id)
                                     runtimeData.remove(bingoData)
                                 },
                                 onSelectBingo = { bingoData ->

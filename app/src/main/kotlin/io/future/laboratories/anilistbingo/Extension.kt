@@ -97,6 +97,18 @@ public inline fun <reified T> Context.loadSingle(uri: Uri): T? {
     return data
 }
 
+
+internal fun Context.deleteAllBingoData(bingoId: Int) {
+    val file = File(filesDir, "")
+    val id = bingoId.toString()
+
+    file.walkTopDown().maxDepth(2).forEach {
+        if (!it.isDirectory && it.name == id) {
+            it.delete()
+        }
+    }
+}
+
 /**
  * deletes file under given Path
  * @param storagePath subPath of App file directory
