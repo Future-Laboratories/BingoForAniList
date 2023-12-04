@@ -7,7 +7,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.edit
-import io.future.laboratories.Companion
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
+import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
@@ -15,22 +18,22 @@ import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.logout
 
-internal class APIController(internal val preferences: SharedPreferences) {
+internal class APIController private constructor(private val preferences: SharedPreferences) {
     private val authorization
         get() = "" +
-                "${preferences.getString(Companion.PREFERENCE_ACCESS_TYPE, null)} " +
-                "${preferences.getString(Companion.PREFERENCE_ACCESS_TOKEN, null)}" +
+                "${preferences.getString(PREFERENCE_ACCESS_TYPE, null)} " +
+                "${preferences.getString(PREFERENCE_ACCESS_TOKEN, null)}" +
                 ""
 
     internal fun Uri?.processFragmentData(data: RuntimeData) = this?.fragment?.let {
         preferences.edit {
             val sub1 = it.substringAfter("access_token=")
-            putString(Companion.PREFERENCE_ACCESS_TOKEN, sub1.substringBefore("&"))
+            putString(PREFERENCE_ACCESS_TOKEN, sub1.substringBefore("&"))
             val sub2 = it.substringAfter("&token_type=")
-            putString(Companion.PREFERENCE_ACCESS_TYPE, sub2.substringBefore("&"))
+            putString(PREFERENCE_ACCESS_TYPE, sub2.substringBefore("&"))
             val sub3 = it.substringAfter("&expires_in=").substringBefore("&")
             putLong(
-                Companion.PREFERENCE_ACCESS_EXPIRED,
+                PREFERENCE_ACCESS_EXPIRED,
                 System.currentTimeMillis() + sub3.toInt() * 1000,
             )
         }
@@ -44,7 +47,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
         ).enqueue { _, userResponse ->
             preferences.edit {
                 putLong(
-                    Companion.PREFERENCE_USER_ID,
+                    PREFERENCE_USER_ID,
                     userResponse.body()?.data?.viewer?.id ?: -1L,
                 )
             }
@@ -59,7 +62,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
         if (dataFetchCompleted && !forced) return
 
         val userId = preferences.getLong(
-            Companion.PREFERENCE_USER_ID,
+            PREFERENCE_USER_ID,
             -1L,
         )
 
@@ -85,7 +88,7 @@ internal class APIController(internal val preferences: SharedPreferences) {
 
     internal fun Context.validateKey(): Boolean {
         val isLoggedIn = System.currentTimeMillis() <= preferences.getLong(
-            Companion.PREFERENCE_ACCESS_EXPIRED,
+            PREFERENCE_ACCESS_EXPIRED,
             -1L,
         )
 
@@ -103,5 +106,15 @@ internal class APIController(internal val preferences: SharedPreferences) {
         var runtimeAniListData: MainData? by mutableStateOf(
             initialRuntimeAniListData
         )
+    }
+
+    companion object {
+        @Volatile
+        private var instance: APIController? = null
+
+        internal fun getInstance(preferences: SharedPreferences): APIController =
+            instance ?: synchronized(this) {
+                instance ?: APIController(preferences).also { instance = it }
+            }
     }
 }

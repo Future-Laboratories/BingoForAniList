@@ -53,7 +53,7 @@ public class MainActivity : ComponentActivity() {
     private val runtimeData: SnapshotStateList<BingoData> by lazy { loadAllBingoData() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val apiController = APIController(
+        val apiController = APIController.getInstance(
             preferences = preferences,
         )
 
