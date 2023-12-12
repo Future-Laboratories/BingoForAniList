@@ -40,8 +40,6 @@ internal object ShareController {
 
             startActivity(Intent.createChooser(shareIntent, "Share File"))
         }
-
-        sharedFile.delete()
     }
 
     fun Activity.receive(uri: Uri): BingoData? {

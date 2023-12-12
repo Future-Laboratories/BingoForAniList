@@ -1,6 +1,7 @@
 package io.future.laboratories.anilistbingo.controller
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.compose.runtime.getValue
@@ -16,7 +17,7 @@ import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.enqueue
-import io.future.laboratories.anilistbingo.logout
+import io.future.laboratories.anilistbingo.R
 
 internal class APIController private constructor(private val preferences: SharedPreferences) {
     private val authorization
@@ -25,16 +26,28 @@ internal class APIController private constructor(private val preferences: Shared
                 "${preferences.getString(PREFERENCE_ACCESS_TOKEN, null)}" +
                 ""
 
-    internal fun Uri?.processFragmentData(data: RuntimeData) = this?.fragment?.let {
-        preferences.edit {
-            val sub1 = it.substringAfter("access_token=")
-            putString(PREFERENCE_ACCESS_TOKEN, sub1.substringBefore("&"))
-            val sub2 = it.substringAfter("&token_type=")
-            putString(PREFERENCE_ACCESS_TYPE, sub2.substringBefore("&"))
-            val sub3 = it.substringAfter("&expires_in=").substringBefore("&")
+    /**
+     * Creates a Intent to Login to AniList.
+     */
+    internal fun Context.createLoginIntent() {
+        val url = getString(R.string.anilist_url)
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.setData(Uri.parse(url))
+        startActivity(
+            intent,
+            null,
+        )
+    }
+
+    internal fun processUriData(uri: Uri, data: RuntimeData) {
+        // put the received values into the given preferences
+        preferences.edit(commit = true) {
+            putString(PREFERENCE_ACCESS_TOKEN, uri.getValueOfKey("access_token"))
+            putString(PREFERENCE_ACCESS_TYPE, uri.getValueOfKey("token_type"))
             putLong(
                 PREFERENCE_ACCESS_EXPIRED,
-                System.currentTimeMillis() + sub3.toInt() * 1000,
+                System.currentTimeMillis() + (uri.getValueOfKey("expires_in")
+                    ?: "0").toInt() * 1000,
             )
         }
 
@@ -56,8 +69,27 @@ internal class APIController private constructor(private val preferences: Shared
         }
     }
 
+    /**
+     * Takes a value [key] and returns the associated value as a String
+     *
+     * @param key The key searching for
+     * @return String that represents the value under the given [key]
+     */
+    private fun Uri?.getValueOfKey(key: String): String? {
+        return this?.fragment
+            ?.substringAfter("${key}=")
+            ?.substringBefore("&")
+    }
+
+    /**
+     * fetch data from AniList
+     *
+     * @param forced if true a fetch will be forced, default set to false
+     * @param onFetchFinished additional logic that will be executed when the async fetch finish
+     */
     internal fun RuntimeData.fetchAniList(
         forced: Boolean = false,
+        onFetchFinished: (MainData?) -> Unit = {},
     ) {
         if (dataFetchCompleted && !forced) return
 
@@ -83,9 +115,14 @@ internal class APIController private constructor(private val preferences: Shared
             runtimeAniListData = listResponse.body()?.data?.copy()
 
             dataFetchCompleted = true
+
+            onFetchFinished(runtimeAniListData)
         }
     }
 
+    /**
+     * Validate if [PREFERENCE_ACCESS_EXPIRED] is still valid, if not, try to login again
+     */
     internal fun Context.validateKey(): Boolean {
         val isLoggedIn = System.currentTimeMillis() <= preferences.getLong(
             PREFERENCE_ACCESS_EXPIRED,
@@ -93,7 +130,7 @@ internal class APIController private constructor(private val preferences: Shared
         )
 
         if (!isLoggedIn) {
-            preferences.logout(context = this)
+            createLoginIntent()
         }
 
         return isLoggedIn

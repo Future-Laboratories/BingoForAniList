@@ -7,7 +7,7 @@
     <string name="donation_url" translatable="false">https://ko-fi.com/L3L6QSI1Z</string>
 
     <string name="bingo">Bingo</string>
-    <string name="delete_success">Delete of file was successful</string>
+    <string name="delete_success">Deletion of file was successful</string>
     <string name="delete_permission_error">Error while deletion, make sure the App has the needed permissions</string>
     <string name="delete_file_error">Error while deletion, the file doesn\'t exist</string>
     <string name="donate">Donate</string>

@@ -109,18 +109,14 @@ public class MainActivity : ComponentActivity() {
                 isVisible = { true },
                 onClick = {
                     if (viewModel.isLoggedIn) {
-                        preferences.logout(this@MainActivity)
+                        preferences.logout(this)
 
                         viewModel.runtimeAPIData.runtimeAniListData = null
                         viewModel.isLoggedIn = false
                     } else {
-                        val url = getString(R.string.anilist_url)
-                        val intent = Intent(Intent.ACTION_VIEW)
-                        intent.setData(Uri.parse(url))
-                        startActivity(
-                            intent,
-                            null,
-                        )
+                        with(apiController) {
+                            createLoginIntent()
+                        }
                     }
                 },
             ),
@@ -226,10 +222,11 @@ public class MainActivity : ComponentActivity() {
                                         viewModel.currentPage = viewModel.currentPage.previousPage
                                     },
                                     onClickSave = { bingoData, isNew ->
-                                        save(bingoData, bingoStoragePath("${bingoData.id}"))
                                         if (isNew) {
                                             runtimeData.add(bingoData)
                                         }
+
+                                        save(bingoData, bingoStoragePath("${bingoData.id}"))
 
                                         viewModel.currentPage = Page.BINGO_OVERVIEW()
                                     },
@@ -311,12 +308,7 @@ public class AniListBingoViewModel : ViewModel() {
             initialRuntimeAniListData = activity.loadSingle(TEMP_PATH),
         )
 
-        intent.data?.processFragmentData(data = runtimeAPIData)
-
-        isLoggedIn = activity.validateKey()
-
-        runtimeAPIData.fetchAniList()
-
+        // If The Apps open from a shared Bingo, open in EditorView
         if (intent.scheme == "content") {
             intent.data.let {
                 if (it != null) {
@@ -327,6 +319,19 @@ public class AniListBingoViewModel : ViewModel() {
                     )
                 }
             }
+        } else {
+            // If the app got open from OAuth, process data
+            intent.data?.let {
+                processUriData(uri = it, data = runtimeAPIData)
+            }
+        }
+
+        // Validate if login is (still) valid
+        isLoggedIn = activity.validateKey()
+
+        // Fetch data from AniList and save into TMP_PATH for offline functionality
+        runtimeAPIData.fetchAniList {
+            activity.save(it, TEMP_PATH)
         }
     }
 }
