@@ -58,7 +58,7 @@ public interface API {
                   User(id: ${'$'}userId) {
                     avatar {
                       medium
-                      }
+                    }
                   }
                   MediaListCollection(userId: ${'$'}userId, type: ANIME) {
                     lists {
