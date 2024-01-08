@@ -17,11 +17,13 @@
     <string name="edit_dismiss_header">Abbruch im Gange</string>
     <string name="name">Name</string>
     <string name="options">Einstellungen</string>
+    <string name="options_expire_date">Login Ablaufdatum</string>
     <string name="search_anime">Suche Title</string>
     <string name="search_tag">Suche Tag</string>
     <string name="share">Teilen</string>
     <string name="shuffle">Mischen</string>
     <string name="shuffle_hint">Info: Mischen im Bearbeitungsmodus wird nur auf <u>NEUE</u> Bingo\'s angewendet</string>
+    <string name="version">Version</string>
     <string name="yes">Ja</string>
 
 </resources>

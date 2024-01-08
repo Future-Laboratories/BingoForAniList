@@ -246,7 +246,7 @@ private fun WarningSign() {
     }
 
     LaunchedEffect(key1 = "blink", block = {
-        target = 0.1f
+        target = 0.3f
     })
 
     Icon(
@@ -480,6 +480,31 @@ private fun DropdownText(text: String) {
         textAlign = TextAlign.End,
         modifier = Modifier.fillMaxWidth(),
     )
+}
+
+//endregion
+
+//region TextRow
+
+@Composable
+internal fun TextRow(
+    text: String,
+    value: String,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        Text(
+            text = text,
+            fontSize = 12.sp,
+        )
+
+        Text(
+            text = value,
+            fontSize = 12.sp,
+        )
+    }
 }
 
 //endregion

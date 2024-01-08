@@ -17,11 +17,13 @@
     <string name="edit_dismiss_header">Cancel in progress</string>
     <string name="name">Name</string>
     <string name="options">Options</string>
+    <string name="options_expire_date">Login expire date</string>
     <string name="search_anime">Search title</string>
     <string name="search_tag">Search tag</string>
     <string name="share">Share</string>
     <string name="shuffle">Shuffle</string>
     <string name="shuffle_hint">Info: Shuffle in edit-mode only apply to <u>NEW</u> created Bingo\'s</string>
+    <string name="version">Version</string>
     <string name="yes">Yes</string>
 
 

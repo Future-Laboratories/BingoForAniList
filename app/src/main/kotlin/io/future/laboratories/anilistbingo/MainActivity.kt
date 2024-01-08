@@ -21,6 +21,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModel
+import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
@@ -44,7 +45,7 @@ import io.future.laboratories.ui.theme.AniListBingoTheme
 public class MainActivity : ComponentActivity() {
     private val preferences by lazy {
         getSharedPreferences(
-            PREFERENCE_BASE_KEY,
+            % PREFERENCE_BASE_KEY,
             MODE_PRIVATE,
         )
     }
@@ -234,6 +235,8 @@ public class MainActivity : ComponentActivity() {
                             }
 
                             is Page.OPTIONS -> OptionsPage(
+                                timestamp = preferences.getLong(PREFERENCE_ACCESS_EXPIRED, 0L),
+                                version = BuildConfig.VERSION_NAME,
                                 options = arrayOf(
                                     OptionGroup(
                                         text = stringResource(id = R.string.options_general),
