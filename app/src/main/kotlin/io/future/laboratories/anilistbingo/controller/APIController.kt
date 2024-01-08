@@ -47,7 +47,7 @@ internal class APIController private constructor(private val preferences: Shared
             putLong(
                 PREFERENCE_ACCESS_EXPIRED,
                 System.currentTimeMillis() + (uri.getValueOfKey("expires_in")
-                    ?: "0").toInt() * 1000,
+                    ?: "0").toLong() * 1000L,
             )
         }
 
