@@ -18,12 +18,16 @@ android {
     namespace = "io.future.laboratories.anilistbingo"
     compileSdk = 34
 
+    val major = 1
+    val minor = 0
+    val patch = 0
+
     defaultConfig {
         applicationId = "io.future.laboratories.anilistbingo"
         minSdk = 27
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = major * 100 * 100 + minor * 100 + patch
+        versionName = "$major.$minor.$patch"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -48,6 +52,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     composeOptions {

@@ -45,7 +45,7 @@ import io.future.laboratories.ui.theme.AniListBingoTheme
 public class MainActivity : ComponentActivity() {
     private val preferences by lazy {
         getSharedPreferences(
-            % PREFERENCE_BASE_KEY,
+            PREFERENCE_BASE_KEY,
             MODE_PRIVATE,
         )
     }
