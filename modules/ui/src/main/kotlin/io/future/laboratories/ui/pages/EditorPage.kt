@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
@@ -17,11 +18,13 @@ import androidx.core.content.edit
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.common.plus
 import io.future.laboratories.ui.R
+import io.future.laboratories.ui.components.BackButton
 import io.future.laboratories.ui.components.BingoEditor
 import io.future.laboratories.ui.components.BingoNameField
 import io.future.laboratories.ui.components.DefaultHeader
-import io.future.laboratories.ui.components.DismissDialog
+import io.future.laboratories.ui.components.DefaultWarningDialog
 import io.future.laboratories.ui.components.OptionToggle
 import io.future.laboratories.ui.components.PositiveButton
 
@@ -35,6 +38,7 @@ public fun EditorPage(
     onBackDialogAccept: () -> Unit,
     onClickSave: (BingoData, isNew: Boolean) -> Unit,
 ) {
+    var localShowDialog by remember(showDialog) { mutableStateOf(showDialog) }
     var lastId = preferences.getInt("LAST_USED_ID", 0)
     val localBingoData by remember {
         mutableStateOf(
@@ -56,6 +60,17 @@ public fun EditorPage(
                     }
                 )
             }
+        )
+    }
+
+    if (localShowDialog) {
+        DefaultWarningDialog(
+            header = stringResource(id = R.string.edit_dismiss_header),
+            body = stringResource(id = R.string.edit_dismiss_body),
+            actionButtonText = stringResource(id = R.string.yes),
+            abortText = stringResource(id = android.R.string.cancel),
+            onDismiss = { localShowDialog = false } + onBackDialogDismiss,
+            onAction = onBackDialogAccept,
         )
     }
 
@@ -98,11 +113,7 @@ public fun EditorPage(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                DismissDialog(
-                    showDialog = showDialog,
-                    onDismiss = onBackDialogDismiss,
-                    onAccept = onBackDialogAccept,
-                )
+                BackButton(onClick = { localShowDialog = true })
 
                 PositiveButton(
                     onClick = {

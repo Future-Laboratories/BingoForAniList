@@ -16,7 +16,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
-import io.future.laboratories.common.plus
 import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
@@ -103,29 +101,5 @@ private fun RowScope.BingoEditorField(
                 innerTextField()
             }
         }
-    }
-}
-
-@Composable
-internal fun DismissDialog(
-    showDialog: Boolean,
-    onDismiss: () -> Unit,
-    onAccept: () -> Unit,
-) {
-    var localShowDialog by remember {
-        mutableStateOf(false)
-    }
-
-    BackButton(onClick = { localShowDialog = true })
-
-    if (localShowDialog || showDialog) {
-        DefaultWarningDialog(
-            header = stringResource(id = R.string.edit_dismiss_header),
-            body = stringResource(id = R.string.edit_dismiss_body),
-            actionButtonText = stringResource(id = R.string.yes),
-            abortText = stringResource(id = android.R.string.cancel),
-            onDismiss = { localShowDialog = false } + onDismiss,
-            onAction = onAccept,
-        )
     }
 }
