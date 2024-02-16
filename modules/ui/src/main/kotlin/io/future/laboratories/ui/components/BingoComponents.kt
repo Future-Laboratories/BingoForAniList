@@ -1,7 +1,9 @@
 package io.future.laboratories.ui.components
 
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
@@ -81,12 +84,14 @@ private fun BingoRow(
 
 private val colorFilter = Color.Red.copy(alpha = 0.6f)
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun RowScope.BingoField(
     fieldData: FieldData,
     bingoData: BingoData,
     onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
+    val context = LocalContext.current
     var isMarked by rememberSaveable { mutableStateOf(fieldData.isMarked) }
 
     Box(
@@ -94,11 +99,18 @@ private fun RowScope.BingoField(
             .weight(1f)
             .aspectRatio(1f)
             .border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
-            .clickable {
-                fieldData.isMarked = !fieldData.isMarked
-                isMarked = fieldData.isMarked
-                onValueChanged?.invoke(bingoData)
-            },
+            .combinedClickable(
+                onLongClick = {
+                    Toast
+                        .makeText(context, fieldData.text, Toast.LENGTH_LONG)
+                        .show()
+                },
+                onClick = {
+                    fieldData.isMarked = !fieldData.isMarked
+                    isMarked = fieldData.isMarked
+                    onValueChanged?.invoke(bingoData)
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Text(
