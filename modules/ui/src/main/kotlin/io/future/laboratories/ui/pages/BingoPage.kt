@@ -67,7 +67,7 @@ public fun BingoPage(
     calculateCounts()
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp)
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         item {
             DefaultHeader(title = stringResource(id = R.string.bingo))

@@ -129,7 +129,7 @@ public fun AnimeOverviewPage(
                         AnimeItem(
                             useCards = useCards,
                             animeData = animeData,
-                            bingoData = bingoData.copy(),
+                            bingoData = bingoData.clone(),
                             onClickDelete = onClickDelete,
                             onClick = onSelectAnime,
                         )
