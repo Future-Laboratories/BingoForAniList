@@ -38,8 +38,8 @@ public fun BingoPage(
     }
 
     fun calculateCounts() {
-        val rowCounts = IntArray(5)
-        val columnCounts = IntArray(5)
+        val rowCounts = IntArray(bingoData.size)
+        val columnCounts = IntArray(bingoData.size)
         val diagonalCounts = IntArray(2)
 
         bingoData.rowData.forEachIndexed { rowIndex, rowData ->
@@ -54,14 +54,14 @@ public fun BingoPage(
                 diagonalCounts[0]++
             }
 
-            if (rowData.fieldData[4 - rowIndex].isMarked) {
+            if (rowData.fieldData[bingoData.size - 1 - rowIndex].isMarked) {
                 diagonalCounts[1]++
             }
         }
 
-        horizontal = rowCounts.count { it == 5 }
-        vertical = columnCounts.count { it == 5 }
-        diagonal = diagonalCounts.count { it == 5 }
+        horizontal = rowCounts.count { it == bingoData.size }
+        vertical = columnCounts.count { it == bingoData.size }
+        diagonal = diagonalCounts.count { it == bingoData.size }
     }
 
     calculateCounts()
@@ -85,13 +85,13 @@ public fun BingoPage(
             BingoStat(
                 name = stringResource(id = R.string.bingo_horizontal),
                 outOf = horizontal,
-                max = 5,
+                max = bingoData.size,
             )
 
             BingoStat(
                 name = stringResource(id = R.string.bingo_vertical),
                 outOf = vertical,
-                max = 5,
+                max = bingoData.size,
             )
 
             BingoStat(

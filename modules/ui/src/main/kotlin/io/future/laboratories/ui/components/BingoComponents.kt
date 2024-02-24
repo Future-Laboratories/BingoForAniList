@@ -55,7 +55,7 @@ internal fun Bingo(
     onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
     Column {
-        bingoData.rowData.take(5).forEach { rowData ->
+        bingoData.rowData.take(bingoData.size).forEach { rowData ->
             BingoRow(
                 rowData = rowData,
                 bingoData = bingoData,
@@ -72,7 +72,7 @@ private fun BingoRow(
     onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
     Row {
-        rowData.fieldData.take(5).forEach { fieldData ->
+        rowData.fieldData.take(bingoData.size).forEach { fieldData ->
             BingoField(
                 fieldData = fieldData,
                 bingoData = bingoData,

@@ -7,12 +7,13 @@ public data class BingoData(
     val id : Int,
     var name : String,
     var rowData : List<RowData>,
+    var size: Int = 5,
 ) : Cloneable {
     /**
      * returns a completely new Instance of BingoData, instead of a soft-copy
      */
     public override fun clone(): BingoData =
-        BingoData(id, name, rowData.map { rowData -> rowData.clone() })
+        BingoData(id, name, rowData.map { rowData -> rowData.clone() }, size)
 }
 
 @JsonClass(generateAdapter = true)

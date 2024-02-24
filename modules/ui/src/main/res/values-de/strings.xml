@@ -5,6 +5,7 @@
     <string name="bingo">Bingo</string>
     <string name="bingo_diagonal">Diagonal</string>
     <string name="bingo_horizontal">Horizontal</string>
+    <string name="bingo_size">Bingogröße</string>
     <string name="bingo_stats">Statistiken</string>
     <string name="bingo_vertical">Vertikal</string>
     <string name="complete">Abschluss</string>

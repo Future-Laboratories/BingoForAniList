@@ -31,7 +31,7 @@ internal object ShareController {
             shareIntent.setType("application/json")
             shareIntent.putExtra(
                 Intent.EXTRA_STREAM,
-                FileProvider.getUriForFile(this, getString(R.string.provider_name), sharedFile)
+                FileProvider.getUriForFile(this, getString(R.string.provider_name), sharedFile),
             )
 
             val extraString = getString(R.string.share_message)

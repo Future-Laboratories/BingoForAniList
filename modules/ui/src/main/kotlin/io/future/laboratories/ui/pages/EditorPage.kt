@@ -8,8 +8,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -25,6 +27,7 @@ import io.future.laboratories.ui.components.BingoEditor
 import io.future.laboratories.ui.components.BingoNameField
 import io.future.laboratories.ui.components.DefaultHeader
 import io.future.laboratories.ui.components.DefaultWarningDialog
+import io.future.laboratories.ui.components.OptionDropdown
 import io.future.laboratories.ui.components.OptionToggle
 import io.future.laboratories.ui.components.PositiveButton
 
@@ -39,6 +42,7 @@ public fun EditorPage(
     onClickSave: (BingoData, isNew: Boolean) -> Unit,
 ) {
     var localShowDialog by remember(showDialog) { mutableStateOf(showDialog) }
+    var bingoSize by rememberSaveable { mutableIntStateOf(bingoData?.size ?: 5) }
     var lastId = preferences.getInt("LAST_USED_ID", 0)
     val localBingoData by remember {
         mutableStateOf(
@@ -48,16 +52,17 @@ public fun EditorPage(
                 else -> BingoData(
                     id = ++lastId,
                     name = "",
-                    rowData = List(5) {
+                    rowData = List(bingoSize) {
                         RowData(
-                            fieldData = List(5) {
+                            fieldData = List(bingoSize) {
                                 FieldData(
                                     text = "",
                                     isMarked = false
                                 )
                             }
                         )
-                    }
+                    },
+                    size = bingoSize,
                 )
             }
         )
@@ -81,7 +86,7 @@ public fun EditorPage(
             BingoNameField(bingoData = localBingoData)
         }
 
-        item {
+        item(bingoSize) {
             DefaultHeader(title = stringResource(id = R.string.bingo))
 
             BingoEditor(bingoData = localBingoData)
@@ -103,6 +108,33 @@ public fun EditorPage(
                     text = stringResource(id = R.string.shuffle_hint),
                     fontSize = 14.sp,
                 )
+            }
+
+            OptionDropdown(
+                optionName = stringResource(id = R.string.bingo_size),
+                values = (1..12).associate { it.toString() to it.toString() },
+                initialValue = bingoSize.toString()
+            ) {
+                val localSize = it.toInt()
+
+                localBingoData.rowData = List(localSize) { rowIndex ->
+                    RowData(
+                        fieldData = List(localSize) { fieldIndex ->
+                            localBingoData
+                                .rowData
+                                .getOrNull(rowIndex)
+                                ?.fieldData
+                                ?.getOrNull(fieldIndex)
+                                ?: FieldData(
+                                    text = "",
+                                    isMarked = false
+                                )
+                        }
+                    )
+                }
+                localBingoData.size = localSize
+
+                bingoSize = localSize
             }
         }
 
@@ -144,10 +176,10 @@ private fun validateDataAndSave(
 
     if (bingoData.name.isBlank()) return
 
-    if (bingoData.rowData.count() != 5) return
+    if (bingoData.rowData.count() != bingoData.size) return
 
     bingoData.rowData.forEach { row ->
-        if (row.fieldData.count() != 5) return
+        if (row.fieldData.count() != bingoData.size) return
 
         row.fieldData.forEach { field ->
             if (field.text.isBlank()) return
@@ -158,7 +190,7 @@ private fun validateDataAndSave(
         bingoData.rowData = bingoData.rowData
             .flatMap { it.fieldData }
             .shuffled()
-            .chunked(5)
+            .chunked(bingoData.size)
             .map { fieldData -> RowData(fieldData) }
     }
 

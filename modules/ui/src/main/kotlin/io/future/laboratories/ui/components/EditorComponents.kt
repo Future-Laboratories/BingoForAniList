@@ -55,8 +55,8 @@ internal fun BingoEditor(
     bingoData: BingoData,
 ) {
     Column {
-        bingoData.rowData.take(5).forEach { rowData ->
-            BingoEditorRow(rowData = rowData)
+        bingoData.rowData.take(bingoData.size).forEach { rowData ->
+            BingoEditorRow(rowData = rowData, size = bingoData.size)
         }
     }
 }
@@ -64,9 +64,10 @@ internal fun BingoEditor(
 @Composable
 private fun BingoEditorRow(
     rowData: RowData,
+    size: Int,
 ) {
     Row {
-        rowData.fieldData.take(5).forEach { fieldData ->
+        rowData.fieldData.take(size).forEach { fieldData ->
             BingoEditorField(fieldData = fieldData)
         }
     }
