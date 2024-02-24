@@ -12,8 +12,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollection
@@ -32,12 +36,13 @@ import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
+import io.future.laboratories.ui.components.CustomPullToRefreshContainer
 import io.future.laboratories.ui.components.DefaultHeader
 import io.future.laboratories.ui.components.DefaultSearchBar
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.ModalBottomSheet
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 public fun AnimeOverviewPage(
     bingoData: BingoData,
@@ -46,9 +51,19 @@ public fun AnimeOverviewPage(
     pinned: DropdownOption,
     animeDataList: MediaListCollection?,
     mediaTags: List<MediaTag>?,
+    onRefresh: () -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
+    // Refreshing
+    val state = rememberPullToRefreshState()
+    if (state.isRefreshing) {
+        LaunchedEffect(key1 = "refresh") {
+            onRefresh()
+            state.endRefresh()
+        }
+    }
+
     // Searchbar - Anime
     var animeQuery by rememberSaveable { mutableStateOf("") }
     var animeSearchActive by rememberSaveable { mutableStateOf(false) }
@@ -94,7 +109,13 @@ public fun AnimeOverviewPage(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(state.nestedScrollConnection),
+    ) {
+        CustomPullToRefreshContainer(state = state)
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(4.dp)

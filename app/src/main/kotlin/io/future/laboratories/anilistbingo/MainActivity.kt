@@ -144,6 +144,12 @@ public class MainActivity : ComponentActivity() {
                                 pinned = options[PINNED_CATEGORY],
                                 animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
                                 mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
+                                onRefresh = {
+                                    viewModel.fetchAPIData(
+                                        apiController = apiController,
+                                        activity = this@MainActivity,
+                                    )
+                                },
                                 onClickDelete = { bingoData, animeData ->
                                     val deletionSuccessful = deleteSingle(
                                         bingoPath(
@@ -333,6 +339,16 @@ public class AniListBingoViewModel : ViewModel() {
         isLoggedIn = activity.validateKey()
 
         // Fetch data from AniList and save into TMP_PATH for offline functionality
+        fetchAPIData(
+            apiController = apiController,
+            activity = activity,
+        )
+    }
+
+    internal fun fetchAPIData(
+        apiController: APIController,
+        activity: Activity,
+    ) = with(apiController) {
         runtimeAPIData.fetchAniList {
             activity.save(it, TEMP_PATH)
         }

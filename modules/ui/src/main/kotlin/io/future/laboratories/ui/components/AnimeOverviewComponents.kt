@@ -3,11 +3,13 @@ package io.future.laboratories.ui.components
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -32,8 +34,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -51,6 +57,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
@@ -177,6 +184,29 @@ internal fun AnimeItem(
             content = content,
         )
     }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun BoxScope.CustomPullToRefreshContainer(
+    state: PullToRefreshState,
+) {
+    val targetAlpha by remember {
+        derivedStateOf { if (state.progress >= 1f) 1f else 0.1f }
+    }
+    val alphaState by animateFloatAsState(
+        targetValue = targetAlpha,
+        animationSpec = tween(150),
+        label = "refresh"
+    )
+
+    PullToRefreshContainer(
+        modifier = Modifier
+            .align(Alignment.TopCenter)
+            .zIndex(1f),
+        containerColor = PullToRefreshDefaults.containerColor.copy(alpha = alphaState),
+        state = state,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
