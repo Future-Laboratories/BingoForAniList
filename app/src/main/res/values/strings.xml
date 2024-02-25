@@ -24,6 +24,11 @@
     <string name="overview_anime">Anime Overview</string>
     <string name="share_message">Checkout my new Bingo!</string>
 
+    <!--Error-code Messages-->
+    <string name="error_429">Too Many Requests: retry in a few Minutes again</string>
+    <string name="error_500">Internal Server Error</string>
+    <string name="error_unknown_d">Unknown error: %d</string>
+
     <!--Names returned by AniList + "No Selection"-->
     <string-array name="option_pinned_category_values" tools:ignore="ExtraTranslation">
         <item>No Selection</item>

@@ -21,6 +21,7 @@ import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
 import io.future.laboratories.common.plus
+import io.future.laboratories.ui.BuildConfig
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.BackButton
 import io.future.laboratories.ui.components.BingoEditor
@@ -30,6 +31,7 @@ import io.future.laboratories.ui.components.DefaultWarningDialog
 import io.future.laboratories.ui.components.OptionDropdown
 import io.future.laboratories.ui.components.OptionToggle
 import io.future.laboratories.ui.components.PositiveButton
+import kotlin.random.Random
 
 @Composable
 public fun EditorPage(
@@ -57,7 +59,7 @@ public fun EditorPage(
                             fieldData = List(bingoSize) {
                                 FieldData(
                                     text = "",
-                                    isMarked = false
+                                    isMarked = false,
                                 )
                             }
                         )
@@ -113,7 +115,7 @@ public fun EditorPage(
             OptionDropdown(
                 optionName = stringResource(id = R.string.bingo_size),
                 values = (1..12).associate { it.toString() to it.toString() },
-                initialValue = bingoSize.toString()
+                initialValue = bingoSize.toString(),
             ) {
                 val localSize = it.toInt()
 
@@ -127,7 +129,7 @@ public fun EditorPage(
                                 ?.getOrNull(fieldIndex)
                                 ?: FieldData(
                                     text = "",
-                                    isMarked = false
+                                    isMarked = false,
                                 )
                         }
                     )
@@ -135,6 +137,18 @@ public fun EditorPage(
                 localBingoData.size = localSize
 
                 bingoSize = localSize
+            }
+
+            if (BuildConfig.DEBUG) {
+                PositiveButton(onClick = {
+                    localBingoData.rowData = localBingoData.rowData.map { rowData ->
+                        rowData.copy(fieldData = rowData.fieldData.map { fieldData ->
+                            fieldData.copy(text = Random.nextInt().toString())
+                        })
+                    }
+                }) {
+                    Text(text = "Fill with Debug values")
+                }
             }
         }
 

@@ -1,8 +1,10 @@
 package io.future.laboratories.anilistbingo
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.core.content.edit
 import com.squareup.moshi.JsonAdapter
@@ -137,7 +139,7 @@ internal enum class Status {
 
 //region logout
 
-public fun SharedPreferences.logout(context: Context) {
+internal fun SharedPreferences.logout(context: Context) {
     context.deleteSingle(Companion.TEMP_PATH)
 
     edit {
@@ -147,5 +149,23 @@ public fun SharedPreferences.logout(context: Context) {
         putLong(Companion.PREFERENCE_USER_ID, -1L)
     }
 }
+
+//endregion
+
+//region Activity
+
+internal fun Activity.errorCodeHandle(code: Int) = defaultToast(
+    message = when (code) {
+        429 -> getString(R.string.error_429)
+        500 -> getString(R.string.error_500)
+        else -> getString(R.string.error_unknown_d, code)
+    }
+)
+
+internal fun Activity.defaultToast(message: String) = Toast.makeText(
+    this,
+    message,
+    Toast.LENGTH_LONG,
+).show()
 
 //endregion

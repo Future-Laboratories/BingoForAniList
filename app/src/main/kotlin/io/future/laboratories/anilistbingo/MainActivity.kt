@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -148,6 +147,7 @@ public class MainActivity : ComponentActivity() {
                                     viewModel.fetchAPIData(
                                         apiController = apiController,
                                         activity = this@MainActivity,
+                                        forced = true,
                                     )
                                 },
                                 onClickDelete = { bingoData, animeData ->
@@ -164,8 +164,7 @@ public class MainActivity : ComponentActivity() {
                                         Status.PermissionDenied -> R.string.delete_permission_error
                                     }
 
-                                    Toast.makeText(this@MainActivity, toastText, Toast.LENGTH_LONG)
-                                        .show()
+                                    defaultToast(getString(toastText))
                                 },
                                 onSelectAnime = { bingoData, animeData ->
                                     viewModel.currentPage = Page.BINGO(
@@ -331,7 +330,11 @@ public class AniListBingoViewModel : ViewModel() {
         } else {
             // If the app got open from OAuth, process data
             intent.data?.let {
-                processUriData(uri = it, data = runtimeAPIData)
+                processUriData(
+                    uri = it,
+                    data = runtimeAPIData,
+                    onErrorCode = activity::errorCodeHandle
+                )
             }
         }
 
@@ -348,8 +351,9 @@ public class AniListBingoViewModel : ViewModel() {
     internal fun fetchAPIData(
         apiController: APIController,
         activity: Activity,
+        forced: Boolean = false,
     ) = with(apiController) {
-        runtimeAPIData.fetchAniList {
+        runtimeAPIData.fetchAniList(forced = forced, onErrorCode = activity::errorCodeHandle) {
             activity.save(it, TEMP_PATH)
         }
     }

@@ -39,7 +39,11 @@ internal class APIController private constructor(private val preferences: Shared
         )
     }
 
-    internal fun processUriData(uri: Uri, data: RuntimeData) {
+    internal fun processUriData(
+        uri: Uri,
+        data: RuntimeData,
+        onErrorCode: (Int) -> Unit,
+    ) {
         // put the received values into the given preferences
         preferences.edit(commit = true) {
             putString(PREFERENCE_ACCESS_TOKEN, uri.getValueOfKey("access_token"))
@@ -65,7 +69,7 @@ internal class APIController private constructor(private val preferences: Shared
                 )
             }
 
-            data.fetchAniList(forced = true)
+            data.fetchAniList(forced = true, onErrorCode = onErrorCode)
         }
     }
 
@@ -89,6 +93,7 @@ internal class APIController private constructor(private val preferences: Shared
      */
     internal fun RuntimeData.fetchAniList(
         forced: Boolean = false,
+        onErrorCode: (Int) -> Unit,
         onFetchFinished: (MainData?) -> Unit = {},
     ) {
         if (dataFetchCompleted && !forced) return
@@ -111,13 +116,22 @@ internal class APIController private constructor(private val preferences: Shared
                     "userId" to userId,
                 ),
             ),
-        ).enqueue(onFailure = { _, _ -> dataFetchCompleted = true }) { _, listResponse ->
-            runtimeAniListData = listResponse.body()?.data?.copy()
+        ).enqueue(
+            onFailure = { _, _ -> dataFetchCompleted = true },
+            onResponse = { _, listResponse ->
+                if (listResponse.code() == 200) {
+                    runtimeAniListData = listResponse.body()?.data?.copy()
 
-            dataFetchCompleted = true
+                    dataFetchCompleted = true
 
-            onFetchFinished(runtimeAniListData)
-        }
+                    onFetchFinished(runtimeAniListData)
+                } else {
+                    onErrorCode(listResponse.code())
+
+                    dataFetchCompleted = true
+                }
+            },
+        )
     }
 
     /**
