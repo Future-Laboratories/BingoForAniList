@@ -1,6 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
-@Suppress("DSL_SCOPE_VIOLATION") // TODO: Remove once KTIJ-19369 is fixed
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
@@ -44,20 +43,24 @@ android {
             )
         }
     }
+
+    val javaVersion = JavaVersion.VERSION_21
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = javaVersion.toString()
     }
     buildFeatures {
         buildConfig = true
         compose = true
     }
+    val composeCompiler: String by project
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.3"
+        kotlinCompilerExtensionVersion = composeCompiler
     }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
