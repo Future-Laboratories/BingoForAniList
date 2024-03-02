@@ -336,13 +336,16 @@ internal fun DefaultNavIcon(
 
 @Composable
 private fun DefaultDropdownIcon(
+    modifier: Modifier = Modifier,
     imageVector: ImageVector,
     contentDescription: String,
 ) {
     Icon(
         imageVector = imageVector,
         contentDescription = contentDescription,
-        modifier = Modifier.size(20.dp),
+        modifier = Modifier
+            .size(20.dp)
+            .then(modifier),
         tint = textColor,
     )
 }
@@ -358,6 +361,7 @@ internal fun DropdownRow(
         text = {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 DefaultDropdownIcon(
+                    modifier = Modifier.align(Alignment.CenterVertically),
                     imageVector = imageVector,
                     contentDescription = contentDescription,
                 )
@@ -431,13 +435,16 @@ private fun DropdownBox(
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
     var currentOptionText by rememberSaveable { mutableStateOf(if (initialValue in values) initialValue else "") }
+
     PositiveButton(
         onClick = { expanded = !expanded },
     ) {
         Icon(
             imageVector = Icons.Rounded.ArrowDropDown,
             contentDescription = null,
+            modifier = Modifier.align(Alignment.CenterVertically),
         )
+
         Text(
             text = currentOptionText,
             textAlign = TextAlign.End,

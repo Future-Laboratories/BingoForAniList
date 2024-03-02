@@ -45,6 +45,7 @@ public fun EditorPage(
 ) {
     var localShowDialog by remember(showDialog) { mutableStateOf(showDialog) }
     var bingoSize by rememberSaveable { mutableIntStateOf(bingoData?.size ?: 5) }
+    var sizeChangeCount by rememberSaveable { mutableIntStateOf(0) }
     var lastId = preferences.getInt("LAST_USED_ID", 0)
     val localBingoData by remember {
         mutableStateOf(
@@ -88,7 +89,7 @@ public fun EditorPage(
             BingoNameField(bingoData = localBingoData)
         }
 
-        item(bingoSize) {
+        item(sizeChangeCount) {
             DefaultHeader(title = stringResource(id = R.string.bingo))
 
             BingoEditor(bingoData = localBingoData)
@@ -114,7 +115,7 @@ public fun EditorPage(
 
             OptionDropdown(
                 optionName = stringResource(id = R.string.bingo_size),
-                values = (1..12).associate { it.toString() to it.toString() },
+                values = (1..11).associate { it.toString() to it.toString() },
                 initialValue = bingoSize.toString(),
             ) {
                 val localSize = it.toInt()
@@ -137,15 +138,24 @@ public fun EditorPage(
                 localBingoData.size = localSize
 
                 bingoSize = localSize
+
+                sizeChangeCount += 1
             }
 
             if (BuildConfig.DEBUG) {
                 PositiveButton(onClick = {
-                    localBingoData.rowData = localBingoData.rowData.map { rowData ->
-                        rowData.copy(fieldData = rowData.fieldData.map { fieldData ->
-                            fieldData.copy(text = Random.nextInt().toString())
-                        })
+                    localBingoData.rowData = List(bingoSize) { _ ->
+                        RowData(
+                            fieldData = List(bingoSize) { _ ->
+                                FieldData(
+                                    text = Random.nextInt().toString(),
+                                    isMarked = false,
+                                )
+                            }
+                        )
                     }
+
+                    sizeChangeCount += 1
                 }) {
                     Text(text = "Fill with Debug values")
                 }
