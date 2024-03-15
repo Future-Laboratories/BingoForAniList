@@ -1,9 +1,9 @@
 package io.future.laboratories.anilistapi
 
-import io.future.laboratories.anilistapi.data.AniListBody
-import io.future.laboratories.anilistapi.data.DataHolder
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.ViewerData
+import io.future.laboratories.anilistapi.data.base.AniListBody
+import io.future.laboratories.anilistapi.data.base.DataHolder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

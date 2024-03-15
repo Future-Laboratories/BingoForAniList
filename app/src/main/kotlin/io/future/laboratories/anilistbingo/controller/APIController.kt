@@ -14,8 +14,8 @@ import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
-import io.future.laboratories.anilistapi.data.AniListBody
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.base.AniListBody
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.R
 
