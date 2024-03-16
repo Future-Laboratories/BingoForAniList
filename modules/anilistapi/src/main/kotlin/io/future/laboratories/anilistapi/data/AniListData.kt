@@ -21,12 +21,35 @@ public data class MediaTag(
 @JsonClass(generateAdapter = true)
 public data class User(
     val avatar: UserAvatar,
+    val mediaListOptions: MediaListOptions?,
 )
 
 @JsonClass(generateAdapter = true)
 public data class UserAvatar(
     val medium: String,
 )
+
+@JsonClass(generateAdapter = true)
+public data class MediaListOptions(
+    val scoreFormat: ScoreFormat,
+)
+
+public enum class ScoreFormat(public val value: String) {
+    @Json(name = "POINT_100")
+    POINT_100("POINT_100"),
+
+    @Json(name = "POINT_10_DECIMAL")
+    POINT_10_DECIMAL("POINT_10_DECIMAL"),
+
+    @Json(name = "POINT_10")
+    POINT_10("POINT_10"),
+
+    @Json(name = "POINT_5")
+    POINT_5("POINT_5"),
+
+    @Json(name = "POINT_3")
+    POINT_3("POINT_3"),
+}
 
 @JsonClass(generateAdapter = true)
 public data class MediaListCollection(

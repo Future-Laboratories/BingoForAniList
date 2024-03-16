@@ -59,6 +59,9 @@ public interface API {
                     avatar {
                       medium
                     }
+                    mediaListOptions {
+                        scoreFormat
+                    }
                   }
                   MediaListCollection(userId: ${'$'}userId, type: ANIME) {
                     lists {
