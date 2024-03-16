@@ -2,7 +2,7 @@ package io.future.laboratories.anilistapi
 
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.ViewerData
-import io.future.laboratories.anilistapi.data.base.AniListBody
+import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.data.base.DataHolder
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,7 +26,7 @@ public interface API {
     public fun postAniListViewer(
         @Header("Authorization") authorization: String,
         @Query("response_type") token: String = "token",
-        @Body json: AniListBody,
+        @Body json: AniListQueryBody,
     ): DataHolderCall<ViewerData>
 
     @POST("/")
@@ -37,7 +37,7 @@ public interface API {
     public fun postAniList(
         @Header("Authorization") authorization: String,
         @Query("response_type") token: String = "token",
-        @Body json: AniListBody,
+        @Body json: AniListQueryBody,
     ): DataHolderCall<MainData>
 
     public companion object {

@@ -15,7 +15,7 @@ import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MainData
-import io.future.laboratories.anilistapi.data.base.AniListBody
+import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.R
 
@@ -57,7 +57,7 @@ internal class APIController private constructor(private val preferences: Shared
 
         api.postAniListViewer(
             authorization = authorization,
-            json = AniListBody(
+            json = AniListQueryBody(
                 API.aniListViewerQuery,
                 emptyMap(),
             ),
@@ -110,7 +110,7 @@ internal class APIController private constructor(private val preferences: Shared
 
         api.postAniList(
             authorization = authorization,
-            json = AniListBody(
+            json = AniListQueryBody(
                 query = API.aniListMainQuery,
                 variables = mapOf(
                     "userId" to userId,
