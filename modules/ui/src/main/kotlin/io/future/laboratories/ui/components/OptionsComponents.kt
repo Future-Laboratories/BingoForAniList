@@ -17,6 +17,7 @@ public abstract class OptionData<T : Any> {
     internal abstract val name: @Composable () -> String
     internal abstract val defaultValue: T
     internal abstract val isVisible: (() -> Boolean)?
+    internal abstract val onValueChanged: ((T) -> Unit)?
 
     public var currentValue: T by LazyMutableState()
 
@@ -49,6 +50,10 @@ public abstract class OptionData<T : Any> {
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
             _currentValue = value
+
+            _currentValue.saveData()
+
+            onValueChanged?.invoke(_currentValue)
         }
     }
 }
@@ -65,20 +70,20 @@ public data class BooleanOption(
     override val name: @Composable () -> String,
     override val defaultValue: Boolean,
     override val isVisible: (() -> Boolean)? = null,
+    override val onValueChanged: ((Boolean) -> Unit)? = null,
 ) : OptionData<Boolean>() {
     @Composable
     override fun Layout() {
         OptionToggle(
             optionName = name(),
             initialValue = loadData(),
-            onCheckedChange = { it.saveData() },
+            onCheckedChange = { currentValue = it },
         )
     }
 
     override fun loadData(): Boolean = preferences.getBoolean(key.key, defaultValue)
 
     override fun Boolean.saveData(): Unit = preferences.edit {
-        currentValue = this@saveData
         putBoolean(key.key, this@saveData)
     }
 }
@@ -90,6 +95,7 @@ public data class DropdownOption(
     override val defaultValue: String,
     internal val values: @Composable () -> Map<String, String>,
     override val isVisible: (() -> Boolean)? = null,
+    override val onValueChanged: ((String) -> Unit)? = null,
 ) : OptionData<String>() {
     @Composable
     override fun Layout() {
@@ -97,14 +103,13 @@ public data class DropdownOption(
             optionName = name(),
             values = values(),
             initialValue = currentValue,
-            onCheckedChange = { it.saveData() },
+            onCheckedChange = { currentValue = it },
         )
     }
 
     override fun loadData(): String = preferences.getString(key.key, defaultValue)!!
 
     override fun String.saveData(): Unit = preferences.edit {
-        currentValue = this@saveData
         putString(key.key, this@saveData)
     }
 }

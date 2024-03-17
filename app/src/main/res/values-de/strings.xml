@@ -12,9 +12,11 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="options">Optionen</string>
+    <string name="options_account">Konto</string>
     <string name="options_appearance">Aussehen</string>
     <string name="options_general">Allgemein</string>
     <string name="option_pinned_category">Angepinnte Kategorie</string>
+    <string name="option_scoring_system">Bewertungssystem</string>
     <string name="option_use_cards">Verwende Karten</string>
     <string name="option_visibility">Alle Anime anzeigen</string>
     <string name="overview_bingo">Bingo Übersicht</string>

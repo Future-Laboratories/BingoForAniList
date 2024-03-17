@@ -26,6 +26,7 @@ import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
+import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
 import io.future.laboratories.anilistbingo.controller.APIController
@@ -34,6 +35,7 @@ import io.future.laboratories.anilistbingo.controller.ShareController.receive
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.CustomScaffold
 import io.future.laboratories.ui.DropDownItemData
+import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionGroup
 import io.future.laboratories.ui.pages.AnimeOverviewPage
 import io.future.laboratories.ui.pages.BingoOverviewPage
@@ -78,49 +80,14 @@ public class MainActivity : ComponentActivity() {
 
         setupBackpressHandle(viewModel)
 
-        val dropDownItems = arrayOf(
-            DropDownItemData(
-                textId = { R.string.options },
-                contentDescription = null,
-                imageVector = Icons.Rounded.Settings,
-                isVisible = { viewModel.currentPage !is Page.OPTIONS },
-                onClick = {
-                    viewModel.currentPage = Page.OPTIONS(sourcePage = viewModel.currentPage)
-                },
-            ),
-            DropDownItemData(
-                textId = { R.string.donate },
-                contentDescription = null,
-                imageVector = Icons.Rounded.Favorite,
-                isVisible = { true },
-                onClick = {
-                    val url = getString(R.string.donation_url)
-                    val intent = Intent(Intent.ACTION_VIEW)
-                    intent.setData(Uri.parse(url))
-                    startActivity(
-                        intent,
-                        null,
-                    )
-                }
-            ),
-            DropDownItemData(
-                textId = { if (viewModel.isLoggedIn) R.string.logout else R.string.login },
-                contentDescription = null,
-                imageVector = Icons.Rounded.AccountCircle,
-                isVisible = { true },
-                onClick = {
-                    if (viewModel.isLoggedIn) {
-                        preferences.logout(this)
+        val dropDownItems = createDropDownItemData(
+            apiController = apiController,
+            viewModel = viewModel,
+        )
 
-                        viewModel.runtimeAPIData.runtimeAniListData = null
-                        viewModel.isLoggedIn = false
-                    } else {
-                        with(apiController) {
-                            createLoginIntent()
-                        }
-                    }
-                },
-            ),
+        syncOptions(
+            options = options,
+            viewModel = viewModel,
         )
 
         setContent {
@@ -144,8 +111,11 @@ public class MainActivity : ComponentActivity() {
                                 pinned = options[PINNED_CATEGORY],
                                 animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
                                 mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
-                                scoreFormat = viewModel.runtimeAPIData.runtimeAniListData?.user?.mediaListOptions?.scoreFormat
-                                    ?: ScoreFormat.POINT_100,
+                                scoreFormat = ScoreFormat.entries.first {
+                                    it.value == options.get<DropdownOption>(
+                                        SCORING_SYSTEM
+                                    ).currentValue
+                                },
                                 onRefresh = {
                                     viewModel.fetchAPIData(
                                         apiController = apiController,
@@ -258,6 +228,12 @@ public class MainActivity : ComponentActivity() {
                                         options = listOfNotNull(
                                             options[USE_CARDS],
                                         )
+                                    ),
+                                    OptionGroup(
+                                        text = stringResource(id = R.string.options_account),
+                                        options = listOfNotNull(
+                                            options[SCORING_SYSTEM],
+                                        )
                                     )
                                 )
                             )
@@ -265,6 +241,64 @@ public class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun createDropDownItemData(
+        apiController: APIController,
+        viewModel: AniListBingoViewModel,
+    ) = arrayOf(
+        DropDownItemData(
+            textId = { R.string.options },
+            contentDescription = null,
+            imageVector = Icons.Rounded.Settings,
+            isVisible = { viewModel.currentPage !is Page.OPTIONS },
+            onClick = {
+                viewModel.currentPage = Page.OPTIONS(sourcePage = viewModel.currentPage)
+            },
+        ),
+        DropDownItemData(
+            textId = { R.string.donate },
+            contentDescription = null,
+            imageVector = Icons.Rounded.Favorite,
+            isVisible = { true },
+            onClick = {
+                val url = getString(R.string.donation_url)
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setData(Uri.parse(url))
+                startActivity(
+                    intent,
+                    null,
+                )
+            }
+        ),
+        DropDownItemData(
+            textId = { if (viewModel.isLoggedIn) R.string.logout else R.string.login },
+            contentDescription = null,
+            imageVector = Icons.Rounded.AccountCircle,
+            isVisible = { true },
+            onClick = {
+                if (viewModel.isLoggedIn) {
+                    preferences.logout(this)
+
+                    viewModel.runtimeAPIData.runtimeAniListData = null
+                    viewModel.isLoggedIn = false
+                } else {
+                    with(apiController) {
+                        createLoginIntent()
+                    }
+                }
+            },
+        ),
+    )
+
+    private fun syncOptions(
+        options: Options,
+        viewModel: AniListBingoViewModel,
+    ) {
+        viewModel.runtimeAPIData.runtimeAniListData?.user?.let {
+            options.get<DropdownOption>(SCORING_SYSTEM).currentValue =
+                it.mediaListOptions?.scoreFormat?.value.orEmpty()
         }
     }
 
@@ -298,7 +332,7 @@ public class MainActivity : ComponentActivity() {
     }
 }
 
-public class AniListBingoViewModel : ViewModel() {
+internal class AniListBingoViewModel : ViewModel() {
     // compose var
     internal var currentPage: Page by mutableStateOf(Page.BINGO_OVERVIEW())
     internal var isLoggedIn: Boolean by mutableStateOf(false)

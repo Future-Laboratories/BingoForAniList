@@ -15,9 +15,11 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="options">Options</string>
+    <string name="options_account">Account</string>
     <string name="options_appearance">Appearance</string>
     <string name="options_general">General</string>
     <string name="option_pinned_category">Pinned category</string>
+    <string name="option_scoring_system">Scoring System</string>
     <string name="option_use_cards">Use cards</string>
     <string name="option_visibility">Show all anime</string>
     <string name="overview_bingo">Bingo Overview</string>
@@ -38,6 +40,14 @@
         <item>Planning</item>
         <item>Rewatching</item>
         <item>Watching</item>
+    </string-array>
+
+    <string-array name="option_score_system" tools:ignore="ExtraTranslation">
+        <item>100 Point (55/100)</item>
+        <item>10 Point Decimal (5.5/10)</item>
+        <item>10 Point (5/10)</item>
+        <item>5 Star (3/5)</item>
+        <item>3 Point Smiley</item>
     </string-array>
 
 </resources>

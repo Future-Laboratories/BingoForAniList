@@ -36,19 +36,19 @@ public data class MediaListOptions(
 
 public enum class ScoreFormat(public val value: String) {
     @Json(name = "POINT_100")
-    POINT_100("POINT_100"),
+    POINT_100("100 Point (55/100)"),
 
     @Json(name = "POINT_10_DECIMAL")
-    POINT_10_DECIMAL("POINT_10_DECIMAL"),
+    POINT_10_DECIMAL("10 Point Decimal (5.5/10)"),
 
     @Json(name = "POINT_10")
-    POINT_10("POINT_10"),
+    POINT_10("10 Point (5/10)"),
 
     @Json(name = "POINT_5")
-    POINT_5("POINT_5"),
+    POINT_5("5 Star (3/5)"),
 
     @Json(name = "POINT_3")
-    POINT_3("POINT_3"),
+    POINT_3("3 Point Smiley"),
 }
 
 @JsonClass(generateAdapter = true)

@@ -32,6 +32,15 @@ public class Options private constructor(preferences: SharedPreferences) {
         name = { stringResource(id = R.string.option_use_cards) },
         defaultValue = true,
     )
+    private val scoringSystem: DropdownOption = DropdownOption(
+        preferences = preferences,
+        key = SCORING_SYSTEM,
+        name = { stringResource(id = R.string.option_scoring_system) },
+        defaultValue = "100 Point (55/100)",
+        values = {
+            stringArrayResource(id = R.array.option_score_system).associateWith { it }
+        },
+    )
 
     @PublishedApi
     @RestrictedApi
@@ -39,6 +48,7 @@ public class Options private constructor(preferences: SharedPreferences) {
         showFinishedAnime,
         pinnedCategory,
         useCards,
+        scoringSystem,
     ).associate { it.toPair() }
 
     @PublishedApi
@@ -58,6 +68,7 @@ public class Options private constructor(preferences: SharedPreferences) {
         internal val SHOW_FINISHED_ANIME = OptionKey("SHOW_FINISHED_ANIME")
         internal val PINNED_CATEGORY = OptionKey("PINNED_CATEGORY")
         internal val USE_CARDS = OptionKey("USE_CARDS")
+        internal val SCORING_SYSTEM = OptionKey("SCORING_SYSTEM")
 
         @Volatile
         private var instance: Options? = null
