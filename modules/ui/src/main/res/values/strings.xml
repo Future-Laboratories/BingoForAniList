@@ -8,6 +8,7 @@
     <string name="bingo_size">Bingo-size</string>
     <string name="bingo_stats">Stats</string>
     <string name="bingo_vertical">Vertical</string>
+    <string name="commit">Commit</string>
     <string name="complete">Completion</string>
     <string name="delete">Delete</string>
     <string name="delete_permanently_body">Are you really sure, that you want to delete this bingo permanently?</string>
@@ -19,6 +20,8 @@
     <string name="name">Name</string>
     <string name="options">Options</string>
     <string name="options_expire_date">Login expire date</string>
+    <string name="rating_body">You can create or update your rating here!</string>
+    <string name="rating_header">Rating: create and edit</string>
     <string name="search_anime">Search title</string>
     <string name="search_tag">Search tag</string>
     <string name="share">Share</string>

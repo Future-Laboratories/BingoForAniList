@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import androidx.annotation.FloatRange
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,15 +26,25 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.KeyboardArrowDown
 import androidx.compose.material.icons.rounded.KeyboardArrowUp
+import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material.icons.rounded.SentimentNeutral
+import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
+import androidx.compose.material.icons.rounded.SentimentVerySatisfied
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
 import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
@@ -41,6 +53,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -49,6 +62,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalContext
@@ -57,20 +71,26 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaTag
+import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.pxValueToDp
+import io.future.laboratories.ui.toTriple
 
 @Composable
 internal fun AnimeItem(
     useCards: BooleanOption,
     animeData: MediaList,
     bingoData: BingoData,
+    scoreFormat: ScoreFormat,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
@@ -139,8 +159,13 @@ internal fun AnimeItem(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(4.dp),
-                        horizontalArrangement = Arrangement.End,
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
                     ) {
+                        RatingDialog(
+                            animeData = animeData,
+                            scoreFormat = scoreFormat,
+                        )
+
                         DeleteDialog(
                             bingoData = bingoData,
                             animeData = animeData,
@@ -307,7 +332,7 @@ internal fun ModalBottomSheet(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(all = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Constants.spacedByDefault,
             ) {
                 for (letter in 'a'..'z') {
                     stickyHeader {
@@ -316,13 +341,13 @@ internal fun ModalBottomSheet(
 
                     items(
                         items = preFilteredTags
-                        .orEmpty()
-                        .filter {
-                            it.name.startsWith(letter, ignoreCase = true) && it.name.contains(
-                                other = tagQuery,
-                                ignoreCase = true,
-                            )
-                        }
+                            .orEmpty()
+                            .filter {
+                                it.name.startsWith(letter, ignoreCase = true) && it.name.contains(
+                                    other = tagQuery,
+                                    ignoreCase = true,
+                                )
+                            },
                     ) { tag ->
                         SheetItem(
                             item = tag,
@@ -358,5 +383,173 @@ private fun SheetItem(
         )
 
         Text(text = item.name)
+    }
+}
+
+@Composable
+private fun RatingDialog(
+    animeData: MediaList,
+    scoreFormat: ScoreFormat,
+) {
+    var showRatingDialog by rememberSaveable {
+        mutableStateOf(false)
+    }
+
+    PositiveImageButton(
+        onClick = { showRatingDialog = true },
+        contentDescription = stringResource(id = R.string.delete),
+        imageVector = Icons.Rounded.Star,
+    )
+
+    if (showRatingDialog) {
+        Dialog(onDismissRequest = { showRatingDialog = false }) {
+            ElevatedCard {
+                Column(
+                    modifier = Modifier.padding(8.dp),
+                    verticalArrangement = Constants.spacedByDefault,
+                ) {
+                    DefaultHeader(title = stringResource(id = R.string.rating_header))
+
+                    Row(
+                        horizontalArrangement = Constants.spacedByDefault,
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(text = stringResource(id = R.string.rating_body))
+                    }
+
+                    Rating(
+                        defaultValue = animeData.score,
+                        scoreFormat = scoreFormat,
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                    ) {
+                        PositiveButton(onClick = {
+                            showRatingDialog = false
+                        }) {
+                            Text(text = stringResource(id = android.R.string.cancel))
+                        }
+
+                        NegativeButton(onClick = {
+                            showRatingDialog = false
+                        }) {
+                            Text(text = stringResource(id = R.string.commit))
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Rating(
+    defaultValue: Float,
+    scoreFormat: ScoreFormat,
+) {
+    var value by remember {
+        mutableFloatStateOf(defaultValue)
+    }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+    ) {
+        when (scoreFormat) {
+            ScoreFormat.POINT_100,
+            ScoreFormat.POINT_10_DECIMAL,
+            ScoreFormat.POINT_10 -> RatingSlider(
+                value = value,
+                scoreFormat = scoreFormat,
+                onValueChange = { value = it },
+            )
+
+            ScoreFormat.POINT_5 -> RatingBar(
+                rating = value,
+                onRatingChanged = {
+                    value = it
+                },
+            )
+
+            ScoreFormat.POINT_3 -> EmojiRepresentation(
+                rating = value,
+                onRatingChanged = { value = it }
+            )
+        }
+    }
+}
+
+@Composable
+private fun RowScope.RatingSlider(
+    value: Float,
+    scoreFormat: ScoreFormat,
+    onValueChange: (Float) -> Unit,
+) {
+    val (valueRange, valueSteps, formatString) = when (scoreFormat) {
+        ScoreFormat.POINT_100 -> 0f..100f to 1f toTriple "%03.0f"
+        ScoreFormat.POINT_10_DECIMAL -> 0f..10f to 0.01f toTriple "%05.2f"
+        ScoreFormat.POINT_10 -> 0f..10f to 1f toTriple "%02.0f"
+        else -> return
+    }
+
+    Text(text = formatString.format(value))
+
+    PositiveImageButton(
+        onClick = { onValueChange((value - valueSteps).coerceIn(valueRange)) },
+        contentDescription = "null",
+        imageVector = Icons.Rounded.Remove,
+    )
+
+    Slider(
+        value = value,
+        modifier = Modifier.weight(1f),
+        onValueChange = onValueChange,
+        steps = if (scoreFormat != ScoreFormat.POINT_10_DECIMAL) valueRange.endInclusive.toInt() - 1 else 0,
+        valueRange = valueRange,
+    )
+
+    PositiveImageButton(
+        onClick = { onValueChange((value + valueSteps).coerceIn(valueRange)) },
+        contentDescription = "null",
+        imageVector = Icons.Rounded.Add,
+    )
+}
+
+@Composable
+private fun RowScope.RatingBar(
+    rating: Float,
+    onRatingChanged: (Float) -> Unit
+) {
+    for (i in 1..5) {
+        IconButton(onClick = { onRatingChanged(i.toFloat()) }) {
+            Icon(
+                imageVector = if (i <= rating) Icons.Default.Star else Icons.Default.StarBorder,
+                contentDescription = null,
+            )
+        }
+    }
+}
+
+@Composable
+private fun RowScope.EmojiRepresentation(
+    @FloatRange(from = 0.0, to = 3.0)
+    rating: Float,
+    onRatingChanged: (Float) -> Unit,
+) {
+    listOf(
+        Icons.Rounded.SentimentVeryDissatisfied to Color.Red,
+        Icons.Rounded.SentimentNeutral to textColor,
+        Icons.Rounded.SentimentVerySatisfied to Color.Green,
+    ).forEachIndexed { index, buttonData ->
+        IconButton(onClick = { onRatingChanged(index.toFloat()) }) {
+            Icon(
+                imageVector = buttonData.first,
+                contentDescription = null,
+                tint = if (rating == index.toFloat()) buttonData.second else textColor.copy(alpha = 0.6f),
+            )
+        }
     }
 }

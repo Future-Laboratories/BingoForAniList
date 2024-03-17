@@ -24,6 +24,7 @@ import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
@@ -143,6 +144,8 @@ public class MainActivity : ComponentActivity() {
                                 pinned = options[PINNED_CATEGORY],
                                 animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
                                 mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
+                                scoreFormat = viewModel.runtimeAPIData.runtimeAniListData?.user?.mediaListOptions?.scoreFormat
+                                    ?: ScoreFormat.POINT_100,
                                 onRefresh = {
                                     viewModel.fetchAPIData(
                                         apiController = apiController,

@@ -1,6 +1,5 @@
 package io.future.laboratories.ui.pages
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,10 +9,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.Wallpapers
-import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.Bingo
 import io.future.laboratories.ui.components.BingoStat
@@ -67,7 +66,7 @@ public fun BingoPage(
     calculateCounts()
 
     LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Constants.spacedByDefault,
     ) {
         item {
             DefaultHeader(title = stringResource(id = R.string.bingo))

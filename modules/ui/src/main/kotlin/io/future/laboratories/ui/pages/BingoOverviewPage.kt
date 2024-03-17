@@ -1,6 +1,5 @@
 package io.future.laboratories.ui.pages
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.components.BingoItem
 import io.future.laboratories.ui.components.BooleanOption
 
@@ -35,7 +35,7 @@ public fun BingoOverviewPage(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Constants.spacedByDefault,
         ) {
             items(bingoDataList) { bingoData ->
                 BingoItem(

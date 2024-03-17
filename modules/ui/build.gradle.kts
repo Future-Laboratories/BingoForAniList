@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
+    implementation(libs.material.icons)
     implementation(libs.material3)
 
     api(project(":modules:anilistapi"))

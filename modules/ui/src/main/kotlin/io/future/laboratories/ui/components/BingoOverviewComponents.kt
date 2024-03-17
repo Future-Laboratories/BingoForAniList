@@ -3,7 +3,6 @@ package io.future.laboratories.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 
 @Composable
@@ -42,7 +42,7 @@ internal fun BingoItem(
     val content: @Composable Any.() -> Unit = {
         Row(
             modifier = if (useCards.currentValue) Modifier.padding(all = 8.dp) else Modifier,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Constants.spacedByDefault,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -51,7 +51,7 @@ internal fun BingoItem(
             )
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Constants.spacedByDefault,
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 PositiveImageButton(
@@ -62,7 +62,7 @@ internal fun BingoItem(
 
                 AnimatedVisibility(visible = expended) {
                     Column(
-                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalArrangement = Constants.spacedByDefault,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         PositiveImageButton(

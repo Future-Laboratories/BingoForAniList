@@ -67,6 +67,7 @@ public interface API {
                     lists {
                       name
                       entries {
+                        score
                         media {
                           id
                           title {

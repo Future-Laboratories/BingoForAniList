@@ -3,7 +3,6 @@ package io.future.laboratories.ui.pages
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,7 +31,9 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollection
 import io.future.laboratories.anilistapi.data.MediaTag
+import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
@@ -51,6 +52,7 @@ public fun AnimeOverviewPage(
     pinned: DropdownOption,
     animeDataList: MediaListCollection?,
     mediaTags: List<MediaTag>?,
+    scoreFormat: ScoreFormat,
     onRefresh: () -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
@@ -118,7 +120,7 @@ public fun AnimeOverviewPage(
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Constants.spacedByDefault,
         ) {
             animeDataList
                 ?.lists
@@ -145,12 +147,13 @@ public fun AnimeOverviewPage(
                                 } else {
                                     it.media.tags.any { tag -> tag in selectedTags }
                                 }
-                            }
+                            },
                     ) { animeData ->
                         AnimeItem(
                             useCards = useCards,
                             animeData = animeData,
                             bingoData = bingoData.clone(),
+                            scoreFormat = scoreFormat,
                             onClickDelete = onClickDelete,
                             onClick = onSelectAnime,
                         )

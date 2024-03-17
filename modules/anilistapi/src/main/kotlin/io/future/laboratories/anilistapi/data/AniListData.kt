@@ -64,6 +64,7 @@ public data class MediaListGroup(
 
 @JsonClass(generateAdapter = true)
 public data class MediaList(
+    val score: Float,
     val media: Media,
 )
 

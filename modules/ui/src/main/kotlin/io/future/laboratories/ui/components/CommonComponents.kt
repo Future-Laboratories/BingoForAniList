@@ -59,6 +59,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import io.future.laboratories.common.textColor
+import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
 
@@ -200,12 +201,12 @@ internal fun DefaultWarningDialog(
     ElevatedCard {
         Column(
             modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Constants.spacedByDefault,
         ) {
             DefaultHeader(title = header)
 
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalArrangement = Constants.spacedByDefault,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 WarningSign()
@@ -359,7 +360,7 @@ internal fun DropdownRow(
 ) {
     DropdownMenuItem(
         text = {
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(horizontalArrangement = Constants.spacedByDefault) {
                 DefaultDropdownIcon(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     imageVector = imageVector,
@@ -500,7 +501,7 @@ internal fun TextRow(
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        horizontalArrangement = Constants.spacedByDefault,
     ) {
         Text(
             text = text,

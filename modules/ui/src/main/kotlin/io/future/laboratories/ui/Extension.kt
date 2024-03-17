@@ -10,6 +10,8 @@ import androidx.compose.ui.unit.Dp
 
 internal fun String.colon(): String = "$this:"
 
+internal infix fun <A, B, C : Pair<A, B>, D> C.toTriple(other: D) = Triple(first, second, other)
+
 //endregion
 
 //region dp
