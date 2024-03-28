@@ -123,6 +123,7 @@ public class MainActivity : ComponentActivity() {
                                         forced = true,
                                     )
                                 },
+                                onCommit = apiController::mutateEntry,
                                 onClickDelete = { bingoData, animeData ->
                                     val deletionSuccessful = deleteSingle(
                                         bingoPath(

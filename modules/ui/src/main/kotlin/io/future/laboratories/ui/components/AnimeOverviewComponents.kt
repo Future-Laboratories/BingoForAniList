@@ -91,6 +91,7 @@ internal fun AnimeItem(
     animeData: MediaList,
     bingoData: BingoData,
     scoreFormat: ScoreFormat,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
@@ -164,6 +165,7 @@ internal fun AnimeItem(
                         RatingDialog(
                             animeData = animeData,
                             scoreFormat = scoreFormat,
+                            onCommit = onCommit,
                         )
 
                         DeleteDialog(
@@ -390,9 +392,14 @@ private fun SheetItem(
 private fun RatingDialog(
     animeData: MediaList,
     scoreFormat: ScoreFormat,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float) -> Unit,
 ) {
     var showRatingDialog by rememberSaveable {
         mutableStateOf(false)
+    }
+
+    var scoreValue by rememberSaveable {
+        mutableStateOf(0f)
     }
 
     PositiveImageButton(
@@ -414,12 +421,18 @@ private fun RatingDialog(
                         horizontalArrangement = Constants.spacedByDefault,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(text = stringResource(id = R.string.rating_body))
+                        Text(
+                            text = stringResource(
+                                id = R.string.rating_body,
+                                formatArgs = arrayOf(animeData.media.title.userPreferred),
+                            )
+                        )
                     }
 
                     Rating(
                         defaultValue = animeData.score,
                         scoreFormat = scoreFormat,
+                        onValueChange = { scoreValue = it }
                     )
 
                     Row(
@@ -433,6 +446,7 @@ private fun RatingDialog(
                         }
 
                         NegativeButton(onClick = {
+                            onCommit(scoreFormat, scoreValue)
                             showRatingDialog = false
                         }) {
                             Text(text = stringResource(id = R.string.commit))
@@ -448,6 +462,7 @@ private fun RatingDialog(
 private fun Rating(
     defaultValue: Float,
     scoreFormat: ScoreFormat,
+    onValueChange: (Float) -> Unit,
 ) {
     var value by remember {
         mutableFloatStateOf(defaultValue)
@@ -464,19 +479,29 @@ private fun Rating(
             ScoreFormat.POINT_10 -> RatingSlider(
                 value = value,
                 scoreFormat = scoreFormat,
-                onValueChange = { value = it },
+                onValueChange = {
+                    value = it
+
+                    onValueChange(it)
+                },
             )
 
             ScoreFormat.POINT_5 -> RatingBar(
                 rating = value,
                 onRatingChanged = {
                     value = it
+
+                    onValueChange(it)
                 },
             )
 
             ScoreFormat.POINT_3 -> EmojiRepresentation(
                 rating = value,
-                onRatingChanged = { value = it }
+                onRatingChanged = {
+                    value = it
+
+                    onValueChange(it)
+                }
             )
         }
     }
@@ -490,7 +515,7 @@ private fun RowScope.RatingSlider(
 ) {
     val (valueRange, valueSteps, formatString) = when (scoreFormat) {
         ScoreFormat.POINT_100 -> 0f..100f to 1f toTriple "%03.0f"
-        ScoreFormat.POINT_10_DECIMAL -> 0f..10f to 0.01f toTriple "%04.1f"
+        ScoreFormat.POINT_10_DECIMAL -> 0f..10f to 0.1f toTriple "%04.1f"
         ScoreFormat.POINT_10 -> 0f..10f to 1f toTriple "%02.0f"
         else -> return
     }

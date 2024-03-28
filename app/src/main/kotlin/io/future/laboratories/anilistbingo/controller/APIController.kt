@@ -16,6 +16,7 @@ import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
@@ -161,6 +162,29 @@ internal class APIController private constructor(private val preferences: Shared
         }
     }
 
+    internal fun mutateEntry(
+        format: ScoreFormat,
+        value: Float,
+        animeData: MediaList,
+    ) {
+        api.postMediaListEntryMutation(
+            authorization = authorization,
+            json = AniListMutationBody(
+                query = API.SaveMediaListEntryMutation,
+                variables = mapOf(
+                    "id" to animeData.id,
+                    "scoreRaw" to format.convertTo100(value),
+                ),
+            ),
+        ).enqueue { _, response ->
+            val errorMsg = response.errorBody()?.string()
+
+            if (errorMsg != null) {
+                Log.e("mutateEntry", errorMsg)
+            }
+        }
+    }
+
     /**
      * Validate if [PREFERENCE_ACCESS_EXPIRED] is still valid, if not, try to login again
      */
@@ -178,9 +202,9 @@ internal class APIController private constructor(private val preferences: Shared
     }
 
     /**
-     * convert value to 100-base Scoreformat
+     * convert value to 100-base ScoreFormat
      */
-    internal fun ScoreFormat.convertTo100(value: Float): Int = kotlin.math.round(
+    private fun ScoreFormat.convertTo100(value: Float): Int = kotlin.math.round(
         when (this) {
             ScoreFormat.POINT_100 -> value
             ScoreFormat.POINT_10_DECIMAL -> value * 10f

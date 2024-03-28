@@ -18,6 +18,11 @@ public data class UpdateUserData(
 )
 
 @JsonClass(generateAdapter = true)
+public data class UpdateMediaListEntry(
+    @Json(name = "SaveMediaListEntry") val saveMediaListEntry: Score,
+)
+
+@JsonClass(generateAdapter = true)
 public data class MediaTag(
     val name: String,
     val isAdult: Boolean = false,
@@ -74,8 +79,14 @@ public data class MediaListGroup(
 
 @JsonClass(generateAdapter = true)
 public data class MediaList(
+    val id: Long,
     val score: Float,
     val media: Media,
+)
+
+@JsonClass(generateAdapter = true)
+public data class Score(
+    val score: Float,
 )
 
 @JsonClass(generateAdapter = true)

@@ -1,6 +1,7 @@
 package io.future.laboratories.anilistapi
 
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.UpdateMediaListEntry
 import io.future.laboratories.anilistapi.data.UpdateUserData
 import io.future.laboratories.anilistapi.data.ViewerData
 import io.future.laboratories.anilistapi.data.base.AniListMutationBody
@@ -53,6 +54,17 @@ public interface API {
         @Body json: AniListMutationBody,
     ): DataHolderCall<UpdateUserData>
 
+    @POST("/")
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json",
+    )
+    public fun postMediaListEntryMutation(
+        @Header("Authorization") authorization: String,
+        @Query("response_type") token: String = "token",
+        @Body json: AniListMutationBody,
+    ): DataHolderCall<UpdateMediaListEntry>
+
     public companion object {
         public val aniListViewerQuery: String = """
                 query {
@@ -80,6 +92,7 @@ public interface API {
                     lists {
                       name
                       entries {
+                        id
                         score
                         media {
                           id
@@ -105,6 +118,14 @@ public interface API {
                     mediaListOptions {
                       scoreFormat
                     }
+                }
+            }
+        """.trimIndent()
+
+        public val SaveMediaListEntryMutation: String = """
+            mutation(${'$'}id: Int, ${'$'}scoreRaw: Int) {
+                SaveMediaListEntry(id: ${'$'}id, scoreRaw: ${'$'}scoreRaw) {
+                    score
                 }
             }
         """.trimIndent()

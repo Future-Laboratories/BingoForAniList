@@ -20,7 +20,7 @@
     <string name="name">Name</string>
     <string name="options">Options</string>
     <string name="options_expire_date">Login expire date</string>
-    <string name="rating_body">You can create or update your rating here!</string>
+    <string name="rating_body">You can create or update your rating for \"%1$s\" here!</string>
     <string name="rating_header">Rating: create and edit</string>
     <string name="search_anime">Search title</string>
     <string name="search_tag">Search tag</string>

@@ -20,8 +20,8 @@
     <string name="name">Name</string>
     <string name="options">Einstellungen</string>
     <string name="options_expire_date">Login Ablaufdatum</string>
-    <string name="rating_body">Du kannst deine Bewertung hier erstellen und bearbeiten!</string>
-    <string name="rating_header">Bewertung: erstellen and bearbeiten</string>
+    <string name="rating_body">Du kannst deine Bewertung für \"%1$s\" hier erstellen und bearbeiten!</string>
+    <string name="rating_header">Bewertung: erstellen und bearbeiten</string>
     <string name="search_anime">Suche Title</string>
     <string name="search_tag">Suche Tag</string>
     <string name="share">Teilen</string>
