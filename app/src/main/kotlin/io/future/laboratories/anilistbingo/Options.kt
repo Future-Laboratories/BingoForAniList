@@ -3,7 +3,9 @@ package io.future.laboratories.anilistbingo
 import android.content.SharedPreferences
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.annotation.RestrictedApi
+import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionData
@@ -40,6 +42,13 @@ public class Options private constructor(preferences: SharedPreferences) {
         values = {
             stringArrayResource(id = R.array.option_score_system).associateWith { it }
         },
+        onValueChanged = { value ->
+            val controller = APIController.getInstance(preferences)
+
+            val type = ScoreFormat.entries.first { it.value == value }
+
+            controller.mutateUser(type)
+        }
     )
 
     @PublishedApi

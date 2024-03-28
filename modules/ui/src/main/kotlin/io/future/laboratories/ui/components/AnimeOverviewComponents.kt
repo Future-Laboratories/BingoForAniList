@@ -490,7 +490,7 @@ private fun RowScope.RatingSlider(
 ) {
     val (valueRange, valueSteps, formatString) = when (scoreFormat) {
         ScoreFormat.POINT_100 -> 0f..100f to 1f toTriple "%03.0f"
-        ScoreFormat.POINT_10_DECIMAL -> 0f..10f to 0.01f toTriple "%05.2f"
+        ScoreFormat.POINT_10_DECIMAL -> 0f..10f to 0.01f toTriple "%04.1f"
         ScoreFormat.POINT_10 -> 0f..10f to 1f toTriple "%02.0f"
         else -> return
     }

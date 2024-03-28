@@ -15,6 +15,6 @@ public data class AniListQueryBody(
 
 @JsonClass(generateAdapter = true)
 public data class AniListMutationBody(
-    val mutation: String,
+    val query: String,
     val variables: Map<String, Any>,
 )

@@ -1,7 +1,9 @@
 package io.future.laboratories.anilistapi
 
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.UpdateUserData
 import io.future.laboratories.anilistapi.data.ViewerData
+import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.data.base.DataHolder
 import retrofit2.Call
@@ -39,6 +41,17 @@ public interface API {
         @Query("response_type") token: String = "token",
         @Body json: AniListQueryBody,
     ): DataHolderCall<MainData>
+
+    @POST("/")
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json",
+    )
+    public fun postUserData(
+        @Header("Authorization") authorization: String,
+        @Query("response_type") token: String = "token",
+        @Body json: AniListMutationBody,
+    ): DataHolderCall<UpdateUserData>
 
     public companion object {
         public val aniListViewerQuery: String = """
@@ -85,5 +98,15 @@ public interface API {
                   }
                 }
             """.trimIndent()
+
+        public val aniListUserMutation: String = """
+            mutation(${'$'}format: ScoreFormat) {
+                UpdateUser(scoreFormat: ${'$'}format) {
+                    mediaListOptions {
+                      scoreFormat
+                    }
+                }
+            }
+        """.trimIndent()
     }
 }

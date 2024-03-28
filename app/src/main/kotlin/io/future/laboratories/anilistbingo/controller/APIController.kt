@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -15,6 +16,8 @@ import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.ScoreFormat
+import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.R
@@ -135,6 +138,30 @@ internal class APIController private constructor(private val preferences: Shared
     }
 
     /**
+     * Mutates User-preferences
+     * @param format ScoreFormat to use
+     */
+    internal fun mutateUser(
+        format: ScoreFormat,
+    ) {
+        api.postUserData(
+            authorization = authorization,
+            json = AniListMutationBody(
+                query = API.aniListUserMutation,
+                variables = mapOf(
+                    "format" to format,
+                ),
+            ),
+        ).enqueue { _, response ->
+            val errorMsg = response.errorBody()?.string()
+
+            if (errorMsg != null) {
+                Log.e("mutateUser", errorMsg)
+            }
+        }
+    }
+
+    /**
      * Validate if [PREFERENCE_ACCESS_EXPIRED] is still valid, if not, try to login again
      */
     internal fun Context.validateKey(): Boolean {
@@ -149,6 +176,19 @@ internal class APIController private constructor(private val preferences: Shared
 
         return isLoggedIn
     }
+
+    /**
+     * convert value to 100-base Scoreformat
+     */
+    internal fun ScoreFormat.convertTo100(value: Float): Int = kotlin.math.round(
+        when (this) {
+            ScoreFormat.POINT_100 -> value
+            ScoreFormat.POINT_10_DECIMAL -> value * 10f
+            ScoreFormat.POINT_10 -> value * 10f
+            ScoreFormat.POINT_5 -> value * 20f
+            ScoreFormat.POINT_3 -> value * 33.3f
+        }
+    ).toInt()
 
     internal data class RuntimeData(
         var dataFetchCompleted: Boolean,

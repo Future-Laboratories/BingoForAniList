@@ -49,11 +49,13 @@ public abstract class OptionData<T : Any> {
         }
 
         operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
-            _currentValue = value
+            if (_currentValue != value) {
+                _currentValue = value
 
-            _currentValue.saveData()
+                _currentValue.saveData()
 
-            onValueChanged?.invoke(_currentValue)
+                onValueChanged?.invoke(_currentValue)
+            }
         }
     }
 }
