@@ -28,4 +28,9 @@
     <string name="error_500">Interner Serverfehler</string>
     <string name="error_unknown_d">Unbekannter Fehler: %d</string>
 
+    <!--shortcuts-->
+    <string name="shortcut_create_bingo_short">Erstellen</string>
+    <string name="shortcut_create_bingo_long">Bingo Erstellen</string>
+    <string name="shortcut_disabled">Deaktiviert</string>
+
 </resources>

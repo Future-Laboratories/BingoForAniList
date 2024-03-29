@@ -31,6 +31,11 @@
     <string name="error_500">Internal Server Error</string>
     <string name="error_unknown_d">Unknown error: %d</string>
 
+    <!--shortcuts-->
+    <string name="shortcut_create_bingo_short">Create</string>
+    <string name="shortcut_create_bingo_long">Create Bingo</string>
+    <string name="shortcut_disabled">Disabled</string>
+
     <!--Names returned by AniList + "No Selection"-->
     <string-array name="option_pinned_category_values" tools:ignore="ExtraTranslation">
         <item>No Selection</item>

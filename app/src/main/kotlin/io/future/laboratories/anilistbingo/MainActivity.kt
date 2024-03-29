@@ -2,6 +2,7 @@ package io.future.laboratories.anilistbingo
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ShortcutInfo.SHORTCUT_CATEGORY_CONVERSATION
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -365,6 +366,12 @@ internal class AniListBingoViewModel : ViewModel() {
                     )
                 }
             }
+        } else if (intent.categories?.contains(SHORTCUT_CATEGORY_CONVERSATION) == true) {
+            currentPage = Page.EDITOR(
+                bingoData = null,
+                isImported = false,
+                sourcePage = null,
+            )
         } else {
             // If the app got open from OAuth, process data
             intent.data?.let {
@@ -416,7 +423,7 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
     class EDITOR(
         val bingoData: BingoData? = null,
         val isImported: Boolean = false,
-        sourcePage: Page,
+        sourcePage: Page?,
     ) : Page(R.string.editor, sourcePage) {
         var showDialog: Boolean by mutableStateOf(false)
 
