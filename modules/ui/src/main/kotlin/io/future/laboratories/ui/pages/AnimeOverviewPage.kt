@@ -19,12 +19,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshots.SnapshotStateList
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
@@ -32,6 +28,7 @@ import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollection
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
+import io.future.laboratories.common.BasicSaver
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
@@ -75,20 +72,10 @@ public fun AnimeOverviewPage(
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     // TagFilter
-    val saver = object : Saver<SnapshotStateList<MediaTag>, String> {
-        private val separator = ", "
-        override fun restore(value: String): SnapshotStateList<MediaTag> {
-            return value
-                .split(separator)
-                .filter { it.isNotBlank() }
-                .map { MediaTag(name = it) }
-                .toMutableStateList()
-        }
-
-        override fun SaverScope.save(value: SnapshotStateList<MediaTag>): String {
-            return value.joinToString(separator = separator) { it.name }
-        }
-    }
+    val saver = BasicSaver(
+        fromString = { string -> MediaTag(name = string) },
+        toString = { mediaTag -> mediaTag.name },
+    )
 
     @SuppressLint("MutableCollectionMutableState")
     val selectedTags by rememberSaveable(stateSaver = saver) { mutableStateOf(mutableStateListOf()) }
