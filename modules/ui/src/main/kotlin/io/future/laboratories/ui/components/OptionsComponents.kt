@@ -17,7 +17,7 @@ public abstract class OptionData<T : Any> {
     internal abstract val name: @Composable () -> String
     internal abstract val defaultValue: T
     internal abstract val isVisible: (() -> Boolean)?
-    internal abstract val onValueChanged: ((T) -> Unit)?
+    internal abstract val onValueChanged: ((T, T.() -> Unit) -> Unit)?
 
     public var currentValue: T by LazyMutableState()
 
@@ -52,9 +52,11 @@ public abstract class OptionData<T : Any> {
             if (_currentValue != value) {
                 _currentValue = value
 
-                _currentValue.saveData()
-
-                onValueChanged?.invoke(_currentValue)
+                if (onValueChanged == null) {
+                    _currentValue.saveData()
+                } else {
+                    onValueChanged?.invoke(_currentValue) { saveData() }
+                }
             }
         }
     }
@@ -72,7 +74,7 @@ public data class BooleanOption(
     override val name: @Composable () -> String,
     override val defaultValue: Boolean,
     override val isVisible: (() -> Boolean)? = null,
-    override val onValueChanged: ((Boolean) -> Unit)? = null,
+    override val onValueChanged: ((Boolean, Boolean.() -> Unit) -> Unit)? = null,
 ) : OptionData<Boolean>() {
     @Composable
     override fun Layout() {
@@ -97,7 +99,7 @@ public data class DropdownOption(
     override val defaultValue: String,
     internal val values: @Composable () -> Map<String, String>,
     override val isVisible: (() -> Boolean)? = null,
-    override val onValueChanged: ((String) -> Unit)? = null,
+    override val onValueChanged: ((String, String.() -> Unit) -> Unit)? = null,
 ) : OptionData<String>() {
     @Composable
     override fun Layout() {

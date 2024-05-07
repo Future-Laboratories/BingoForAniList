@@ -80,7 +80,7 @@ public data class MediaListGroup(
 @JsonClass(generateAdapter = true)
 public data class MediaList(
     val id: Long,
-    val score: Float,
+    var score: Float,
     val media: Media,
 )
 

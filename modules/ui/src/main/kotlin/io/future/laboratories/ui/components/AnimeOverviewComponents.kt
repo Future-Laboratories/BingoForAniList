@@ -91,7 +91,7 @@ internal fun AnimeItem(
     animeData: MediaList,
     bingoData: BingoData,
     scoreFormat: ScoreFormat,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float) -> Unit,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, (Float) -> Unit) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
@@ -392,14 +392,14 @@ private fun SheetItem(
 private fun RatingDialog(
     animeData: MediaList,
     scoreFormat: ScoreFormat,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float) -> Unit,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, (Float) -> Unit) -> Unit,
 ) {
     var showRatingDialog by rememberSaveable {
         mutableStateOf(false)
     }
 
     var scoreValue by rememberSaveable {
-        mutableStateOf(0f)
+        mutableFloatStateOf(0f)
     }
 
     PositiveImageButton(
@@ -446,7 +446,9 @@ private fun RatingDialog(
                         }
 
                         NegativeButton(onClick = {
-                            onCommit(scoreFormat, scoreValue)
+                            onCommit(scoreFormat, scoreValue) {
+                                animeData.score = it
+                            }
                             showRatingDialog = false
                         }) {
                             Text(text = stringResource(id = R.string.commit))

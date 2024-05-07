@@ -144,6 +144,7 @@ internal class APIController private constructor(private val preferences: Shared
      */
     internal fun mutateUser(
         format: ScoreFormat,
+        onCallback: (String) -> Unit,
     ) {
         api.postUserData(
             authorization = authorization,
@@ -158,6 +159,11 @@ internal class APIController private constructor(private val preferences: Shared
 
             if (errorMsg != null) {
                 Log.e("mutateUser", errorMsg)
+            } else {
+                onCallback(
+                    response.body()?.data?.updateUser?.mediaListOptions?.scoreFormat?.value
+                        ?: return@enqueue
+                )
             }
         }
     }
@@ -166,6 +172,7 @@ internal class APIController private constructor(private val preferences: Shared
         format: ScoreFormat,
         value: Float,
         animeData: MediaList,
+        onCallback: (Float) -> Unit,
     ) {
         api.postMediaListEntryMutation(
             authorization = authorization,
@@ -181,6 +188,8 @@ internal class APIController private constructor(private val preferences: Shared
 
             if (errorMsg != null) {
                 Log.e("mutateEntry", errorMsg)
+            } else {
+                onCallback(response.body()?.data?.saveMediaListEntry?.score ?: return@enqueue)
             }
         }
     }

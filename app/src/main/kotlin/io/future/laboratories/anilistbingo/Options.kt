@@ -42,12 +42,12 @@ public class Options private constructor(preferences: SharedPreferences) {
         values = {
             stringArrayResource(id = R.array.option_score_system).associateWith { it }
         },
-        onValueChanged = { value ->
+        onValueChanged = { value, save ->
             val controller = APIController.getInstance(preferences)
 
             val type = ScoreFormat.entries.first { it.value == value }
 
-            controller.mutateUser(type)
+            controller.mutateUser(type, save)
         }
     )
 

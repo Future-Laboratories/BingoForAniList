@@ -54,7 +54,7 @@ public fun AnimeOverviewPage(
     mediaTags: List<MediaTag>?,
     scoreFormat: ScoreFormat,
     onRefresh: () -> Unit,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, animeData: MediaList) -> Unit,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, animeData: MediaList, callback: (Float) -> Unit) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
@@ -155,8 +155,8 @@ public fun AnimeOverviewPage(
                             animeData = animeData,
                             bingoData = bingoData.clone(),
                             scoreFormat = scoreFormat,
-                            onCommit = { format, value ->
-                                onCommit(format, value, animeData)
+                            onCommit = { format, value, save ->
+                                onCommit(format, value, animeData, save)
                             },
                             onClickDelete = onClickDelete,
                             onClick = onSelectAnime,
