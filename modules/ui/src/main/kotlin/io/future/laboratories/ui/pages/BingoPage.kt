@@ -1,17 +1,17 @@
 package io.future.laboratories.ui.pages
 
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.Wallpapers
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.ui.AllPreview
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.Bingo
@@ -102,17 +102,19 @@ public fun BingoPage(
     }
 }
 
-@Preview(wallpaper = Wallpapers.RED_DOMINATED_EXAMPLE)
+@AllPreview
 @Composable
 public fun BingoPagePreview() {
-    AniListBingoTheme(darkTheme = true) {
-        BingoPage(
-            bingoData = BingoData(2070, "TestBingo", List(5) {
-                RowData(List(5) {
-                    FieldData("TestField", false)
-                })
-            }),
-            onDataChange = {},
-        )
+    AniListBingoTheme {
+        Surface {
+            BingoPage(
+                bingoData = BingoData(2070, "TestBingo", List(5) {
+                    RowData(List(5) {
+                        FieldData("TestField", false)
+                    })
+                }),
+                onDataChange = {},
+            )
+        }
     }
 }
