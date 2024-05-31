@@ -23,7 +23,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
@@ -38,6 +40,7 @@ import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
 import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -72,10 +75,12 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
@@ -409,31 +414,44 @@ private fun RatingDialog(
     )
 
     if (showRatingDialog) {
-        Dialog(onDismissRequest = { showRatingDialog = false }) {
-            ElevatedCard {
+        Dialog(
+            onDismissRequest = { showRatingDialog = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false),
+        ) {
+            ElevatedCard(
+                modifier = Modifier.fillMaxWidth(fraction = 0.8f).padding(bottom = 24.dp)
+            ) {
                 Column(
                     modifier = Modifier.padding(8.dp),
                     verticalArrangement = Constants.spacedByDefault,
                 ) {
                     DefaultHeader(title = stringResource(id = R.string.rating_header))
 
-                    Row(
-                        horizontalArrangement = Constants.spacedByDefault,
-                        verticalAlignment = Alignment.CenterVertically,
+                    Column(
+                        modifier = Modifier
+                            .verticalScroll(rememberScrollState())
+                            .weight(weight = 1f, fill = false),
                     ) {
-                        Text(
-                            text = stringResource(
-                                id = R.string.rating_body,
-                                formatArgs = arrayOf(animeData.media.title.userPreferred),
+                        Row(
+                            horizontalArrangement = Constants.spacedByDefault,
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                text = stringResource(
+                                    id = R.string.rating_body,
+                                    formatArgs = arrayOf(animeData.media.title.userPreferred + animeData.media.title.userPreferred),
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    Rating(
-                        defaultValue = animeData.score,
-                        scoreFormat = scoreFormat,
-                        onValueChange = { scoreValue = it }
-                    )
+                        Rating(
+                            defaultValue = animeData.score,
+                            scoreFormat = scoreFormat,
+                            onValueChange = { scoreValue = it }
+                        )
+
+                        StatusDropDown(animeData.status)
+                    }
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -457,6 +475,35 @@ private fun RatingDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun StatusDropDown(
+    status: MediaListStatus,
+) {
+    var showMenu by rememberSaveable {
+        mutableStateOf(true)
+    }
+
+    OptionDropdown(
+        optionName = "Status",
+        values = MediaListStatus.entries
+            .filterNot { it == MediaListStatus.NONE }
+            .map { it.value }
+            .associateWith { it },
+        initialValue = status.value,
+    ) {
+
+    }
+
+    DropdownMenu(
+        expanded = showMenu,
+        onDismissRequest = { showMenu = false }
+    ) {
+        MediaListStatus.entries
+            .filterNot { it == MediaListStatus.NONE }
+
     }
 }
 

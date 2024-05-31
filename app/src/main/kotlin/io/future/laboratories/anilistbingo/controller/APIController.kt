@@ -141,6 +141,7 @@ internal class APIController private constructor(private val preferences: Shared
     /**
      * Mutates User-preferences
      * @param format ScoreFormat to use
+     * @param onCallback What to do with the the response
      */
     internal fun mutateUser(
         format: ScoreFormat,

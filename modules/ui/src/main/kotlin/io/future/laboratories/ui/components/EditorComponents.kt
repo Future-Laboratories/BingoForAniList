@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +27,6 @@ import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
 import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.R
-import io.future.laboratories.ui.colon
 
 
 @Composable
@@ -36,18 +35,18 @@ internal fun BingoNameField(
 ) {
     var bingoName by rememberSaveable { mutableStateOf(bingoData.name) }
 
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(text = stringResource(id = R.string.name).colon())
-
-        TextField(
-            value = bingoName,
-            onValueChange = {
-                bingoName = it
-                bingoData.name = it
-            },
-            modifier = Modifier.fillMaxWidth(),
-        )
-    }
+    OutlinedTextField(
+        value = bingoName,
+        label = {
+            Text(text = stringResource(id = R.string.name))
+        },
+        onValueChange = {
+            bingoName = it
+            bingoData.name = it
+        },
+        modifier = Modifier.fillMaxWidth(),
+        singleLine = true,
+    )
 }
 
 @Composable

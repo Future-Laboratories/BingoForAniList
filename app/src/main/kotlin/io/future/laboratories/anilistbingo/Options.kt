@@ -1,8 +1,8 @@
 package io.future.laboratories.anilistbingo
 
 import android.content.SharedPreferences
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
+import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.annotation.RestrictedApi
 import io.future.laboratories.anilistbingo.controller.APIController
@@ -22,10 +22,8 @@ public class Options private constructor(preferences: SharedPreferences) {
         preferences = preferences,
         key = PINNED_CATEGORY,
         name = { stringResource(id = R.string.option_pinned_category) },
-        defaultValue = "Completed",
-        values = {
-            stringArrayResource(id = R.array.option_pinned_category_values).associateWith { it }
-        },
+        defaultValue = MediaListStatus.NONE.value,
+        values = { MediaListStatus.entries.map { it.value }.associateWith { it } },
         isVisible = { showFinishedAnime.currentValue },
     )
     private val useCards: BooleanOption = BooleanOption(
@@ -38,10 +36,8 @@ public class Options private constructor(preferences: SharedPreferences) {
         preferences = preferences,
         key = SCORING_SYSTEM,
         name = { stringResource(id = R.string.option_scoring_system) },
-        defaultValue = "100 Point (55/100)",
-        values = {
-            stringArrayResource(id = R.array.option_score_system).associateWith { it }
-        },
+        defaultValue = ScoreFormat.POINT_100.value,
+        values = { ScoreFormat.entries.map { it.value }.associateWith { it } },
         onValueChanged = { value, save ->
             val controller = APIController.getInstance(preferences)
 

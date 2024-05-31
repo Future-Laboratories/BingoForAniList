@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <string name="app_name">Bingo for AniList</string>
     <string name="provider_name" translatable="false">io.future.laboratories.anilistbingo.fileprovider</string>
@@ -35,24 +35,5 @@
     <string name="shortcut_create_bingo_short">Create</string>
     <string name="shortcut_create_bingo_long">Create Bingo</string>
     <string name="shortcut_disabled">Disabled</string>
-
-    <!--Names returned by AniList + "No Selection"-->
-    <string-array name="option_pinned_category_values" tools:ignore="ExtraTranslation">
-        <item>No Selection</item>
-        <item>Completed</item>
-        <item>Dropped</item>
-        <item>Paused</item>
-        <item>Planning</item>
-        <item>Rewatching</item>
-        <item>Watching</item>
-    </string-array>
-
-    <string-array name="option_score_system" tools:ignore="ExtraTranslation">
-        <item>100 Point (55/100)</item>
-        <item>10 Point Decimal (5.5/10)</item>
-        <item>10 Point (5/10)</item>
-        <item>5 Star (3/5)</item>
-        <item>3 Point Smiley</item>
-    </string-array>
 
 </resources>

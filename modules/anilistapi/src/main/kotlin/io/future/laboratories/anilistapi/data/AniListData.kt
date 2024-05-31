@@ -81,8 +81,32 @@ public data class MediaListGroup(
 public data class MediaList(
     val id: Long,
     var score: Float,
+    var status: MediaListStatus = MediaListStatus.NONE,
     val media: Media,
 )
+
+public enum class MediaListStatus(public val value: String) {
+    @Json(ignore = true)
+    NONE("No Selection"),
+
+    @Json(name = "CURRENT")
+    CURRENT("Watching"),
+
+    @Json(name = "PLANNING")
+    PLANNING("Planning"),
+
+    @Json(name = "COMPLETED")
+    COMPLETED("Completed"),
+
+    @Json(name = "DROPPED")
+    DROPPED("Dropped"),
+
+    @Json(name = "PAUSED")
+    PAUSED("Paused"),
+
+    @Json(name = "REPEATING")
+    REPEATING("Rewatching"),
+}
 
 @JsonClass(generateAdapter = true)
 public data class Score(

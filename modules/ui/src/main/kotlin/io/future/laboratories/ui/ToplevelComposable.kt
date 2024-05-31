@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.ArrowBack
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -68,7 +68,7 @@ public fun CustomScaffold(
             navigationIcon = {
                 if (isNavVisible()) {
                     DefaultNavIcon(
-                        imageVector = Icons.Rounded.ArrowBack,
+                        imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                         contentDescription = stringResource(id = R.string.back),
                         onClick = onNavPress,
                     )

@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinAndroid)
 
     alias(libs.plugins.ksp)
@@ -54,11 +55,6 @@ android {
     }
     buildFeatures {
         buildConfig = true
-        compose = true
-    }
-    val composeCompiler: String by project
-    composeOptions {
-        kotlinCompilerExtensionVersion = composeCompiler
     }
 
     packaging {

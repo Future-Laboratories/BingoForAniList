@@ -19,16 +19,16 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.ArrowBack
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -66,7 +66,7 @@ import io.future.laboratories.ui.colon
 //region Divider & Spacer
 
 @Composable
-internal fun RowScope.DefaultDivider() = Divider(
+internal fun RowScope.DefaultDivider() = HorizontalDivider(
     modifier = Modifier
         .weight(1f)
         .clip(RoundedCornerShape(1.dp)),
@@ -163,7 +163,7 @@ internal fun BackButton(
         Row(verticalAlignment = Alignment.CenterVertically) {
             val backString = stringResource(id = R.string.back)
             Icon(
-                imageVector = Icons.Rounded.ArrowBack,
+                imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = backString,
                 tint = textColor,
             )

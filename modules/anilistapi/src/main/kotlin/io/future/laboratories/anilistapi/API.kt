@@ -94,6 +94,7 @@ public interface API {
                       entries {
                         id
                         score
+                        status
                         media {
                           id
                           title {
@@ -123,9 +124,10 @@ public interface API {
         """.trimIndent()
 
         public val SaveMediaListEntryMutation: String = """
-            mutation(${'$'}id: Int, ${'$'}scoreRaw: Int) {
-                SaveMediaListEntry(id: ${'$'}id, scoreRaw: ${'$'}scoreRaw) {
+            mutation(${'$'}id: Int, ${'$'}scoreRaw: Int, ${'$'}status: MediaListStatus) {
+                SaveMediaListEntry(id: ${'$'}id, scoreRaw: ${'$'}scoreRaw, status: ${'$'}status) {
                     score
+                    status
                 }
             }
         """.trimIndent()
