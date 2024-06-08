@@ -18,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
-import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.components.BingoItem
 import io.future.laboratories.ui.components.BooleanOption
@@ -61,9 +60,7 @@ public fun BingoOverviewPage(
             Icon(
                 imageVector = Icons.Rounded.Add,
                 contentDescription = null,
-                tint = textColor,
-                modifier = Modifier
-                    .fillMaxSize(0.9f),
+                modifier = Modifier.fillMaxSize(0.9f),
             )
         }
     }

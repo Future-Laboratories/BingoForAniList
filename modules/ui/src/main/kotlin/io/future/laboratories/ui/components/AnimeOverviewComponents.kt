@@ -45,6 +45,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Slider
@@ -84,7 +85,6 @@ import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
-import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.pxValueToDp
@@ -419,7 +419,9 @@ private fun RatingDialog(
             properties = DialogProperties(usePlatformDefaultWidth = false),
         ) {
             ElevatedCard(
-                modifier = Modifier.fillMaxWidth(fraction = 0.8f).padding(bottom = 24.dp)
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.8f)
+                    .padding(bottom = 24.dp)
             ) {
                 Column(
                     modifier = Modifier.padding(8.dp),
@@ -615,14 +617,16 @@ private fun RowScope.EmojiRepresentation(
 ) {
     listOf(
         Icons.Rounded.SentimentVeryDissatisfied to Color.Red,
-        Icons.Rounded.SentimentNeutral to textColor,
+        Icons.Rounded.SentimentNeutral to MaterialTheme.colorScheme.onSurface,
         Icons.Rounded.SentimentVerySatisfied to Color.Green,
     ).forEachIndexed { index, buttonData ->
         IconButton(onClick = { onRatingChanged(index.toFloat()) }) {
             Icon(
                 imageVector = buttonData.first,
                 contentDescription = null,
-                tint = if (rating == index.toFloat()) buttonData.second else textColor.copy(alpha = 0.6f),
+                tint = if (rating == index.toFloat()) buttonData.second else MaterialTheme.colorScheme.onSurface.copy(
+                    alpha = 0.6f
+                ),
             )
         }
     }

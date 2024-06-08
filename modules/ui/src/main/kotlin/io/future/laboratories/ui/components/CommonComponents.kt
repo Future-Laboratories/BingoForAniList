@@ -58,7 +58,6 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
-import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
@@ -96,12 +95,13 @@ internal fun DefaultHeader(title: String) {
 
 internal val negativeButtonColors
     @Composable get() = ButtonDefaults.buttonColors(
-        containerColor = Color(0xFFAA0000),
-        contentColor = textColor,
+        containerColor = MaterialTheme.colorScheme.error,
     )
 
 internal val positiveButtonColors
-    @Composable get() = ButtonDefaults.buttonColors(contentColor = textColor)
+    @Composable get() = ButtonDefaults.buttonColors(
+        containerColor = MaterialTheme.colorScheme.primary,
+    )
 
 @Composable
 internal fun PositiveImageButton(
@@ -165,7 +165,6 @@ internal fun BackButton(
             Icon(
                 imageVector = Icons.AutoMirrored.Rounded.ArrowBack,
                 contentDescription = backString,
-                tint = textColor,
             )
             Text(text = backString)
         }
@@ -280,7 +279,7 @@ internal fun ProfileButton(
     Box(
         modifier = Modifier
             .padding(end = 4.dp)
-            .background(textColor, CircleShape)
+            .background(Color.White, CircleShape)
             .size(44.dp)
             .clip(CircleShape),
         contentAlignment = Alignment.Center,
@@ -331,7 +330,7 @@ internal fun DefaultNavIcon(
         modifier = Modifier
             .size(32.dp)
             .clickable { onClick() },
-        tint = textColor,
+        tint = MaterialTheme.colorScheme.onPrimary,
     )
 }
 
@@ -347,7 +346,6 @@ private fun DefaultDropdownIcon(
         modifier = Modifier
             .size(20.dp)
             .then(modifier),
-        tint = textColor,
     )
 }
 

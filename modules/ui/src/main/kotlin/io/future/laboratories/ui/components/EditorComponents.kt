@@ -25,7 +25,6 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
-import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.R
 
 
@@ -92,7 +91,7 @@ private fun RowScope.BingoEditorField(
                 fieldData.text = fieldText
             },
             modifier = Modifier.fillMaxSize(),
-            textStyle = LocalTextStyle.current.copy(color = textColor),
+            textStyle = LocalTextStyle.current.copy(color = MaterialTheme.colorScheme.onSurface),
         ) { innerTextField ->
             Box(
                 modifier = Modifier.fillMaxSize(),

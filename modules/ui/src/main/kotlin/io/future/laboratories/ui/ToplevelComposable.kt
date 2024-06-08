@@ -24,7 +24,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.plus
-import io.future.laboratories.common.textColor
 import io.future.laboratories.ui.components.DefaultNavIcon
 import io.future.laboratories.ui.components.DropdownRow
 import io.future.laboratories.ui.components.ProfileButton
@@ -76,7 +75,7 @@ public fun CustomScaffold(
             },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = textColor,
+                titleContentColor = MaterialTheme.colorScheme.onPrimary,
             ),
             actions = {
                 var showMenu by rememberSaveable { mutableStateOf(false) }
