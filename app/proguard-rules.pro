@@ -30,4 +30,11 @@
 
 -keepclasseswithmembers class * {
     @retrofit2.http.* <methods>;
+    @io.future.laboratories.anilistapi.** <methods>;
+    @io.future.laboratories.common.** <methods>;
+    @io.future.laboratories.ui.** <methods>;
 }
+
+-keep class io.future.laboratories.anilistapi.** { *; }
+-keep interface io.future.laboratories.anilistapi.** { *; }
+-keep enum io.future.laboratories.anilistapi.** { *; }
