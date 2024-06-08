@@ -47,15 +47,16 @@ android {
         }
     }
 
-
     signingConfigs {
+        println("my message visible by default")
+
         getByName("release") {
             val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
             val allFilesFromDir = File(tmpFilePath).listFiles()
 
             if (allFilesFromDir != null) {
                 val keystoreFile = allFilesFromDir.first()
-                keystoreFile.renameTo(File("keystore/keystore.jks"))
+                keystoreFile.copyTo(file("keystore/keystore.jks"), true)
             }
 
             storeFile = file("keystore/keystore.jks")
