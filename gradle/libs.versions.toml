@@ -13,6 +13,7 @@ activity-compose = "1.9.0"
 compose-bom = "2024.05.00"
 moshi-kotlin = "1.14.0"
 retrofit = "2.9.0"
+annotation-jvm = "1.8.0"
 
 [libraries]
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "core-splashscreen" }
@@ -37,6 +38,7 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 material-icons = { group = "androidx.compose.material", name = "material-icons-extended" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-annotation-jvm = { group = "androidx.annotation", name = "annotation-jvm", version.ref = "annotation-jvm" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
