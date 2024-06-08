@@ -49,15 +49,15 @@ android {
 
 
     signingConfigs {
-        val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-        val allFilesFromDir = File(tmpFilePath).listFiles()
-
-        if (allFilesFromDir != null) {
-            val keystoreFile = allFilesFromDir.first()
-            keystoreFile.renameTo(File("keystore/keystore.jks"))
-        }
-
         getByName("release") {
+            val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+            val allFilesFromDir = File(tmpFilePath).listFiles()
+
+            if (allFilesFromDir != null) {
+                val keystoreFile = allFilesFromDir.first()
+                keystoreFile.renameTo(File("keystore/keystore.jks"))
+            }
+
             storeFile = file("keystore/keystore.jks")
             storePassword = System.getenv("SIGNING_STORE_PASSWORD")
             keyAlias = System.getenv("SIGNING_KEY_ALIAS")
