@@ -54,7 +54,7 @@ android {
 
         if (allFilesFromDir != null) {
             val keystoreFile = allFilesFromDir.first()
-            keystoreFile.renameTo(File("keystore/your_keystore.jks"))
+            keystoreFile.renameTo(File("keystore/keystore.jks"))
         }
 
         getByName("release") {
