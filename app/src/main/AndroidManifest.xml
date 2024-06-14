@@ -32,11 +32,12 @@
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
                     android:host="*"
                     android:mimeType="*/*"
-                    android:pathPattern=".*\\.aniJson"
+                    android:pathPattern="/.*\\.aniJson"
                     android:scheme="content" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
@@ -45,9 +46,10 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="https" />
-                <data android:host="future-laboratories.io" />
-                <data android:path="/anilistbingo" />
+                <data
+                    android:scheme="https"
+                    android:host="future-laboratories.io"
+                    android:path="/anilistbingo" />
             </intent-filter>
 
             <meta-data

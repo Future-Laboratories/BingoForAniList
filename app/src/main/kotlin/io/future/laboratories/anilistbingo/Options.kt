@@ -44,7 +44,7 @@ public class Options private constructor(preferences: SharedPreferences) {
             val type = ScoreFormat.entries.first { it.value == value }
 
             controller.mutateUser(type, save)
-        }
+        },
     )
 
     @PublishedApi
