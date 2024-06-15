@@ -1,6 +1,5 @@
 package io.future.laboratories.anilistbingo
 
-import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.net.Uri
@@ -154,7 +153,7 @@ internal fun SharedPreferences.logout(context: Context) {
 
 //region Activity
 
-internal fun Activity.errorCodeHandle(code: Int) = defaultToast(
+internal fun Context.errorCodeHandle(code: Int) = defaultToast(
     message = when (code) {
         429 -> getString(R.string.error_429)
         500 -> getString(R.string.error_500)
@@ -162,7 +161,7 @@ internal fun Activity.errorCodeHandle(code: Int) = defaultToast(
     }
 )
 
-internal fun Activity.defaultToast(message: String) = Toast.makeText(
+internal fun Context.defaultToast(message: String) = Toast.makeText(
     this,
     message,
     Toast.LENGTH_LONG,

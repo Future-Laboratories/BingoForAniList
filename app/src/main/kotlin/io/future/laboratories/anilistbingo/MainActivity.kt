@@ -59,10 +59,12 @@ public class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         val apiController = APIController.getInstance(
             preferences = preferences,
+            onNetworkError = ::errorCodeHandle,
         )
 
         val options = Options.getInstance(
             preferences = preferences,
+            controller = apiController,
         )
 
         val viewModel: AniListBingoViewModel by viewModels()
@@ -378,7 +380,6 @@ internal class AniListBingoViewModel : ViewModel() {
                 processUriData(
                     uri = it,
                     data = runtimeAPIData,
-                    onErrorCode = activity::errorCodeHandle
                 )
             }
         }
@@ -398,7 +399,7 @@ internal class AniListBingoViewModel : ViewModel() {
         activity: Activity,
         forced: Boolean = false,
     ) = with(apiController) {
-        runtimeAPIData.fetchAniList(forced = forced, onErrorCode = activity::errorCodeHandle) {
+        runtimeAPIData.fetchAniList(forced = forced) {
             activity.save(it, TEMP_PATH)
         }
     }

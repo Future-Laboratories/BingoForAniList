@@ -46,10 +46,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:scheme="https"
-                    android:host="future-laboratories.io"
-                    android:path="/anilistbingo" />
+                <data android:scheme="https" />
+                <data android:host="future-laboratories.io" />
+                <data android:path="/anilistbingo" />
             </intent-filter>
 
             <meta-data

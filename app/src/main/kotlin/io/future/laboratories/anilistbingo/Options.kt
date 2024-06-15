@@ -11,7 +11,10 @@ import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionData
 import io.future.laboratories.ui.components.OptionKey
 
-public class Options private constructor(preferences: SharedPreferences) {
+public class Options private constructor(
+    preferences: SharedPreferences,
+    controller: APIController,
+) {
     private val showFinishedAnime: BooleanOption = BooleanOption(
         preferences = preferences,
         key = SHOW_FINISHED_ANIME,
@@ -39,8 +42,6 @@ public class Options private constructor(preferences: SharedPreferences) {
         defaultValue = ScoreFormat.POINT_100.value,
         values = { ScoreFormat.entries.map { it.value }.associateWith { it } },
         onValueChanged = { value, save ->
-            val controller = APIController.getInstance(preferences)
-
             val type = ScoreFormat.entries.first { it.value == value }
 
             controller.mutateUser(type, save)
@@ -78,9 +79,15 @@ public class Options private constructor(preferences: SharedPreferences) {
         @Volatile
         private var instance: Options? = null
 
-        internal fun getInstance(preferences: SharedPreferences): Options =
+        internal fun getInstance(
+            preferences: SharedPreferences,
+            controller: APIController,
+        ): Options =
             instance ?: synchronized(this) {
-                instance ?: Options(preferences).also { instance = it }
+                instance ?: Options(
+                    preferences = preferences,
+                    controller = controller,
+                ).also { instance = it }
             }
     }
 }

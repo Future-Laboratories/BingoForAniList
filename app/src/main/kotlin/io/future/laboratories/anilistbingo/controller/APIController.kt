@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -23,7 +24,10 @@ import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.R
 
-internal class APIController private constructor(private val preferences: SharedPreferences) {
+internal class APIController private constructor(
+    private val preferences: SharedPreferences,
+    private val onNetworkError: (Int) -> Unit,
+) {
     private val authorization
         get() = "" +
                 "${preferences.getString(PREFERENCE_ACCESS_TYPE, null)} " +
@@ -46,7 +50,6 @@ internal class APIController private constructor(private val preferences: Shared
     internal fun processUriData(
         uri: Uri,
         data: RuntimeData,
-        onErrorCode: (Int) -> Unit,
     ) {
         // put the received values into the given preferences
         preferences.edit(commit = true) {
@@ -73,7 +76,7 @@ internal class APIController private constructor(private val preferences: Shared
                 )
             }
 
-            data.fetchAniList(forced = true, onErrorCode = onErrorCode)
+            data.fetchAniList(forced = true)
         }
     }
 
@@ -97,7 +100,6 @@ internal class APIController private constructor(private val preferences: Shared
      */
     internal fun RuntimeData.fetchAniList(
         forced: Boolean = false,
-        onErrorCode: (Int) -> Unit,
         onFetchFinished: (MainData?) -> Unit = {},
     ) {
         if (dataFetchCompleted && !forced) return
@@ -123,14 +125,15 @@ internal class APIController private constructor(private val preferences: Shared
         ).enqueue(
             onFailure = { _, _ -> dataFetchCompleted = true },
             onResponse = { _, listResponse ->
-                if (listResponse.code() == 200) {
+                val code = listResponse.code()
+                if (code == 200) {
                     runtimeAniListData = listResponse.body()?.data?.copy()
 
                     dataFetchCompleted = true
 
                     onFetchFinished(runtimeAniListData)
                 } else {
-                    onErrorCode(listResponse.code())
+                    onNetworkError(code)
 
                     dataFetchCompleted = true
                 }
@@ -143,6 +146,7 @@ internal class APIController private constructor(private val preferences: Shared
      * @param format ScoreFormat to use
      * @param onCallback What to do with the the response
      */
+    @ReadOnlyComposable
     internal fun mutateUser(
         format: ScoreFormat,
         onCallback: (String) -> Unit,
@@ -156,15 +160,14 @@ internal class APIController private constructor(private val preferences: Shared
                 ),
             ),
         ).enqueue { _, response ->
-            val errorMsg = response.errorBody()?.string()
-
-            if (errorMsg != null) {
-                Log.e("mutateUser", errorMsg)
-            } else {
+            val code = response.code()
+            if (code == 200) {
                 onCallback(
                     response.body()?.data?.updateUser?.mediaListOptions?.scoreFormat?.value
                         ?: return@enqueue
                 )
+            } else {
+                onNetworkError(code)
             }
         }
     }
@@ -237,9 +240,15 @@ internal class APIController private constructor(private val preferences: Shared
         @Volatile
         private var instance: APIController? = null
 
-        internal fun getInstance(preferences: SharedPreferences): APIController =
+        internal fun getInstance(
+            preferences: SharedPreferences,
+            onNetworkError: (Int) -> Unit,
+        ): APIController =
             instance ?: synchronized(this) {
-                instance ?: APIController(preferences).also { instance = it }
+                instance ?: APIController(
+                    preferences = preferences,
+                    onNetworkError = onNetworkError,
+                ).also { instance = it }
             }
     }
 }
