@@ -1,6 +1,7 @@
 package io.future.laboratories.ui.components
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
@@ -12,10 +13,13 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -24,6 +28,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
@@ -31,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.colon
 
 @Composable
@@ -39,13 +45,33 @@ internal fun BingoStat(
     outOf: Int,
     max: Int,
 ) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-    ) {
-        Text(text = name.colon())
+    val localGradient = StyleProvider.containerGradient
 
-        Text(text = "$outOf/$max")
+    OutlinedCard(
+        shape = RoundedCornerShape(50),
+        border = BorderStroke(2.dp, localGradient),
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = name.colon())
+
+            Text(
+                modifier = Modifier
+                    .drawBehind {
+                        drawCircle(
+                            brush = localGradient,
+                        )
+                    }
+                    .padding(12.dp),
+                color = StyleProvider.onGradientTextColor,
+                text = "$outOf/$max",
+            )
+        }
     }
 }
 

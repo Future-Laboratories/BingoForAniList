@@ -32,10 +32,10 @@ import io.future.laboratories.common.BasicSaver
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
+import io.future.laboratories.ui.components.AnimeHeader
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.CustomPullToRefreshContainer
-import io.future.laboratories.ui.components.DefaultHeader
 import io.future.laboratories.ui.components.DefaultSearchBar
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.ModalBottomSheet
@@ -120,7 +120,7 @@ public fun AnimeOverviewPage(
                         key = animeList.name,
                         contentType = "Header",
                     ) {
-                        DefaultHeader(title = animeList.name)
+                        AnimeHeader(title = animeList.name)
                     }
 
                     items(

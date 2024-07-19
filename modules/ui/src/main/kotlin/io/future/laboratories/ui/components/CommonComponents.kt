@@ -3,6 +3,7 @@ package io.future.laboratories.ui.components
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,10 +27,10 @@ import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
@@ -45,6 +47,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.RenderVectorGroup
@@ -52,12 +57,14 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
@@ -65,27 +72,42 @@ import io.future.laboratories.ui.colon
 //region Divider & Spacer
 
 @Composable
-internal fun RowScope.DefaultDivider() = HorizontalDivider(
+internal fun HorizontalDivider(
+    modifier: Modifier = Modifier,
+    thickness: Dp = DividerDefaults.Thickness,
+    brush: Brush = StyleProvider.containerGradient,
+) = Canvas(modifier.fillMaxWidth().height(thickness)) {
+    drawLine(
+        brush = brush,
+        strokeWidth = thickness.toPx(),
+        start = Offset(0f, thickness.toPx() / 2),
+        end = Offset(size.width, thickness.toPx() / 2),
+    )
+}
+
+@Composable
+internal fun RowScope.DefaultDivider(front: Boolean) = HorizontalDivider(
     modifier = Modifier
         .weight(1f)
+        .scale(if (front) 1f else -1f)
         .clip(RoundedCornerShape(1.dp)),
     thickness = 2.dp,
-    color = MaterialTheme.colorScheme.primary,
+    brush = StyleProvider.containerGradient,
 )
 
 @Composable
 internal fun DefaultHeader(title: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        DefaultDivider()
+        DefaultDivider(front = true)
 
         Text(
             text = title,
             modifier = Modifier.padding(all = 4.dp),
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = 16.sp,
+            color = StyleProvider.gradientTextColor,
+            fontSize = 18.sp,
         )
 
-        DefaultDivider()
+        DefaultDivider(front = false)
     }
 }
 

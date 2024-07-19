@@ -30,12 +30,15 @@ import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
+import io.future.laboratories.anilistbingo.Options.Companion.USE_GRADIENT
 import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.anilistbingo.controller.ShareController
 import io.future.laboratories.anilistbingo.controller.ShareController.receive
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.CustomScaffold
 import io.future.laboratories.ui.DropDownItemData
+import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionGroup
 import io.future.laboratories.ui.pages.AnimeOverviewPage
@@ -231,6 +234,7 @@ public class MainActivity : ComponentActivity() {
                                         text = stringResource(id = R.string.options_appearance),
                                         options = listOfNotNull(
                                             options[USE_CARDS],
+                                            options[USE_GRADIENT]
                                         )
                                     ),
                                     OptionGroup(
@@ -296,14 +300,21 @@ public class MainActivity : ComponentActivity() {
         ),
     )
 
+    /**
+     * Sync Option with AniList API & StyleProvider
+     */
     private fun syncOptions(
         options: Options,
         viewModel: AniListBingoViewModel,
     ) {
+        // API
         viewModel.runtimeAPIData.runtimeAniListData?.user?.let {
             options.get<DropdownOption>(SCORING_SYSTEM).currentValue =
                 it.mediaListOptions?.scoreFormat?.value.orEmpty()
         }
+
+        // StyleProvider
+        StyleProvider.useGradient = options.get<BooleanOption>(USE_GRADIENT).currentValue
     }
 
     private fun AniListBingoViewModel.onBackPress() = with(currentPage) {

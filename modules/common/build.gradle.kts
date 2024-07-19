@@ -45,6 +45,7 @@ dependencies {
     implementation(platform(libs.compose.bom))
     implementation(libs.ui.graphics)
     implementation(libs.androidx.compose.foundation)
+    implementation(libs.material3)
 
     // Moshi
     api(libs.moshi.kotlin)

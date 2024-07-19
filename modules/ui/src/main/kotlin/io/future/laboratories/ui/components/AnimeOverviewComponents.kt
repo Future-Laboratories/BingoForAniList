@@ -6,6 +6,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +40,7 @@ import androidx.compose.material.icons.rounded.SentimentNeutral
 import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
 import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Star
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
@@ -47,6 +49,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -85,6 +88,7 @@ import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.pxValueToDp
@@ -625,9 +629,37 @@ private fun RowScope.EmojiRepresentation(
                 imageVector = buttonData.first,
                 contentDescription = null,
                 tint = if (rating == index.toFloat()) buttonData.second else MaterialTheme.colorScheme.onSurface.copy(
-                    alpha = 0.6f
+                    alpha = 0.4f
                 ),
             )
         }
+    }
+}
+
+@Composable
+internal fun AnimeHeader(title: String) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        DefaultDivider(front = false)
+
+        OutlinedCard(
+            modifier = Modifier.padding(4.dp),
+            shape = MaterialTheme.shapes.extraLarge,
+            colors = CardDefaults.elevatedCardColors().copy(
+                containerColor = StyleProvider.gradientTextColor.copy(alpha = 0.8f),
+            ),
+            border = BorderStroke(2.dp, StyleProvider.containerGradient),
+        ) {
+            Text(
+                text = title,
+                modifier = Modifier.padding(
+                    horizontal = 10.dp,
+                    vertical = 6.dp
+                ),
+                color = StyleProvider.onGradientTextColor,
+                fontSize = 18.sp,
+            )
+        }
+
+        DefaultDivider(front = false)
     }
 }

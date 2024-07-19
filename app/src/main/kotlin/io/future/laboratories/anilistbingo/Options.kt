@@ -6,6 +6,7 @@ import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.annotation.RestrictedApi
 import io.future.laboratories.anilistbingo.controller.APIController
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionData
@@ -35,6 +36,17 @@ public class Options private constructor(
         name = { stringResource(id = R.string.option_use_cards) },
         defaultValue = true,
     )
+    private val useGradient: BooleanOption = BooleanOption(
+        preferences = preferences,
+        key = USE_GRADIENT,
+        name = { stringResource(id = R.string.option_use_gradient) },
+        onValueChanged = { value, save ->
+            StyleProvider.useGradient = value
+
+            save(value)
+        },
+        defaultValue = false,
+    )
     private val scoringSystem: DropdownOption = DropdownOption(
         preferences = preferences,
         key = SCORING_SYSTEM,
@@ -54,6 +66,7 @@ public class Options private constructor(
         showFinishedAnime,
         pinnedCategory,
         useCards,
+        useGradient,
         scoringSystem,
     ).associate { it.toPair() }
 
@@ -74,6 +87,7 @@ public class Options private constructor(
         internal val SHOW_FINISHED_ANIME = OptionKey("SHOW_FINISHED_ANIME")
         internal val PINNED_CATEGORY = OptionKey("PINNED_CATEGORY")
         internal val USE_CARDS = OptionKey("USE_CARDS")
+        internal val USE_GRADIENT = OptionKey("USE_GRADIENT")
         internal val SCORING_SYSTEM = OptionKey("SCORING_SYSTEM")
 
         @Volatile

@@ -21,6 +21,7 @@
     <string name="option_pinned_category">Pinned category</string>
     <string name="option_scoring_system">Scoring System</string>
     <string name="option_use_cards">Use cards</string>
+    <string name="option_use_gradient">Use gradient</string>
     <string name="option_visibility">Show all anime</string>
     <string name="overview_bingo">Bingo Overview</string>
     <string name="overview_anime">Anime Overview</string>
