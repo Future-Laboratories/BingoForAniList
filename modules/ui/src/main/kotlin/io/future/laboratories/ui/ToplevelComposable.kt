@@ -9,7 +9,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -23,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.common.plus
 import io.future.laboratories.ui.components.DefaultNavIcon
 import io.future.laboratories.ui.components.DropdownRow
@@ -74,8 +74,11 @@ public fun CustomScaffold(
                 }
             },
             colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                containerColor = StyleProvider.gradientColor,
+                titleContentColor = StyleProvider.onGradientColor,
+                scrolledContainerColor = StyleProvider.gradientColor,
+                navigationIconContentColor = StyleProvider.onGradientColor,
+                actionIconContentColor = StyleProvider.onGradientColor,
             ),
             actions = {
                 var showMenu by rememberSaveable { mutableStateOf(false) }

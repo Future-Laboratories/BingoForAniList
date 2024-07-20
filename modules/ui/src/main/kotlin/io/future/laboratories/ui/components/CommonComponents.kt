@@ -26,7 +26,6 @@ import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -47,8 +46,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -65,6 +66,8 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import io.future.laboratories.common.StyleProvider
+import io.future.laboratories.common.StyleProvider.negativeButtonColors
+import io.future.laboratories.common.StyleProvider.positiveButtonColors
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
@@ -103,7 +106,7 @@ internal fun DefaultHeader(title: String) {
         Text(
             text = title,
             modifier = Modifier.padding(all = 4.dp),
-            color = StyleProvider.gradientTextColor,
+            color = StyleProvider.gradientColor,
             fontSize = 18.sp,
         )
 
@@ -114,16 +117,6 @@ internal fun DefaultHeader(title: String) {
 //endregion
 
 //region Buttons
-
-internal val negativeButtonColors
-    @Composable get() = ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.error,
-    )
-
-internal val positiveButtonColors
-    @Composable get() = ButtonDefaults.buttonColors(
-        containerColor = MaterialTheme.colorScheme.primary,
-    )
 
 @Composable
 internal fun PositiveImageButton(
@@ -256,15 +249,16 @@ internal fun DefaultWarningDialog(
 
 @Composable
 private fun WarningSign() {
+    val brush = StyleProvider.containerGradient
     var target by remember {
-        mutableFloatStateOf(1f)
+        mutableFloatStateOf(0.99f)
     }
     val alpha by animateFloatAsState(
         targetValue = target,
         animationSpec = tween(durationMillis = 600, easing = LinearEasing),
         label = "blink"
     ) { value ->
-        target = if (value != 1f) 1f else 0.3f
+        target = if (value != 0.99f) 0.99f else 0.3f
     }
 
     LaunchedEffect(key1 = "blink", block = {
@@ -274,7 +268,13 @@ private fun WarningSign() {
     Icon(
         modifier = Modifier
             .size(48.dp)
-            .alpha(alpha),
+            .alpha(alpha)
+            .drawWithCache {
+                onDrawWithContent {
+                    drawContent()
+                    drawRect(brush, blendMode = BlendMode.SrcAtop)
+                }
+            },
         imageVector = Icons.Rounded.Warning,
         contentDescription = null,
         tint = MaterialTheme.colorScheme.primary,
@@ -352,7 +352,7 @@ internal fun DefaultNavIcon(
         modifier = Modifier
             .size(32.dp)
             .clickable { onClick() },
-        tint = MaterialTheme.colorScheme.onPrimary,
+        tint = StyleProvider.onGradientColor,
     )
 }
 
@@ -413,6 +413,7 @@ internal fun OptionToggle(
         Text(text = optionName.colon())
 
         Switch(
+            colors = StyleProvider.switchColor,
             checked = checked,
             onCheckedChange = { value ->
                 checked = value

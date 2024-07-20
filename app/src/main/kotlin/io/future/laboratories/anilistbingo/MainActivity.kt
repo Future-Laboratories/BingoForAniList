@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModel
@@ -98,6 +99,7 @@ public class MainActivity : ComponentActivity() {
 
         setContent {
             AniListBingoTheme {
+                window.statusBarColor = StyleProvider.gradientColor.toArgb()
                 CustomScaffold(
                     titleId = { viewModel.currentPage.nameResId },
                     isNavVisible = { viewModel.currentPage !is Page.BINGO_OVERVIEW },

@@ -11,13 +11,13 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.components.BingoItem
 import io.future.laboratories.ui.components.BooleanOption
@@ -55,7 +55,7 @@ public fun BingoOverviewPage(
                 .align(Alignment.BottomEnd),
             onClick = { onEdit(null) },
             shape = RoundedCornerShape(32.dp),
-            containerColor = MaterialTheme.colorScheme.primary,
+            containerColor = StyleProvider.gradientColor,
         ) {
             Icon(
                 imageVector = Icons.Rounded.Add,

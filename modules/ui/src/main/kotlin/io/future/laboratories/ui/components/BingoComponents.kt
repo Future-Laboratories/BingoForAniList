@@ -3,6 +3,7 @@ package io.future.laboratories.ui.components
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +30,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -68,7 +73,7 @@ internal fun BingoStat(
                         )
                     }
                     .padding(12.dp),
-                color = StyleProvider.onGradientTextColor,
+                color = StyleProvider.onGradientColor,
                 text = "$outOf/$max",
             )
         }
@@ -80,7 +85,22 @@ internal fun Bingo(
     bingoData: BingoData,
     onValueChanged: ((BingoData) -> Unit)? = null,
 ) {
-    Column {
+    val gradient = StyleProvider.containerGradient
+
+    Column(
+        modifier = Modifier
+            .border(
+                width = 2.dp, gradient,
+                shape = RectangleShape,
+            )
+            .graphicsLayer(alpha = 0.99f)
+            .drawWithCache {
+                onDrawWithContent {
+                    drawRect(gradient, blendMode = BlendMode.SrcOut)
+                    drawContent()
+                }
+            },
+    ) {
         bingoData.rowData.take(bingoData.size).forEach { rowData ->
             BingoRow(
                 rowData = rowData,
@@ -124,7 +144,8 @@ private fun RowScope.BingoField(
         modifier = Modifier
             .weight(1f)
             .aspectRatio(1f)
-            .border(width = 1.dp, color = MaterialTheme.colorScheme.primary)
+            .padding(1.dp)
+            .background(MaterialTheme.colorScheme.background)
             .combinedClickable(
                 onLongClick = {
                     Toast
@@ -140,6 +161,7 @@ private fun RowScope.BingoField(
         contentAlignment = Alignment.Center,
     ) {
         Text(
+            modifier = Modifier.padding(6.dp),
             text = fieldData.text,
             overflow = TextOverflow.Ellipsis,
         )

@@ -645,7 +645,7 @@ internal fun AnimeHeader(title: String) {
             modifier = Modifier.padding(4.dp),
             shape = MaterialTheme.shapes.extraLarge,
             colors = CardDefaults.elevatedCardColors().copy(
-                containerColor = StyleProvider.gradientTextColor.copy(alpha = 0.8f),
+                containerColor = StyleProvider.gradientColor.copy(alpha = 0.8f),
             ),
             border = BorderStroke(2.dp, StyleProvider.containerGradient),
         ) {
@@ -655,7 +655,7 @@ internal fun AnimeHeader(title: String) {
                     horizontal = 10.dp,
                     vertical = 6.dp
                 ),
-                color = StyleProvider.onGradientTextColor,
+                color = StyleProvider.onGradientColor,
                 fontSize = 18.sp,
             )
         }
