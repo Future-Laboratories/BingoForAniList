@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Close
@@ -29,13 +30,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
@@ -50,11 +51,9 @@ internal fun BingoStat(
     outOf: Int,
     max: Int,
 ) {
-    val localGradient = StyleProvider.containerGradient
-
     OutlinedCard(
         shape = RoundedCornerShape(50),
-        border = BorderStroke(2.dp, localGradient),
+        border = BorderStroke(2.dp, StyleProvider.containerGradient),
     ) {
         Row(
             modifier = Modifier
@@ -65,17 +64,22 @@ internal fun BingoStat(
         ) {
             Text(text = name.colon())
 
-            Text(
+            Box(
                 modifier = Modifier
-                    .drawBehind {
-                        drawCircle(
-                            brush = localGradient,
-                        )
-                    }
-                    .padding(12.dp),
-                color = StyleProvider.onGradientColor,
-                text = "$outOf/$max",
-            )
+                    .background(
+                        brush = StyleProvider.containerGradient,
+                        shape = RoundedCornerShape(50),
+                    )
+                    .size(60.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    modifier = Modifier,
+                    textAlign = TextAlign.Center,
+                    color = StyleProvider.onGradientColor,
+                    text = "$outOf/$max",
+                )
+            }
         }
     }
 }
