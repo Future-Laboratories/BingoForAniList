@@ -10,13 +10,11 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -42,6 +40,7 @@ import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,7 +49,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.SearchBar
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -89,6 +87,7 @@ import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.StyleProvider
+import io.future.laboratories.common.StyleProvider.DefaultContainer
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.pxValueToDp
@@ -116,7 +115,14 @@ internal fun AnimeItem(
         label = "animatedImageHeight"
     )
 
-    val content: @Composable Any.() -> Unit = {
+    DefaultContainer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .animateContentSize()
+            .clickable {
+                onClick(bingoData, animeData)
+            },
+    ) {
         Row(
             modifier = Modifier,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -201,25 +207,6 @@ internal fun AnimeItem(
             }
         }
     }
-
-    val modifier = Modifier
-        .fillMaxWidth()
-        .animateContentSize()
-        .clickable {
-            onClick(bingoData, animeData)
-        }
-
-    if (useCards.currentValue) {
-        ElevatedCard(
-            modifier = modifier,
-            content = content,
-        )
-    } else {
-        Box(
-            modifier = modifier,
-            content = content,
-        )
-    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -257,7 +244,8 @@ internal fun DefaultSearchBar(
     trailingIcon: @Composable (() -> Unit)? = null,
     content: @Composable ColumnScope.() -> Unit = { },
 ) {
-    SearchBar(
+    //TODO: Check for alternative
+    DockedSearchBar(
         modifier = Modifier
             .heightIn(max = 68.dp)
             .fillMaxWidth()
@@ -336,8 +324,6 @@ internal fun ModalBottomSheet(
                 onSearch = { active -> tagSearchActive = active },
                 placeholderStringId = R.string.search_tag,
             )
-
-            Spacer(modifier = Modifier.height(8.dp))
 
             LazyColumn(
                 modifier = Modifier

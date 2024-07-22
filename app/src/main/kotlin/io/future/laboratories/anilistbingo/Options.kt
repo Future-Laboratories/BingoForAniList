@@ -34,6 +34,11 @@ public class Options private constructor(
         preferences = preferences,
         key = USE_CARDS,
         name = { stringResource(id = R.string.option_use_cards) },
+        onValueChanged = { value, save ->
+            StyleProvider.useCards = value
+
+            save(value)
+        },
         defaultValue = true,
     )
     private val useGradient: BooleanOption = BooleanOption(

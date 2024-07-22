@@ -317,6 +317,7 @@ public class MainActivity : ComponentActivity() {
 
         // StyleProvider
         StyleProvider.useGradient = options.get<BooleanOption>(USE_GRADIENT).currentValue
+        StyleProvider.useCards = options.get<BooleanOption>(USE_CARDS).currentValue
     }
 
     private fun AniListBingoViewModel.onBackPress() = with(currentPage) {

@@ -1,8 +1,10 @@
 package io.future.laboratories.common
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SwitchColors
@@ -13,12 +15,15 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
+import io.future.laboratories.common.StyleProvider.useCards
 
 public object StyleProvider {
     public var useGradient: Boolean by mutableStateOf(false)
+    public var useCards: Boolean by mutableStateOf(true)
 
     @Stable
     private val gradientList: List<Color>
@@ -90,4 +95,33 @@ public object StyleProvider {
             focusedIndicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
             focusedLabelColor = MaterialTheme.colorScheme.tertiaryContainer,
         ) else OutlinedTextFieldDefaults.colors()
+
+    @Stable
+    @Composable
+    public fun DefaultContainer(
+        modifier: Modifier,
+        content: @Composable Any.() -> Unit,
+    ): Unit = DefaultContainer(
+        useCards = useCards,
+        modifier = modifier,
+        content = content,
+    )
+}
+
+@Stable
+@Composable
+private fun DefaultContainer(
+    useCards: Boolean,
+    modifier: Modifier,
+    content: @Composable Any.() -> Unit,
+) = if (useCards) {
+    ElevatedCard(
+        modifier = modifier,
+        content = content,
+    )
+} else {
+    Box(
+        modifier = modifier,
+        content = content,
+    )
 }

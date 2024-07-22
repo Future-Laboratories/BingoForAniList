@@ -3,7 +3,6 @@ package io.future.laboratories.ui.components
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,7 +12,6 @@ import androidx.compose.material.icons.rounded.Delete
 import androidx.compose.material.icons.rounded.Edit
 import androidx.compose.material.icons.rounded.MoreVert
 import androidx.compose.material.icons.rounded.Share
-import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
+import io.future.laboratories.common.StyleProvider.DefaultContainer
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 
@@ -39,7 +38,14 @@ internal fun BingoItem(
 ) {
     var expended by rememberSaveable { mutableStateOf(false) }
 
-    val content: @Composable Any.() -> Unit = {
+    DefaultContainer(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick(bingoData)
+            }
+            .animateContentSize(),
+    ) {
         Row(
             modifier = if (useCards.currentValue) Modifier.padding(all = 8.dp) else Modifier,
             horizontalArrangement = Constants.spacedByDefault,
@@ -86,25 +92,6 @@ internal fun BingoItem(
 
             }
         }
-    }
-
-    val modifier = Modifier
-        .fillMaxWidth()
-        .clickable {
-            onClick(bingoData)
-        }
-        .animateContentSize()
-
-    if (useCards.currentValue) {
-        ElevatedCard(
-            modifier = modifier,
-            content = content,
-        )
-    } else {
-        Box(
-            modifier = modifier,
-            content = content,
-        )
     }
 }
 
