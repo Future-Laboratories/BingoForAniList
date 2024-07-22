@@ -192,7 +192,7 @@ public class MainActivity : ComponentActivity() {
                                         bingoData,
                                         bingoPath(),
                                     )
-                                }
+                                },
                             )
 
                             is Page.EDITOR -> {
@@ -245,7 +245,7 @@ public class MainActivity : ComponentActivity() {
                                             options[SCORING_SYSTEM],
                                         )
                                     )
-                                )
+                                ),
                             )
                         }
                     }
