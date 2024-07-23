@@ -107,6 +107,7 @@ public object StyleProvider {
             ),
             focusedIndicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
             focusedLabelColor = MaterialTheme.colorScheme.tertiaryContainer,
+            cursorColor = MaterialTheme.colorScheme.tertiaryContainer,
         ) else OutlinedTextFieldDefaults.colors()
 
     @Stable
