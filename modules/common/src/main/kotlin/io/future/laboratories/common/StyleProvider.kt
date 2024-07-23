@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CheckboxColors
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -59,7 +61,7 @@ public object StyleProvider {
     @Stable
     public val switchColor: SwitchColors
         @Composable
-        get() = if (useGradient) SwitchDefaults.colors().copy(
+        get() = if (useGradient) SwitchDefaults.colors(
             checkedTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
             checkedThumbColor = MaterialTheme.colorScheme.onPrimaryContainer,
         ) else SwitchDefaults.colors()
@@ -83,6 +85,15 @@ public object StyleProvider {
         ) else ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
         )
+
+    @Stable
+    public val checkBoxColor: CheckboxColors
+        @Composable
+        get() = if (useGradient) CheckboxDefaults.colors(
+            checkedColor = MaterialTheme.colorScheme.tertiaryContainer,
+            checkmarkColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
+        else CheckboxDefaults.colors()
 
     @Stable
     public val outLineTextColor: TextFieldColors

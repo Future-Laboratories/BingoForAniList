@@ -2,17 +2,13 @@ package io.future.laboratories.ui.pages
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,14 +27,12 @@ import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BasicSaver
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.Constants
-import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.AnimeHeader
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.CustomPullToRefreshContainer
-import io.future.laboratories.ui.components.DefaultSearchBar
 import io.future.laboratories.ui.components.DropdownOption
-import io.future.laboratories.ui.components.ModalBottomSheet
+import io.future.laboratories.ui.components.SearchBarWithModalBotttomSheet
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -66,10 +60,6 @@ public fun AnimeOverviewPage(
 
     // Searchbar - Anime
     var animeQuery by rememberSaveable { mutableStateOf("") }
-    var animeSearchActive by rememberSaveable { mutableStateOf(false) }
-
-    // Modal
-    var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     // TagFilter
     val saver = BasicSaver(
@@ -80,21 +70,11 @@ public fun AnimeOverviewPage(
     @SuppressLint("MutableCollectionMutableState")
     val selectedTags by rememberSaveable(stateSaver = saver) { mutableStateOf(mutableStateListOf()) }
 
-    DefaultSearchBar(
+    SearchBarWithModalBotttomSheet(
         query = animeQuery,
         onQueryChange = { query -> animeQuery = query },
-        isSearchActive = animeSearchActive,
-        onSearch = { active -> animeSearchActive = active },
-        placeholderStringId = R.string.search_anime,
-        trailingIcon = {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = null,
-                modifier = Modifier.clickable {
-                    showModalBottomSheet = true
-                }
-            )
-        }
+        mediaTags = mediaTags,
+        selectedTags = selectedTags,
     )
 
     Spacer(modifier = Modifier.height(8.dp))
@@ -152,11 +132,4 @@ public fun AnimeOverviewPage(
                 }
         }
     }
-
-    ModalBottomSheet(
-        visible = showModalBottomSheet,
-        mediaTags = mediaTags,
-        selectedTags = selectedTags,
-        onDismissRequest = { showModalBottomSheet = false },
-    )
 }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,9 +22,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -40,7 +41,6 @@ import androidx.compose.material.icons.rounded.SentimentVerySatisfied
 import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.DockedSearchBar
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -49,6 +49,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -234,28 +235,53 @@ internal fun BoxScope.CustomPullToRefreshContainer(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun DefaultSearchBar(
+internal fun SearchBarWithModalBotttomSheet(
+    query: String,
+    onQueryChange: (query: String) -> Unit,
+    mediaTags: List<MediaTag>?,
+    selectedTags: SnapshotStateList<MediaTag>,
+) {
+    // Modal
+    var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
+
+    DefaultSearchBar(
+        query = query,
+        onQueryChange = onQueryChange,
+        placeholderStringId = R.string.search_anime,
+        trailingIcon = {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = null,
+                modifier = Modifier.clickable {
+                    showModalBottomSheet = true
+                }
+            )
+        },
+    )
+
+    ModalBottomSheet(
+        visible = showModalBottomSheet,
+        mediaTags = mediaTags,
+        selectedTags = selectedTags,
+        onDismissRequest = { showModalBottomSheet = false },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DefaultSearchBar(
     modifier: Modifier = Modifier,
     query: String,
     onQueryChange: (query: String) -> Unit,
-    isSearchActive: Boolean,
-    onSearch: (active: Boolean) -> Unit,
     @StringRes placeholderStringId: Int,
     trailingIcon: @Composable (() -> Unit)? = null,
-    content: @Composable ColumnScope.() -> Unit = { },
 ) {
-    //TODO: Check for alternative
-    DockedSearchBar(
+    OutlinedTextField(
         modifier = Modifier
-            .heightIn(max = 68.dp)
             .fillMaxWidth()
             .then(modifier),
-        query = query,
-        onQueryChange = onQueryChange,
-        onSearch = { onSearch(false) },
-        active = isSearchActive,
-        onActiveChange = onSearch,
-        placeholder = { Text(stringResource(id = placeholderStringId)) },
+        value = query,
+        onValueChange = onQueryChange,
         leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -263,8 +289,9 @@ internal fun DefaultSearchBar(
             )
         },
         trailingIcon = trailingIcon,
-        content = content
-        // TODO: Implement recommendations?
+        placeholder = { Text(stringResource(id = placeholderStringId)) },
+        colors = StyleProvider.outLineTextColor,
+        shape = CircleShape,
     )
 }
 
@@ -298,7 +325,7 @@ private fun DeleteDialog(
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-internal fun ModalBottomSheet(
+private fun ModalBottomSheet(
     visible: Boolean,
     mediaTags: List<MediaTag>?,
     selectedTags: SnapshotStateList<MediaTag>,
@@ -309,7 +336,6 @@ internal fun ModalBottomSheet(
 
     // Searchbar - Tags
     var tagQuery by rememberSaveable { mutableStateOf("") }
-    var tagSearchActive by rememberSaveable { mutableStateOf(false) }
 
     if (visible) {
         ModalBottomSheet(
@@ -320,8 +346,6 @@ internal fun ModalBottomSheet(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 query = tagQuery,
                 onQueryChange = { query -> tagQuery = query },
-                isSearchActive = tagSearchActive,
-                onSearch = { active -> tagSearchActive = active },
                 placeholderStringId = R.string.search_tag,
             )
 
@@ -376,7 +400,8 @@ private fun SheetItem(
             onCheckedChange = { value ->
                 checked = !checked
                 onClick(value, item)
-            }
+            },
+            colors = StyleProvider.checkBoxColor,
         )
 
         Text(text = item.name)
