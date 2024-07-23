@@ -4,7 +4,7 @@
     <string name="back">Back</string>
     <string name="bingo">Bingo</string>
     <string name="bingo_diagonal">Diagonal</string>
-    <string name="bingo_hint">Can\'t read whats inside of a field? Press a field for longer to get the full text</string>
+    <string name="bingo_hint">Can\'t read whats inside of a field? Press a field for longer to get the full text.</string>
     <string name="bingo_horizontal">Horizontal</string>
     <string name="bingo_size">Bingo-size</string>
     <string name="bingo_stats">Stats</string>

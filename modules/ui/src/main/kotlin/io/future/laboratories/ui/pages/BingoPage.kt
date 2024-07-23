@@ -1,9 +1,12 @@
 package io.future.laboratories.ui.pages
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -16,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.AllPreview
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
@@ -77,6 +81,17 @@ public fun BingoPage(
     ) {
         item {
             DefaultHeader(title = stringResource(id = R.string.bingo))
+
+            StyleProvider.DefaultContainer(
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    modifier = Modifier.padding(8.dp),
+                    text = stringResource(R.string.bingo_hint)
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
 
             Bingo(bingoData = bingoData) { data ->
                 onDataChange(data)
