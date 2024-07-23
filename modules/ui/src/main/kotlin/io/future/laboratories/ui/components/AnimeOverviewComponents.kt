@@ -608,6 +608,7 @@ private fun RowScope.RatingSlider(
         onValueChange = onValueChange,
         steps = if (scoreFormat != ScoreFormat.POINT_10_DECIMAL) valueRange.endInclusive.toInt() - 1 else 0,
         valueRange = valueRange,
+        colors = StyleProvider.sliderColors,
     )
 
     PositiveImageButton(

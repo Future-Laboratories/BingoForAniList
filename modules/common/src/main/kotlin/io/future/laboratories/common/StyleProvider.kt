@@ -9,6 +9,8 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SliderColors
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.TextFieldColors
@@ -106,6 +108,14 @@ public object StyleProvider {
             focusedIndicatorColor = MaterialTheme.colorScheme.tertiaryContainer,
             focusedLabelColor = MaterialTheme.colorScheme.tertiaryContainer,
         ) else OutlinedTextFieldDefaults.colors()
+
+    @Stable
+    public val sliderColors: SliderColors
+        @Composable
+        get() = if (useGradient) SliderDefaults.colors(
+            activeTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
+            thumbColor = MaterialTheme.colorScheme.tertiaryContainer,
+        ) else SliderDefaults.colors()
 
     @Stable
     @Composable
