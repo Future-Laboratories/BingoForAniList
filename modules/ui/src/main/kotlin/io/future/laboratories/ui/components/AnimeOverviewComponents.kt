@@ -5,10 +5,13 @@ import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -22,7 +25,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -276,6 +278,11 @@ private fun DefaultSearchBar(
     @StringRes placeholderStringId: Int,
     trailingIcon: @Composable (() -> Unit)? = null,
 ) {
+    var interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val shape by animateIntAsState((if (isFocused) 10 else 50), label = "cornerAnimation")
+
     OutlinedTextField(
         modifier = Modifier
             .fillMaxWidth()
@@ -291,7 +298,8 @@ private fun DefaultSearchBar(
         trailingIcon = trailingIcon,
         placeholder = { Text(stringResource(id = placeholderStringId)) },
         colors = StyleProvider.outLineTextColor,
-        shape = CircleShape,
+        interactionSource = interactionSource,
+        shape = RoundedCornerShape(shape),
     )
 }
 
