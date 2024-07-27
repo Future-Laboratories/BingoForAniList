@@ -4,6 +4,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedCard
@@ -14,6 +16,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -23,11 +26,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import io.future.laboratories.common.StyleProvider.cardColor
 import io.future.laboratories.common.StyleProvider.useCards
 
 public object StyleProvider {
     public var useGradient: Boolean by mutableStateOf(false)
     public var useCards: Boolean by mutableStateOf(true)
+
+    @Stable
+    private infix fun Color.renderOver(other: Color): Color = this.compositeOver(other)
 
     @Stable
     private val gradientList: List<Color>
@@ -61,6 +69,20 @@ public object StyleProvider {
         get() = if (useGradient) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
 
     @Stable
+    private val surfaceColor: Color
+        @Composable get() = if (useGradient)
+            MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.2f) renderOver MaterialTheme.colorScheme.background
+        else MaterialTheme.colorScheme.surface
+
+    @Stable
+    public val cardColor: CardColors
+        @Composable
+        get() = if (useGradient) CardDefaults.elevatedCardColors(
+            containerColor = surfaceColor,
+            contentColor = contentColorFor(surfaceColor),
+        ) else CardDefaults.elevatedCardColors()
+
+    @Stable
     public val switchColor: SwitchColors
         @Composable
         get() = if (useGradient) SwitchDefaults.colors(
@@ -73,7 +95,7 @@ public object StyleProvider {
         @Composable
         get() = if (useGradient) ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.errorContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            contentColor = contentColorFor(MaterialTheme.colorScheme.errorContainer),
         ) else ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.error,
         )
@@ -83,7 +105,7 @@ public object StyleProvider {
         @Composable
         get() = if (useGradient) ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.tertiaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentColor = contentColorFor(MaterialTheme.colorScheme.tertiaryContainer),
         ) else ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primary,
         )
@@ -140,6 +162,7 @@ private fun DefaultContainer(
     ElevatedCard(
         modifier = modifier,
         content = content,
+        colors = cardColor,
     )
 } else {
     Box(

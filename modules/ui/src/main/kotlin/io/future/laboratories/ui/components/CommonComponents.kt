@@ -79,7 +79,10 @@ internal fun HorizontalDivider(
     modifier: Modifier = Modifier,
     thickness: Dp = DividerDefaults.Thickness,
     brush: Brush = StyleProvider.containerGradient,
-) = Canvas(modifier.fillMaxWidth().height(thickness)) {
+) = Canvas(
+    modifier
+        .fillMaxWidth()
+        .height(thickness)) {
     drawLine(
         brush = brush,
         strokeWidth = thickness.toPx(),
@@ -212,7 +215,9 @@ internal fun DefaultWarningDialog(
     onAction: () -> Unit,
     onAbort: () -> Unit = onDismiss,
 ): Unit = Dialog(onDismissRequest = onDismiss) {
-    ElevatedCard {
+    ElevatedCard(
+        colors = StyleProvider.cardColor,
+    ) {
         Column(
             modifier = Modifier.padding(8.dp),
             verticalArrangement = Constants.spacedByDefault,
