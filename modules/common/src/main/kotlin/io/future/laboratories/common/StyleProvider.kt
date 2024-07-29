@@ -69,7 +69,7 @@ public object StyleProvider {
         get() = if (useGradient) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onPrimary
 
     @Stable
-    private val surfaceColor: Color
+    public val surfaceColor: Color
         @Composable get() = if (useGradient)
             MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.2f) renderOver MaterialTheme.colorScheme.background
         else MaterialTheme.colorScheme.surface

@@ -349,6 +349,7 @@ private fun ModalBottomSheet(
         ModalBottomSheet(
             onDismissRequest = onDismissRequest,
             sheetState = modalBottomSheetState,
+            containerColor = StyleProvider.surfaceColor,
         ) {
             DefaultSearchBar(
                 modifier = Modifier.padding(horizontal = 8.dp),
