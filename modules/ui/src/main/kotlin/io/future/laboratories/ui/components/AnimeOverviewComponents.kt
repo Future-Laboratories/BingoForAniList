@@ -17,10 +17,12 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -52,6 +54,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonDefaults
+import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
@@ -62,6 +67,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -242,6 +248,8 @@ internal fun SearchBarWithModalBotttomSheet(
     onQueryChange: (query: String) -> Unit,
     mediaTags: List<MediaTag>?,
     selectedTags: SnapshotStateList<MediaTag>,
+    initialValue: () -> FilterOptions,
+    onOptionChange: (filterOption: FilterOptions) -> Unit,
 ) {
     // Modal
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
@@ -266,6 +274,8 @@ internal fun SearchBarWithModalBotttomSheet(
         mediaTags = mediaTags,
         selectedTags = selectedTags,
         onDismissRequest = { showModalBottomSheet = false },
+        initialValue = initialValue,
+        onOptionChange = onOptionChange
     )
 }
 
@@ -338,6 +348,8 @@ private fun ModalBottomSheet(
     mediaTags: List<MediaTag>?,
     selectedTags: SnapshotStateList<MediaTag>,
     onDismissRequest: () -> Unit,
+    initialValue: () -> FilterOptions,
+    onOptionChange: (filterOption: FilterOptions) -> Unit,
 ) {
     val modalBottomSheetState = rememberModalBottomSheetState()
     val preFilteredTags = mediaTags?.filterNot { it.isAdult }
@@ -356,6 +368,13 @@ private fun ModalBottomSheet(
                 query = tagQuery,
                 onQueryChange = { query -> tagQuery = query },
                 placeholderStringId = R.string.search_tag,
+            )
+
+            Spacer(Modifier.size(8.dp))
+
+            SingleChoiceSegmentedButtonRow(
+                initialValue = initialValue,
+                onOptionChange = onOptionChange,
             )
 
             LazyColumn(
@@ -379,9 +398,11 @@ private fun ModalBottomSheet(
                                 )
                             },
                     ) { tag ->
+                        val isSelected by rememberSaveable { mutableStateOf(tag in selectedTags) }
+
                         SheetItem(
                             item = tag,
-                            initialValue = tag in selectedTags,
+                            initialValue = isSelected,
                             onClick = { change, value ->
                                 selectedTags.apply {
                                     if (change) add(value) else remove(value)
@@ -393,6 +414,45 @@ private fun ModalBottomSheet(
             }
         }
     }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+private fun SingleChoiceSegmentedButtonRow(
+    initialValue: () -> FilterOptions,
+    onOptionChange: (filterOption: FilterOptions) -> Unit = {},
+) {
+    var selectedIndex by remember { mutableIntStateOf(initialValue().ordinal) }
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center
+    ) {
+        SingleChoiceSegmentedButtonRow {
+            FilterOptions.entries.forEachIndexed { index, option ->
+                SegmentedButton(
+                    shape = SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = FilterOptions.entries.size
+                    ),
+                    onClick = {
+                        selectedIndex = index
+                        onOptionChange(option)
+                    },
+                    selected = index == selectedIndex,
+                ) {
+                    Text(option.name)
+                }
+            }
+        }
+    }
+}
+
+internal enum class FilterOptions {
+    OR,
+    AND,
+    XOR,
+    NOT,
 }
 
 @Composable
@@ -553,7 +613,8 @@ private fun Rating(
         when (scoreFormat) {
             ScoreFormat.POINT_100,
             ScoreFormat.POINT_10_DECIMAL,
-            ScoreFormat.POINT_10 -> RatingSlider(
+            ScoreFormat.POINT_10,
+            -> RatingSlider(
                 value = value,
                 scoreFormat = scoreFormat,
                 onValueChange = {
@@ -624,7 +685,7 @@ private fun RowScope.RatingSlider(
 @Composable
 private fun RowScope.RatingBar(
     rating: Float,
-    onRatingChanged: (Float) -> Unit
+    onRatingChanged: (Float) -> Unit,
 ) {
     for (i in 1..5) {
         IconButton(onClick = { onRatingChanged(i.toFloat()) }) {

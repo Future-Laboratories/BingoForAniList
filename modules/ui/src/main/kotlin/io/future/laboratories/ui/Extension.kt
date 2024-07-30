@@ -10,6 +10,8 @@ import androidx.compose.ui.tooling.preview.PreviewScreenSizes
 import androidx.compose.ui.tooling.preview.Wallpapers
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
+import io.future.laboratories.ui.components.FilterOptions
+import kotlin.collections.any
 
 //region Strings
 
@@ -31,6 +33,20 @@ internal fun Int.pxValueToDp(): Dp {
 
 internal fun Int.pxValueToDp(density: Density): Dp {
     return with(density) { this@pxValueToDp.toDp() }
+}
+
+//endregion
+
+//region FilterOptions
+
+internal fun <T> List<T>.applyOperator(
+    filterOptions: FilterOptions,
+    predicate: (T) -> Boolean,
+): Boolean = when (filterOptions) {
+    FilterOptions.OR -> any(predicate)
+    FilterOptions.AND -> all(predicate)
+    FilterOptions.XOR -> count(predicate) == 1
+    FilterOptions.NOT -> none(predicate)
 }
 
 //endregion

@@ -27,11 +27,13 @@ import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BasicSaver
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.ui.Constants
+import io.future.laboratories.ui.applyOperator
 import io.future.laboratories.ui.components.AnimeHeader
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.CustomPullToRefreshContainer
 import io.future.laboratories.ui.components.DropdownOption
+import io.future.laboratories.ui.components.FilterOptions
 import io.future.laboratories.ui.components.SearchBarWithModalBotttomSheet
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -69,12 +71,17 @@ public fun AnimeOverviewPage(
 
     @SuppressLint("MutableCollectionMutableState")
     val selectedTags by rememberSaveable(stateSaver = saver) { mutableStateOf(mutableStateListOf()) }
+    var selectMode by rememberSaveable { mutableStateOf(FilterOptions.OR) }
 
     SearchBarWithModalBotttomSheet(
         query = animeQuery,
         onQueryChange = { query -> animeQuery = query },
         mediaTags = mediaTags,
         selectedTags = selectedTags,
+        initialValue = { selectMode },
+        onOptionChange = {
+            selectMode = it
+        }
     )
 
     Spacer(modifier = Modifier.height(8.dp))
@@ -113,7 +120,7 @@ public fun AnimeOverviewPage(
                                     ) && if (selectedTags.isEmpty()) {
                                     true
                                 } else {
-                                    it.media.tags.any { tag -> tag in selectedTags }
+                                    selectedTags.applyOperator(selectMode) { tag -> tag in it.media.tags }
                                 }
                             },
                     ) { animeData ->

@@ -32,6 +32,7 @@ import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
 import io.future.laboratories.anilistbingo.Options.Companion.USE_GRADIENT
+import io.future.laboratories.anilistbingo.Page.BINGO_OVERVIEW
 import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.anilistbingo.controller.ShareController
 import io.future.laboratories.anilistbingo.controller.ShareController.receive
@@ -216,7 +217,7 @@ public class MainActivity : ComponentActivity() {
 
                                         save(bingoData, bingoStoragePath("${bingoData.id}"))
 
-                                        viewModel.currentPage = Page.BINGO_OVERVIEW()
+                                        viewModel.currentPage = BINGO_OVERVIEW()
                                     },
                                 )
                             }
@@ -247,6 +248,8 @@ public class MainActivity : ComponentActivity() {
                                     )
                                 ),
                             )
+
+                            is Page.ANIME_BROWSER -> TODO()
                         }
                     }
                 }
@@ -456,6 +459,8 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
     }
 
     class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
+
+    class ANIME_BROWSER(sourcePage: Page) : Page(R.string.overview_anime, sourcePage)
 
     sealed interface SavableBingo {
         fun bingoPath(bingoData: BingoData, animeData: MediaList) =
