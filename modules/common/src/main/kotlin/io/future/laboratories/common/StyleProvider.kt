@@ -10,6 +10,8 @@ import androidx.compose.material3.CheckboxColors
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MenuDefaults
+import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
@@ -139,6 +141,12 @@ public object StyleProvider {
             activeTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
             thumbColor = MaterialTheme.colorScheme.tertiaryContainer,
         ) else SliderDefaults.colors()
+
+    @Stable
+    public val dropDownItemColor: MenuItemColors
+        @Composable get() = if (useGradient) MenuDefaults.itemColors(
+
+        ) else MenuDefaults.itemColors()
 
     @Stable
     @Composable

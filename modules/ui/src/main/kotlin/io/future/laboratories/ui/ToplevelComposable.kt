@@ -1,5 +1,6 @@
 package io.future.laboratories.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.WindowInsets
@@ -91,8 +92,9 @@ public fun CustomScaffold(
                 )
 
                 DropdownMenu(
+                    modifier = Modifier.background(StyleProvider.surfaceColor),
                     expanded = showMenu,
-                    onDismissRequest = { showMenu = false }
+                    onDismissRequest = { showMenu = false },
                 ) {
                     dropDownItems.forEach { dropdownItem ->
                         dropdownItem {

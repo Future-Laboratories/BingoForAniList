@@ -12,8 +12,10 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
+import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -283,7 +285,22 @@ public class MainActivity : ComponentActivity() {
                     intent,
                     null,
                 )
-            }
+            },
+        ),
+        DropDownItemData(
+            textId = { R.string.github },
+            contentDescription = null,
+            imageVector = Icons.Rounded.Build,
+            isVisible = { true },
+            onClick = {
+                val url = getString(R.string.github_url)
+                val intent = Intent(Intent.ACTION_VIEW)
+                intent.setData(Uri.parse(url))
+                startActivity(
+                    intent,
+                    null,
+                )
+            },
         ),
         DropDownItemData(
             textId = { if (viewModel.isLoggedIn) R.string.logout else R.string.login },

@@ -5,6 +5,7 @@
 
     <string name="anilist_url" translatable="false">https://anilist.co/api/v2/oauth/authorize?client_id=14752&amp;response_type=token"</string>
     <string name="donation_url" translatable="false">https://ko-fi.com/L3L6QSI1Z</string>
+    <string name="github_url" translatable="false">https://github.com/Future-Laboratories</string>
 
     <string name="bingo">Bingo</string>
     <string name="delete_success">Deletion of file was successful</string>
@@ -12,6 +13,7 @@
     <string name="delete_file_error">Error while deletion, the file doesn\'t exist</string>
     <string name="donate">Donate</string>
     <string name="editor">Editor</string>
+    <string name="github" translatable="false">Github</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="options">Options</string>
