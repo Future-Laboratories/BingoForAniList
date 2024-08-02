@@ -23,7 +23,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
-import io.future.laboratories.common.StyleProvider.DefaultContainer
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 
@@ -38,7 +37,7 @@ internal fun BingoItem(
 ) {
     var expended by rememberSaveable { mutableStateOf(false) }
 
-    DefaultContainer(
+    StyledContainer(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {

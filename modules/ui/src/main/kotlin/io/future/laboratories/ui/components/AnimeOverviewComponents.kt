@@ -96,7 +96,6 @@ import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.StyleProvider
-import io.future.laboratories.common.StyleProvider.DefaultContainer
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.pxValueToDp
@@ -124,7 +123,7 @@ internal fun AnimeItem(
         label = "animatedImageHeight"
     )
 
-    DefaultContainer(
+    StyledContainer(
         modifier = Modifier
             .fillMaxWidth()
             .animateContentSize()

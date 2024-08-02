@@ -19,13 +19,13 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
-import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.AllPreview
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.components.Bingo
 import io.future.laboratories.ui.components.BingoStat
 import io.future.laboratories.ui.components.DefaultHeader
+import io.future.laboratories.ui.components.StyledContainer
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 @Composable
@@ -82,7 +82,7 @@ public fun BingoPage(
         item {
             DefaultHeader(title = stringResource(id = R.string.bingo))
 
-            StyleProvider.DefaultContainer(
+            StyledContainer(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
