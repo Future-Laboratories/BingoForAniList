@@ -7,8 +7,11 @@ import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.core.content.edit
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_TOKEN
@@ -17,6 +20,7 @@ import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistapi.data.base.AniListMutationBody
@@ -141,6 +145,36 @@ internal class APIController private constructor(
         )
     }
 
+    internal fun RuntimeData.fetchNewPage(
+        page: Int,
+    ) {
+        if (page in runtimePages.keys) return
+
+        api.postPageData(
+            authorization = authorization,
+            json = AniListQueryBody(
+                query = API.aniListMainQuery,
+                variables = mapOf(
+                    "page" to page,
+                ),
+            ),
+        ).enqueue(
+            onFailure = { _, _ -> dataFetchCompleted = true },
+            onResponse = { _, listResponse ->
+                val code = listResponse.code()
+                if (code == 200) {
+                    runtimePages[page] =
+                        listResponse.body()?.data?.page?.media?.toMutableStateList()
+                            ?: return@enqueue
+                } else {
+                    onNetworkError(code)
+
+                    dataFetchCompleted = true
+                }
+            }
+        )
+    }
+
     /**
      * Mutates User-preferences
      * @param format ScoreFormat to use
@@ -232,8 +266,10 @@ internal class APIController private constructor(
         private val initialRuntimeAniListData: MainData? = null,
     ) {
         var runtimeAniListData: MainData? by mutableStateOf(
-            initialRuntimeAniListData
+            initialRuntimeAniListData,
         )
+
+        var runtimePages = mutableStateMapOf<Int, SnapshotStateList<Media>>()
     }
 
     companion object {

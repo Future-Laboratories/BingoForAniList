@@ -1,6 +1,7 @@
 package io.future.laboratories.anilistapi
 
 import io.future.laboratories.anilistapi.data.MainData
+import io.future.laboratories.anilistapi.data.PageData
 import io.future.laboratories.anilistapi.data.UpdateMediaListEntry
 import io.future.laboratories.anilistapi.data.UpdateUserData
 import io.future.laboratories.anilistapi.data.ViewerData
@@ -48,6 +49,17 @@ public interface API {
         "Accept: application/json",
         "Content-Type: application/json",
     )
+    public fun postPageData(
+        @Header("Authorization") authorization: String,
+        @Query("response_type") token: String = "token",
+        @Body json: AniListQueryBody,
+    ): DataHolderCall<PageData>
+
+    @POST("/")
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json",
+    )
     public fun postUserData(
         @Header("Authorization") authorization: String,
         @Query("response_type") token: String = "token",
@@ -74,6 +86,21 @@ public interface API {
                 }
             """.trimIndent()
 
+        private val media: String = """
+                media {
+                    id
+                    title {
+                       userPreferred
+                    }
+                    coverImage {
+                       large
+                    }
+                    tags {
+                       name
+                    }
+                }
+            """.trimIndent()
+
         public val aniListMainQuery: String = """
                 query(${'$'}userId: Int) {
                   MediaTagCollection {
@@ -95,23 +122,20 @@ public interface API {
                         id
                         score
                         status
-                        media {
-                          id
-                          title {
-                            userPreferred
-                          }
-                          coverImage {
-                            large
-                          }
-                          tags {
-                            name
-                          }
-                        }
+                        $media
                       }
                     }
                   }
                 }
             """.trimIndent()
+
+        public val pageQuery: String = """
+            query(${'$'}page: Int) {
+              Page(page: ${'$'}page, page: 50) {
+                $media
+              }
+            }
+        """.trimIndent()
 
         public val aniListUserMutation: String = """
             mutation(${'$'}format: ScoreFormat) {
