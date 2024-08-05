@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Create
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.Constants
+import io.future.laboratories.ui.Constants.contentPaddingForFAB
 import io.future.laboratories.ui.components.BingoItem
 import io.future.laboratories.ui.components.BooleanOption
 
@@ -34,6 +35,7 @@ public fun BingoOverviewPage(
     Box(modifier = Modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
+            contentPadding = contentPaddingForFAB,
             verticalArrangement = Constants.spacedByDefault,
         ) {
             items(bingoDataList) { bingoData ->
@@ -54,13 +56,13 @@ public fun BingoOverviewPage(
                 .aspectRatio(1f)
                 .align(Alignment.BottomEnd),
             onClick = { onEdit(null) },
-            shape = RoundedCornerShape(32.dp),
+            shape = CircleShape,
             containerColor = StyleProvider.gradientColor,
         ) {
             Icon(
-                imageVector = Icons.Rounded.Add,
+                imageVector = Icons.Rounded.Create,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(0.9f),
+                modifier = Modifier.fillMaxSize(0.70f),
             )
         }
     }

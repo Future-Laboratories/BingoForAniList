@@ -16,7 +16,7 @@ kotlin {
 
 android {
     namespace = "io.future.laboratories.anilistbingo"
-    compileSdk = 34
+    compileSdk = 35
 
     val major = 1
     val minor = 0
@@ -25,7 +25,7 @@ android {
     defaultConfig {
         applicationId = "io.future.laboratories.anilistbingo"
         minSdk = 27
-        targetSdk = 34
+        targetSdk = 35
         versionCode = major * 100 * 100 + minor * 100 + patch
         versionName = "$major.$minor.$patch"
 
@@ -90,6 +90,7 @@ dependencies {
     implementation(libs.lifecycle.runtime.ktx)
     implementation(libs.activity.compose)
     implementation(platform(libs.compose.bom))
+    implementation(libs.material.icons)
     implementation(libs.material3)
 
     implementation(project(":modules:anilistapi"))

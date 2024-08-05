@@ -13,9 +13,10 @@ import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.Build
+import androidx.compose.material.icons.rounded.Code
+import androidx.compose.material.icons.rounded.Commit
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Settings
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -27,6 +28,7 @@ import androidx.lifecycle.ViewModel
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
+import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
@@ -34,7 +36,6 @@ import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
 import io.future.laboratories.anilistbingo.Options.Companion.USE_GRADIENT
-import io.future.laboratories.anilistbingo.Page.BINGO_OVERVIEW
 import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.anilistbingo.controller.ShareController
 import io.future.laboratories.anilistbingo.controller.ShareController.receive
@@ -50,6 +51,7 @@ import io.future.laboratories.ui.pages.BingoOverviewPage
 import io.future.laboratories.ui.pages.BingoPage
 import io.future.laboratories.ui.pages.EditorPage
 import io.future.laboratories.ui.pages.OptionsPage
+import io.future.laboratories.ui.pages.AnimeBrowserPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
@@ -158,6 +160,10 @@ public class MainActivity : ComponentActivity() {
                                         sourcePage = viewModel.currentPage,
                                     )
                                 },
+                                onFABClick = {
+                                    viewModel.currentPage =
+                                        Page.ANIME_BROWSER(viewModel.currentPage)
+                                }
                             )
 
                             is Page.BINGO_OVERVIEW -> BingoOverviewPage(
@@ -198,31 +204,29 @@ public class MainActivity : ComponentActivity() {
                                 },
                             )
 
-                            is Page.EDITOR -> {
-                                EditorPage(
-                                    preferences = preferences,
-                                    bingoData = bingoData,
-                                    isImported = isImported,
-                                    showDialog = showDialog,
-                                    onBackDialogDismiss = {
-                                        showDialog = false
-                                    },
-                                    onBackDialogAccept = {
-                                        showDialog = false
+                            is Page.EDITOR -> EditorPage(
+                                preferences = preferences,
+                                bingoData = bingoData,
+                                isImported = isImported,
+                                showDialog = showDialog,
+                                onBackDialogDismiss = {
+                                    showDialog = false
+                                },
+                                onBackDialogAccept = {
+                                    showDialog = false
 
-                                        viewModel.currentPage = viewModel.currentPage.previousPage
-                                    },
-                                    onClickSave = { bingoData, isNew ->
-                                        if (isNew) {
-                                            runtimeData.add(bingoData)
-                                        }
+                                    viewModel.currentPage = viewModel.currentPage.previousPage
+                                },
+                                onClickSave = { bingoData, isNew ->
+                                    if (isNew) {
+                                        runtimeData.add(bingoData)
+                                    }
 
-                                        save(bingoData, bingoStoragePath("${bingoData.id}"))
+                                    save(bingoData, bingoStoragePath("${bingoData.id}"))
 
-                                        viewModel.currentPage = BINGO_OVERVIEW()
-                                    },
-                                )
-                            }
+                                    viewModel.currentPage = Page.BINGO_OVERVIEW()
+                                },
+                            )
 
                             is Page.OPTIONS -> OptionsPage(
                                 timestamp = preferences.getLong(PREFERENCE_ACCESS_EXPIRED, 0L),
@@ -251,7 +255,14 @@ public class MainActivity : ComponentActivity() {
                                 ),
                             )
 
-                            is Page.ANIME_BROWSER -> TODO()
+                            is Page.ANIME_BROWSER -> AnimeBrowserPage(
+                                pages = viewModel.runtimeAPIData.runtimePages,
+                                onRequestMore = { page ->
+                                    with(apiController) {
+                                        viewModel.runtimeAPIData.fetchNewPage(page = page)
+                                    }
+                                },
+                            )
                         }
                     }
                 }
@@ -290,7 +301,7 @@ public class MainActivity : ComponentActivity() {
         DropDownItemData(
             textId = { R.string.github },
             contentDescription = null,
-            imageVector = Icons.Rounded.Build,
+            imageVector = Icons.Rounded.Code,
             isVisible = { true },
             onClick = {
                 val url = getString(R.string.github_url)
@@ -477,7 +488,7 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
 
     class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
 
-    class ANIME_BROWSER(sourcePage: Page) : Page(R.string.overview_anime, sourcePage)
+    class ANIME_BROWSER(sourcePage: Page) : Page(R.string.explorer_anime, sourcePage)
 
     sealed interface SavableBingo {
         fun bingoPath(bingoData: BingoData, animeData: MediaList) =

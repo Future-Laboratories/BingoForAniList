@@ -22,6 +22,7 @@
     <string name="option_visibility">Alle Anime anzeigen</string>
     <string name="overview_bingo">Bingo Übersicht</string>
     <string name="overview_anime">Anime Übersicht</string>
+    <string name="explorer_anime">Anime Entdecken</string>
     <string name="share_message">Schauen Sie sich mein neues Bingo an!</string>
 
     <!--Error-code Messages-->

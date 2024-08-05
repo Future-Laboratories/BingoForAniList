@@ -130,8 +130,8 @@ public interface API {
             """.trimIndent()
 
         public val pageQuery: String = """
-            query(${'$'}page: Int) {
-              Page(page: ${'$'}page, page: 50) {
+            query(${'$'}pageNumber: Int) {
+              Page(page: ${'$'}pageNumber, perPage: 50) {
                 $media
               }
             }

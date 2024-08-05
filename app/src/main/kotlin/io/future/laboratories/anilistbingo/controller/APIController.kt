@@ -153,13 +153,13 @@ internal class APIController private constructor(
         api.postPageData(
             authorization = authorization,
             json = AniListQueryBody(
-                query = API.aniListMainQuery,
+                query = API.pageQuery,
                 variables = mapOf(
-                    "page" to page,
+                    "pageNumber" to page,
                 ),
             ),
         ).enqueue(
-            onFailure = { _, _ -> dataFetchCompleted = true },
+            onFailure = { _, _ -> },
             onResponse = { _, listResponse ->
                 val code = listResponse.code()
                 if (code == 200) {
@@ -168,8 +168,6 @@ internal class APIController private constructor(
                             ?: return@enqueue
                 } else {
                     onNetworkError(code)
-
-                    dataFetchCompleted = true
                 }
             }
         )
