@@ -22,7 +22,9 @@ public fun ColumnScope.OptionsPage(
     vararg options: OptionGroup,
 ) {
     LazyColumn(modifier = Modifier.weight(1f)) {
-        options.forEach { group ->
+        options
+            .filter{ it.isVisible?.invoke() != false }
+            .forEach { group ->
             item {
                 DefaultHeader(title = group.text)
             }

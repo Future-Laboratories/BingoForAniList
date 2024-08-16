@@ -66,6 +66,7 @@ public abstract class OptionData<T : Any> {
 public data class OptionGroup(
     val text: String,
     val options: List<OptionData<*>>,
+    val isVisible: (() -> Boolean)? = null,
 )
 
 public data class BooleanOption(

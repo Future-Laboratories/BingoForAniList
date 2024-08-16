@@ -51,6 +51,7 @@ import io.future.laboratories.ui.components.SearchBarWithModalBotttomSheet
 public fun AnimeOverviewPage(
     bingoData: BingoData,
     showFinished: BooleanOption,
+    showFAB: BooleanOption,
     pinned: DropdownOption,
     animeDataList: MediaListCollection?,
     mediaTags: List<MediaTag>?,
@@ -149,20 +150,22 @@ public fun AnimeOverviewPage(
                 }
         }
 
-        FloatingActionButton(
-            modifier = Modifier
-                .width(64.dp)
-                .aspectRatio(1f)
-                .align(Alignment.BottomEnd),
-            onClick = { onFABClick() },
-            shape = CircleShape,
-            containerColor = StyleProvider.gradientColor,
-        ) {
-            Icon(
-                imageVector = Icons.Rounded.Add,
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(0.9f),
-            )
+        if(showFAB.currentValue) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .width(64.dp)
+                    .aspectRatio(1f)
+                    .align(Alignment.BottomEnd),
+                onClick = { onFABClick() },
+                shape = CircleShape,
+                containerColor = StyleProvider.gradientColor,
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Add,
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(0.9f),
+                )
+            }
         }
     }
 }

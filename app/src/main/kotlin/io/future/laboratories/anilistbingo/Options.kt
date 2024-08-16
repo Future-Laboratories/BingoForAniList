@@ -1,5 +1,6 @@
 package io.future.laboratories.anilistbingo
 
+import android.R.attr.type
 import android.content.SharedPreferences
 import androidx.compose.ui.res.stringResource
 import io.future.laboratories.anilistapi.data.MediaListStatus
@@ -64,6 +65,26 @@ public class Options private constructor(
             controller.mutateUser(type, save)
         },
     )
+    private val showExperimental: BooleanOption = BooleanOption(
+        preferences = preferences,
+        key = SHOW_EXPERIMENTAL,
+        name = { stringResource(id = R.string.option_show_experimental_options) },
+        defaultValue = false,
+        onValueChanged = { value, save ->
+            if(!value) {
+                showExperimentalBrowser.currentValue = false
+            }
+
+            save(value)
+        },
+    )
+    private val showExperimentalBrowser: BooleanOption = BooleanOption(
+        preferences = preferences,
+        key = SHOW_EXPERIMENTAL_BROWSER,
+        name = { stringResource(id = R.string.option_show_experimental_Browser) },
+        defaultValue = false,
+        isVisible = { showExperimental.currentValue },
+    )
 
     @PublishedApi
     @RestrictedApi
@@ -73,6 +94,8 @@ public class Options private constructor(
         useCards,
         useGradient,
         scoringSystem,
+        showExperimental,
+        showExperimentalBrowser,
     ).associate { it.toPair() }
 
     @PublishedApi
@@ -94,6 +117,8 @@ public class Options private constructor(
         internal val USE_CARDS = OptionKey("USE_CARDS")
         internal val USE_GRADIENT = OptionKey("USE_GRADIENT")
         internal val SCORING_SYSTEM = OptionKey("SCORING_SYSTEM")
+        internal val SHOW_EXPERIMENTAL = OptionKey("SHOW_EXPERIMENTAL")
+        internal val SHOW_EXPERIMENTAL_BROWSER = OptionKey("SHOW_EXPERIMENTAL_BROWSER")
 
         @Volatile
         private var instance: Options? = null

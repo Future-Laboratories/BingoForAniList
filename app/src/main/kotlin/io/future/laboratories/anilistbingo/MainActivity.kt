@@ -30,6 +30,8 @@ import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
+import io.future.laboratories.anilistbingo.Options.Companion.SHOW_EXPERIMENTAL
+import io.future.laboratories.anilistbingo.Options.Companion.SHOW_EXPERIMENTAL_BROWSER
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
 import io.future.laboratories.anilistbingo.Options.Companion.USE_GRADIENT
@@ -156,6 +158,7 @@ public class MainActivity : ComponentActivity() {
                                         sourcePage = viewModel.currentPage,
                                     )
                                 },
+                                showFAB = options[SHOW_EXPERIMENTAL_BROWSER],
                                 onFABClick = {
                                     viewModel.currentPage =
                                         Page.ANIME_BROWSER(viewModel.currentPage)
@@ -231,6 +234,7 @@ public class MainActivity : ComponentActivity() {
                                     OptionGroup(
                                         text = stringResource(id = R.string.options_general),
                                         options = listOfNotNull(
+                                            options[SHOW_EXPERIMENTAL],
                                             options[SHOW_FINISHED_ANIME],
                                             options[PINNED_CATEGORY],
                                         )
@@ -247,6 +251,15 @@ public class MainActivity : ComponentActivity() {
                                         options = listOfNotNull(
                                             options[SCORING_SYSTEM],
                                         )
+                                    ),
+                                    OptionGroup(
+                                        text = stringResource(id = R.string.options_experimental),
+                                        options = listOfNotNull(
+                                            options[SHOW_EXPERIMENTAL_BROWSER],
+                                        ),
+                                        isVisible = {
+                                            options.get<BooleanOption>(SHOW_EXPERIMENTAL).currentValue
+                                        }
                                     )
                                 ),
                             )

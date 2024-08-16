@@ -14,9 +14,12 @@
     <string name="options">Optionen</string>
     <string name="options_account">Konto</string>
     <string name="options_appearance">Aussehen</string>
+    <string name="options_experimental">Experimentell</string>
     <string name="options_general">Allgemein</string>
     <string name="option_pinned_category">Angepinnte Kategorie</string>
     <string name="option_scoring_system">Bewertungssystem</string>
+    <string name="option_show_experimental_options">Experimentelle Optionen anzeigen</string>
+    <string name="option_show_experimental_Browser">Experimentellen Browser anzeigen</string>
     <string name="option_use_cards">Verwende Karten</string>
     <string name="option_use_gradient">Verwende Farbverlauf</string>
     <string name="option_visibility">Alle Anime anzeigen</string>
