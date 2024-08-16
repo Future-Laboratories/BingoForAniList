@@ -44,7 +44,7 @@ internal class APIController private constructor(
     internal fun Context.createLoginIntent() {
         val url = getString(R.string.anilist_url)
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.setData(Uri.parse(url))
+        intent.data = Uri.parse(url)
         startActivity(
             intent,
             null,
@@ -194,6 +194,7 @@ internal class APIController private constructor(
         ).enqueue { _, response ->
             val code = response.code()
             if (code == 200) {
+                // Update preferences
                 onCallback(
                     response.body()?.data?.updateUser?.mediaListOptions?.scoreFormat?.value
                         ?: return@enqueue

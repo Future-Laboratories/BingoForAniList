@@ -2,8 +2,6 @@ package io.future.laboratories.ui.components
 
 import androidx.annotation.FloatRange
 import androidx.annotation.StringRes
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
@@ -19,11 +17,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -36,8 +31,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
-import androidx.compose.material.icons.rounded.KeyboardArrowDown
-import androidx.compose.material.icons.rounded.KeyboardArrowUp
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.SentimentNeutral
 import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
@@ -75,12 +68,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layout
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -88,8 +76,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaTag
@@ -98,12 +84,10 @@ import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
-import io.future.laboratories.ui.pxValueToDp
 import io.future.laboratories.ui.toTriple
 
 @Composable
 internal fun AnimeItem(
-    useCards: BooleanOption,
     animeData: MediaList,
     bingoData: BingoData,
     scoreFormat: ScoreFormat,
@@ -111,110 +95,46 @@ internal fun AnimeItem(
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
-    val localDensity = LocalDensity.current
-    val minHeight = 148.dp
+    AnimeItemScaffold(
+        imageData = { animeData.media.coverImage.large },
+        modifier = Modifier.clickable {
+            onClick(bingoData, animeData)
+        },
+        content = { expanded ->
+            Column {
+                Text(
+                    text = animeData.media.title.userPreferred,
+                    textDecoration = TextDecoration.Underline,
+                )
 
-    var textHeight by remember { mutableStateOf(minHeight) }
-    var expended by remember { mutableStateOf(false) }
-
-    val animatedHeight by animateDpAsState(
-        targetValue = textHeight,
-        animationSpec = tween(150),
-        label = "animatedImageHeight"
-    )
-
-    StyledContainer(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-            .clickable {
-                onClick(bingoData, animeData)
-            },
-    ) {
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-            verticalAlignment = Alignment.Top,
-        ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(animeData.media.coverImage.large)
-                    .crossfade(true)
-                    .build(),
-                contentScale = ContentScale.Crop,
-                contentDescription = "Cover",
-                modifier = Modifier
-                    .height(animatedHeight.coerceAtLeast(minHeight))
-                    .width(100.dp)
-                    .clip(shape = RoundedCornerShape(if (useCards.currentValue) 0.dp else 12.dp)),
-            )
-
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp)
-                    .layout { measurable, constraints ->
-                        val placeable = measurable.measure(constraints)
-                        textHeight = placeable.height
-                            .pxValueToDp(localDensity)
-                            .coerceAtLeast(textHeight)
-
-                        layout(placeable.width, placeable.height) {
-                            placeable.placeRelative(0, 0)
-                        }
-                    }
-                    .heightIn(minHeight),
-                verticalArrangement = Arrangement.SpaceBetween,
-            ) {
-                Column {
-                    Text(
-                        text = animeData.media.title.userPreferred,
-                        textDecoration = TextDecoration.Underline,
-                    )
-
-                    Text(
-                        text = animeData.media.tags.joinToString(limit = if (expended) -1 else 10) { it.name },
-                        fontSize = 12.sp,
-                        lineHeight = 12.sp,
-                    )
-                }
-
-                if (expended) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(4.dp),
-                        horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
-                    ) {
-                        RatingDialog(
-                            animeData = animeData,
-                            scoreFormat = scoreFormat,
-                            onCommit = onCommit,
-                        )
-
-                        DeleteDialog(
-                            bingoData = bingoData,
-                            animeData = animeData,
-                            onDelete = onClickDelete,
-                        )
-                    }
-                }
-
-                Icon(
-                    imageVector = if (expended) Icons.Rounded.KeyboardArrowUp else Icons.Rounded.KeyboardArrowDown,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable {
-                            expended = !expended
-
-                            if (!expended) {
-                                textHeight = minHeight
-                            }
-                        }
+                Text(
+                    text = animeData.media.tags.joinToString(limit = if (expanded) -1 else 10) { it.name },
+                    fontSize = 12.sp,
+                    lineHeight = 12.sp,
                 )
             }
-        }
-    }
+        },
+        actions = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(4.dp),
+                horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+            ) {
+                RatingDialog(
+                    animeData = animeData,
+                    scoreFormat = scoreFormat,
+                    onCommit = onCommit,
+                )
+
+                DeleteDialog(
+                    bingoData = bingoData,
+                    animeData = animeData,
+                    onDelete = onClickDelete,
+                )
+            }
+        },
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -588,9 +508,7 @@ private fun StatusDropDown(
         expanded = showMenu,
         onDismissRequest = { showMenu = false }
     ) {
-        MediaListStatus.entries
-            .filterNot { it == MediaListStatus.NONE }
-
+        MediaListStatus.entries.filterNot { it == MediaListStatus.NONE }
     }
 }
 
@@ -612,8 +530,7 @@ private fun Rating(
         when (scoreFormat) {
             ScoreFormat.POINT_100,
             ScoreFormat.POINT_10_DECIMAL,
-            ScoreFormat.POINT_10,
-            -> RatingSlider(
+            ScoreFormat.POINT_10, -> RatingSlider(
                 value = value,
                 scoreFormat = scoreFormat,
                 onValueChange = {

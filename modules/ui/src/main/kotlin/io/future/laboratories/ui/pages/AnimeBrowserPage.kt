@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.ui.Constants
+import io.future.laboratories.ui.components.AnimeBrowserItem
 import io.future.laboratories.ui.components.AnimeHeader
 import io.future.laboratories.ui.components.StyledContainer
 
@@ -37,7 +38,7 @@ public fun AnimeBrowserPage(
                 key = key,
                 contentType = "Header",
             ) {
-                AnimeHeader(title = "${50 * key + 1}..${50 * key + 50}")
+                AnimeHeader(title = "${50 * key + 1}-${50 * key + 50}")
             }
 
             itemsIndexed(list, key = { index, item -> item.id }) { index, item ->
@@ -47,13 +48,10 @@ public fun AnimeBrowserPage(
                 }
 
                 //TODO: Replace with real deal
-                StyledContainer(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .height(180.dp),
-                ) {
-                    Text("${50 * key + index}")
-                }
+                AnimeBrowserItem(
+                    media = item,
+                    modifier = Modifier.height(100.dp),
+                )
             }
         }
     }

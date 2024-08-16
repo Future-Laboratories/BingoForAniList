@@ -12,9 +12,7 @@ import androidx.activity.viewModels
 import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.AccountCircle
-import androidx.compose.material.icons.rounded.Build
 import androidx.compose.material.icons.rounded.Code
-import androidx.compose.material.icons.rounded.Commit
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.Settings
 import androidx.compose.runtime.getValue
@@ -28,7 +26,6 @@ import androidx.lifecycle.ViewModel
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
-import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
@@ -120,7 +117,6 @@ public class MainActivity : ComponentActivity() {
                             is Page.ANIME_OVERVIEW -> AnimeOverviewPage(
                                 bingoData = bingoData,
                                 showFinished = options[SHOW_FINISHED_ANIME],
-                                useCards = options[USE_CARDS],
                                 pinned = options[PINNED_CATEGORY],
                                 animeDataList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection,
                                 mediaTags = viewModel.runtimeAPIData.runtimeAniListData?.mediaTagCollection,
@@ -291,7 +287,7 @@ public class MainActivity : ComponentActivity() {
             onClick = {
                 val url = getString(R.string.donation_url)
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.setData(Uri.parse(url))
+                intent.data = Uri.parse(url)
                 startActivity(
                     intent,
                     null,
@@ -306,7 +302,7 @@ public class MainActivity : ComponentActivity() {
             onClick = {
                 val url = getString(R.string.github_url)
                 val intent = Intent(Intent.ACTION_VIEW)
-                intent.setData(Uri.parse(url))
+                intent.data = Uri.parse(url)
                 startActivity(
                     intent,
                     null,
