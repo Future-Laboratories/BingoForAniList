@@ -16,7 +16,7 @@ kotlin {
 
 android {
     namespace = "io.future.laboratories.ui"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 27
