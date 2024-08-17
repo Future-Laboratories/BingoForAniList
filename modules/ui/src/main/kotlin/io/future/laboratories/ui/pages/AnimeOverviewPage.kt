@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -161,9 +162,9 @@ public fun AnimeOverviewPage(
                 containerColor = StyleProvider.gradientColor,
             ) {
                 Icon(
-                    imageVector = Icons.Rounded.Add,
+                    imageVector = Icons.Rounded.Explore,
                     contentDescription = null,
-                    modifier = Modifier.fillMaxSize(0.9f),
+                    modifier = Modifier.fillMaxSize(0.7f),
                 )
             }
         }

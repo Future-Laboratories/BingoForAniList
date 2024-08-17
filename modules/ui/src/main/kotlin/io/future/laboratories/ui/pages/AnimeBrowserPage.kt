@@ -42,7 +42,7 @@ public fun AnimeBrowserPage(
             }
 
             itemsIndexed(list, key = { index, item -> item.id }) { index, item ->
-                // Load More when reaching 80% of last call
+                // Load more when reaching 80% of last call
                 if (key == pages.keys.last() && index == 40) {
                     LaunchedEffect(key) { onRequestMore(key + 1) }
                 }

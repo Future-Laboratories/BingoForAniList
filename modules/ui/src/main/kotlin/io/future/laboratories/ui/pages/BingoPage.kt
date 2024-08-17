@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.FieldData
 import io.future.laboratories.common.RowData
+import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.AllPreview
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R

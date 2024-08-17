@@ -62,7 +62,7 @@ public fun BingoOverviewPage(
             Icon(
                 imageVector = Icons.Rounded.Create,
                 contentDescription = null,
-                modifier = Modifier.fillMaxSize(0.70f),
+                modifier = Modifier.fillMaxSize(0.7f),
             )
         }
     }
