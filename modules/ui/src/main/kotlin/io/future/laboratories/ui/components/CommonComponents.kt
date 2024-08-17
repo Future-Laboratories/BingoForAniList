@@ -484,6 +484,7 @@ private fun DropdownBox(
                 expanded = false
             },
             modifier = Modifier
+                .background(StyleProvider.surfaceColor)
                 .heightIn(
                     min = 40.dp,
                     max = 200.dp,
