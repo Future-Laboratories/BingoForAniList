@@ -22,6 +22,7 @@ import io.future.laboratories.anilistapi.api
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
@@ -209,7 +210,8 @@ internal class APIController private constructor(
         format: ScoreFormat,
         value: Float,
         animeData: MediaList,
-        onCallback: (Float) -> Unit,
+        status: MediaListStatus,
+        onCallback: (Float, MediaListStatus) -> Unit,
     ) {
         api.postMediaListEntryMutation(
             authorization = authorization,
@@ -218,6 +220,7 @@ internal class APIController private constructor(
                 variables = mapOf(
                     "id" to animeData.id,
                     "scoreRaw" to format.convertTo100(value),
+                    "status" to status
                 ),
             ),
         ).enqueue { _, response ->
@@ -226,7 +229,11 @@ internal class APIController private constructor(
             if (errorMsg != null) {
                 Log.e("mutateEntry", errorMsg)
             } else {
-                onCallback(response.body()?.data?.saveMediaListEntry?.score ?: return@enqueue)
+                val data = response.body()?.data?.saveMediaListEntry ?: return@enqueue
+                onCallback(
+                    data.score,
+                    data.status,
+                )
             }
         }
     }

@@ -2,7 +2,6 @@ package io.future.laboratories.ui.pages
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,25 +11,24 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Explore
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListCollection
+import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaTag
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.BasicSaver
@@ -42,10 +40,11 @@ import io.future.laboratories.ui.applyOperator
 import io.future.laboratories.ui.components.AnimeHeader
 import io.future.laboratories.ui.components.AnimeItem
 import io.future.laboratories.ui.components.BooleanOption
-import io.future.laboratories.ui.components.CustomPullToRefreshContainer
+import io.future.laboratories.ui.components.CustomPullToRefreshBox
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.FilterOptions
 import io.future.laboratories.ui.components.SearchBarWithModalBotttomSheet
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -58,19 +57,15 @@ public fun AnimeOverviewPage(
     mediaTags: List<MediaTag>?,
     scoreFormat: ScoreFormat,
     onRefresh: () -> Unit,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, animeData: MediaList, callback: (Float) -> Unit) -> Unit,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, animeData: MediaList, ratingValue: MediaListStatus, callback: (Float, MediaListStatus) -> Unit) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onFABClick: () -> Unit,
 ) {
     // Refreshing
     val state = rememberPullToRefreshState()
-    if (state.isRefreshing) {
-        LaunchedEffect(key1 = "refresh") {
-            onRefresh()
-            state.endRefresh()
-        }
-    }
+    val coroutineScope = rememberCoroutineScope()
+    var isRefreshing by rememberSaveable { mutableStateOf(false) }
 
     // Searchbar - Anime
     var animeQuery by rememberSaveable { mutableStateOf("") }
@@ -98,13 +93,19 @@ public fun AnimeOverviewPage(
 
     Spacer(modifier = Modifier.height(8.dp))
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(state.nestedScrollConnection),
+    CustomPullToRefreshBox(
+        state = state,
+        onRefresh = {
+            isRefreshing = true
+            coroutineScope.launch {
+                onRefresh()
+                //Delay is needed for Indicator to disappear, TODO: check with future versions
+                kotlinx.coroutines.delay(1000L)
+                isRefreshing = false
+            }
+        },
+        isRefreshing = isRefreshing,
     ) {
-        CustomPullToRefreshContainer(state = state)
-
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = contentPaddingForFAB,
@@ -141,8 +142,8 @@ public fun AnimeOverviewPage(
                             animeData = animeData,
                             bingoData = bingoData.clone(),
                             scoreFormat = scoreFormat,
-                            onCommit = { format, value, save ->
-                                onCommit(format, value, animeData, save)
+                            onCommit = { format, rating, status, save ->
+                                onCommit(format, rating, animeData, status, save)
                             },
                             onClickDelete = onClickDelete,
                             onClick = onSelectAnime,
@@ -151,7 +152,7 @@ public fun AnimeOverviewPage(
                 }
         }
 
-        if(showFAB.currentValue) {
+        if (showFAB.currentValue) {
             FloatingActionButton(
                 modifier = Modifier
                     .width(64.dp)

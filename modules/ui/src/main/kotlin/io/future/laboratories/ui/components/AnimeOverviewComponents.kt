@@ -1,10 +1,9 @@
 package io.future.laboratories.ui.components
 
+import android.R.attr.onClick
 import androidx.annotation.FloatRange
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -52,12 +51,10 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
-import androidx.compose.material3.pulltorefresh.PullToRefreshContainer
-import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -75,7 +72,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.compose.ui.zIndex
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaTag
@@ -91,7 +87,7 @@ internal fun AnimeItem(
     animeData: MediaList,
     bingoData: BingoData,
     scoreFormat: ScoreFormat,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, (Float) -> Unit) -> Unit,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, ratingValue: MediaListStatus, (Float, MediaListStatus) -> Unit) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
     onClick: (bingoData: BingoData, animeData: MediaList) -> Unit,
 ) {
@@ -139,24 +135,17 @@ internal fun AnimeItem(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun BoxScope.CustomPullToRefreshContainer(
+internal fun CustomPullToRefreshBox(
     state: PullToRefreshState,
+    onRefresh: () -> Unit,
+    isRefreshing: Boolean,
+    content: @Composable BoxScope.() -> Unit,
 ) {
-    val targetAlpha by remember {
-        derivedStateOf { if (state.progress >= 1f) 1f else 0.1f }
-    }
-    val alphaState by animateFloatAsState(
-        targetValue = targetAlpha,
-        animationSpec = tween(150),
-        label = "refresh"
-    )
-
-    PullToRefreshContainer(
-        modifier = Modifier
-            .align(Alignment.TopCenter)
-            .zIndex(1f),
-        containerColor = PullToRefreshDefaults.containerColor.copy(alpha = alphaState),
+    PullToRefreshBox(
+        onRefresh = onRefresh,
+        isRefreshing = isRefreshing,
         state = state,
+        content = content,
     )
 }
 
@@ -400,7 +389,7 @@ private fun SheetItem(
 private fun RatingDialog(
     animeData: MediaList,
     scoreFormat: ScoreFormat,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, (Float) -> Unit) -> Unit,
+    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, ratingValue: MediaListStatus, (Float, MediaListStatus) -> Unit) -> Unit,
 ) {
     var showRatingDialog by rememberSaveable {
         mutableStateOf(false)
@@ -408,6 +397,9 @@ private fun RatingDialog(
 
     var scoreValue by rememberSaveable {
         mutableFloatStateOf(0f)
+    }
+    var ratingValue by rememberSaveable {
+        mutableStateOf(animeData.status)
     }
 
     PositiveImageButton(
@@ -457,7 +449,10 @@ private fun RatingDialog(
                             onValueChange = { scoreValue = it }
                         )
 
-                        StatusDropDown(animeData.status)
+                        StatusDropDown(
+                            status = animeData.status,
+                            onValueChange = { status -> ratingValue = status }
+                        )
                     }
 
                     Row(
@@ -471,8 +466,9 @@ private fun RatingDialog(
                         }
 
                         NegativeButton(onClick = {
-                            onCommit(scoreFormat, scoreValue) {
-                                animeData.score = it
+                            onCommit(scoreFormat, scoreValue, ratingValue) { score, status ->
+                                animeData.score = score
+                                animeData.status = status
                             }
                             showRatingDialog = false
                         }) {
@@ -488,6 +484,7 @@ private fun RatingDialog(
 @Composable
 private fun StatusDropDown(
     status: MediaListStatus,
+    onValueChange: (MediaListStatus) -> Unit,
 ) {
     var showMenu by rememberSaveable {
         mutableStateOf(true)
@@ -501,7 +498,7 @@ private fun StatusDropDown(
             .associateWith { it },
         initialValue = status.value,
     ) {
-
+        onValueChange(MediaListStatus.valueOf(it.uppercase()))
     }
 
     DropdownMenu(
@@ -561,6 +558,7 @@ private fun Rating(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun RowScope.RatingSlider(
     value: Float,

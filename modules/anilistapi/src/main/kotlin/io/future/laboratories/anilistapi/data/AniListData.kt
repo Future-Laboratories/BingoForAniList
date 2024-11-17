@@ -112,6 +112,7 @@ public enum class MediaListStatus(public val value: String) {
 @JsonClass(generateAdapter = true)
 public data class Score(
     val score: Float,
+    val status: MediaListStatus,
 )
 
 @JsonClass(generateAdapter = true)
