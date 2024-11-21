@@ -80,9 +80,9 @@ public interface API {
     public companion object {
         public val aniListViewerQuery: String = """
                 query {
-                  Viewer {
-                    id
-                  }
+                    Viewer {
+                         id
+                    }
                 }
             """.trimIndent()
 
@@ -103,37 +103,37 @@ public interface API {
 
         public val aniListMainQuery: String = """
                 query(${'$'}userId: Int) {
-                  MediaTagCollection {
-                    name
-                    isAdult
-                  }
-                  User(id: ${'$'}userId) {
-                    avatar {
-                      medium
+                    MediaTagCollection {
+                        name
+                        isAdult
                     }
-                    mediaListOptions {
-                        scoreFormat
+                    User(id: ${'$'}userId) {
+                        avatar {
+                            medium
+                        }
+                        mediaListOptions {
+                           scoreFormat
+                        }
                     }
-                  }
-                  MediaListCollection(userId: ${'$'}userId, type: ANIME) {
-                    lists {
-                      name
-                      entries {
-                        id
-                        score
-                        status
-                        $media
-                      }
+                    MediaListCollection(userId: ${'$'}userId, type: ANIME) {
+                        lists {
+                             name
+                             entries {
+                                  id
+                                  score
+                                  status
+                                  $media
+                             }
+                        }
                     }
-                  }
                 }
             """.trimIndent()
 
         public val pageQuery: String = """
             query(${'$'}pageNumber: Int) {
-              Page(page: ${'$'}pageNumber, perPage: 50) {
-                $media
-              }
+                Page(page: ${'$'}pageNumber, perPage: 50) {
+                    $media
+                }
             }
         """.trimIndent()
 
@@ -141,7 +141,7 @@ public interface API {
             mutation(${'$'}format: ScoreFormat) {
                 UpdateUser(scoreFormat: ${'$'}format) {
                     mediaListOptions {
-                      scoreFormat
+                        scoreFormat
                     }
                 }
             }

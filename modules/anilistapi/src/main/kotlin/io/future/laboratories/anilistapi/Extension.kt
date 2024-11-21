@@ -29,3 +29,12 @@ public fun <T> DataHolderCall<T>.enqueue(
         onFailure?.invoke(call, t)
     }
 })
+
+/**
+ * Int representing format YYYYMMDD
+ *
+ * Example1: 2016 is represented as 20160000
+ * Example2: May 1976: 19760500
+ */
+@JvmInline
+public value class FuzzyDateInt(public val value: Int)
