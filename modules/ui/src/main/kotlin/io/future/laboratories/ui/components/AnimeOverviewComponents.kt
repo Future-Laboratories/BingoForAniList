@@ -187,40 +187,6 @@ internal fun SearchBarWithModalBotttomSheet(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun DefaultSearchBar(
-    modifier: Modifier = Modifier,
-    query: String,
-    onQueryChange: (query: String) -> Unit,
-    @StringRes placeholderStringId: Int,
-    trailingIcon: @Composable (() -> Unit)? = null,
-) {
-    var interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-
-    val shape by animateIntAsState((if (isFocused) 10 else 50), label = "cornerAnimation")
-
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier),
-        value = query,
-        onValueChange = onQueryChange,
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Search,
-                contentDescription = null,
-            )
-        },
-        trailingIcon = trailingIcon,
-        placeholder = { Text(stringResource(id = placeholderStringId)) },
-        colors = StyleProvider.outLineTextColor,
-        interactionSource = interactionSource,
-        shape = RoundedCornerShape(shape),
-    )
-}
-
 @Composable
 private fun DeleteDialog(
     bingoData: BingoData,
@@ -347,6 +313,7 @@ private fun SingleChoiceSegmentedButtonRow(
                         selectedIndex = index
                         onOptionChange(option)
                     },
+                    colors = StyleProvider.SegmentedButtonColor,
                     selected = index == selectedIndex,
                 ) {
                     Text(option.name)

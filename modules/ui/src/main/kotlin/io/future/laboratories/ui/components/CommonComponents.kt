@@ -1,11 +1,15 @@
 package io.future.laboratories.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Warning
@@ -30,8 +35,10 @@ import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ElevatedCard
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -540,6 +547,44 @@ internal fun TextRow(
             fontSize = 12.sp,
         )
     }
+}
+
+//endregion
+
+//region searchbar
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun DefaultSearchBar(
+    modifier: Modifier = Modifier,
+    query: String,
+    onQueryChange: (query: String) -> Unit,
+    @StringRes placeholderStringId: Int,
+    trailingIcon: @Composable (() -> Unit)? = null,
+) {
+    var interactionSource = remember { MutableInteractionSource() }
+    val isFocused by interactionSource.collectIsFocusedAsState()
+
+    val shape by animateIntAsState((if (isFocused) 10 else 50), label = "cornerAnimation")
+
+    OutlinedTextField(
+        modifier = Modifier
+            .fillMaxWidth()
+            .then(modifier),
+        value = query,
+        onValueChange = onQueryChange,
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = null,
+            )
+        },
+        trailingIcon = trailingIcon,
+        placeholder = { Text(stringResource(id = placeholderStringId)) },
+        colors = StyleProvider.outLineTextColor,
+        interactionSource = interactionSource,
+        shape = RoundedCornerShape(shape),
+    )
 }
 
 //endregion

@@ -11,6 +11,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.MenuItemColors
 import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.SegmentedButtonColors
+import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SwitchColors
@@ -139,8 +141,8 @@ public object StyleProvider {
         ) else SliderDefaults.colors()
 
     @Stable
-    public val dropDownItemColor: MenuItemColors
-        @Composable get() = if (useGradient) MenuDefaults.itemColors(
-
-        ) else MenuDefaults.itemColors()
+    public val SegmentedButtonColor: SegmentedButtonColors
+        @Composable get() = if (useGradient) SegmentedButtonDefaults.colors(
+            activeContainerColor = gradientColor,
+        ) else SegmentedButtonDefaults.colors()
 }
