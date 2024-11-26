@@ -157,6 +157,7 @@ internal fun Context.errorCodeHandle(code: Int) = defaultToast(
     message = when (code) {
         429 -> getString(R.string.error_429)
         500 -> getString(R.string.error_500)
+        400 -> getString(R.string.error_400)
         else -> getString(R.string.error_unknown_d, code)
     }
 )

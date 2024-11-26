@@ -29,6 +29,7 @@
     <string name="share_message">Schauen Sie sich mein neues Bingo an!</string>
 
     <!--Error-code Messages-->
+    <string name="error_400">Error (Bad Request)</string>
     <string name="error_429">Zu viele Anfragen: versuchen Sie es in ein paar Minuten erneut</string>
     <string name="error_500">Interner Serverfehler</string>
     <string name="error_unknown_d">Unbekannter Fehler: %d</string>

@@ -86,8 +86,7 @@ public interface API {
                 }
             """.trimIndent()
 
-        private val media: String = """
-                media {
+        private val mediaBody: String = """
                     id
                     title {
                        userPreferred
@@ -98,7 +97,6 @@ public interface API {
                     tags {
                        name
                     }
-                }
             """.trimIndent()
 
         public val aniListMainQuery: String = """
@@ -119,20 +117,45 @@ public interface API {
                         lists {
                              name
                              entries {
-                                  id
-                                  score
-                                  status
-                                  $media
-                             }
-                        }
-                    }
-                }
+                                id
+                                score
+                                status
+                                media {
+                                    $mediaBody
+                                }
+                            }
+                       }
+                   }
+               }
             """.trimIndent()
 
         public val pageQuery: String = """
-            query(${'$'}pageNumber: Int) {
+            query(
+                ${'$'}pageNumber: Int
+                ${'$'}format: [MediaFormat]
+                ${'$'}season: MediaSeason
+                ${'$'}year: Int
+                ${'$'}search: String
+            ) {
                 Page(page: ${'$'}pageNumber, perPage: 50) {
-                    $media
+                    media(
+                        format_in: ${'$'}format
+                        season: ${'$'}season
+                        seasonYear: ${'$'}year
+                        search: ${'$'}search
+                        sort: [TRENDING_DESC]
+                    ) {
+                        id
+                        title {
+                            userPreferred
+                        }
+                        coverImage {
+                            large
+                        }
+                        tags {
+                            name
+                        }
+                    }
                 }
             }
         """.trimIndent()

@@ -19,10 +19,12 @@ import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
+import io.future.laboratories.anilistapi.data.KeyValue
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaListStatus
+import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
@@ -147,24 +149,27 @@ internal class APIController private constructor(
     }
 
     internal fun RuntimeData.fetchNewPage(
-        page: Int,
+        variableParameter: PageQueryParams,
     ) {
-        if (page in runtimePages.keys) return
+        if (currentQuery != variableParameter) {
+            runtimeCustomPages.clear()
+            currentQuery = variableParameter.clone()
+        }
+
+        if (variableParameter.pageNumber.value in runtimeCustomPages.keys) return
 
         api.postPageData(
             authorization = authorization,
             json = AniListQueryBody(
                 query = API.pageQuery,
-                variables = mapOf(
-                    "pageNumber" to page,
-                ),
+                variables = variableParameter.toMap(),
             ),
         ).enqueue(
             onFailure = { _, _ -> },
             onResponse = { _, listResponse ->
                 val code = listResponse.code()
                 if (code == 200) {
-                    runtimePages[page] =
+                    runtimeCustomPages[variableParameter.pageNumber.value] =
                         listResponse.body()?.data?.page?.media?.toMutableStateList()
                             ?: return@enqueue
                 } else {
@@ -275,7 +280,8 @@ internal class APIController private constructor(
             initialRuntimeAniListData,
         )
 
-        var runtimePages = mutableStateMapOf<Int, SnapshotStateList<Media>>()
+        var currentQuery : PageQueryParams? = null
+        var runtimeCustomPages = mutableStateMapOf<Int, SnapshotStateList<Media>>()
     }
 
     companion object {

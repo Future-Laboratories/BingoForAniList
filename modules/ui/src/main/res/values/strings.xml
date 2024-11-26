@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="airing_status">Airing Status</string>
     <string name="back">Back</string>
     <string name="bingo">Bingo</string>
     <string name="bingo_diagonal">Diagonal</string>
@@ -18,18 +19,23 @@
     <string name="edit">Edit</string>
     <string name="edit_dismiss_body">Are you sure you want to cancel? All changes will be gone permanently!</string>
     <string name="edit_dismiss_header">Cancel in progress</string>
+    <string name="format">Format</string>
     <string name="name">Name</string>
+    <string name="no_selection">No Selection</string>
+    <string name="operator_mode">Mode</string>
     <string name="options">Options</string>
     <string name="options_expire_date">Login expire date</string>
     <string name="rating_body">You can create or update your rating for \"%1$s\" here!</string>
     <string name="rating_header">Rating: create and edit</string>
     <string name="search_anime">Search title</string>
     <string name="search_tag">Search tag</string>
+    <string name="season">Season</string>
     <string name="share">Share</string>
     <string name="shuffle">Shuffle</string>
     <string name="shuffle_hint">Info: Shuffle in edit-mode only apply to <u>NEW</u> created Bingo\'s</string>
     <string name="version">Version</string>
     <string name="yes">Yes</string>
+    <string name="year">Year</string>
 
 
 </resources>

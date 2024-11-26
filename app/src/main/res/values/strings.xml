@@ -34,6 +34,7 @@
     <string name="share_message">Checkout my new Bingo!</string>
 
     <!--Error-code Messages-->
+    <string name="error_400">Error (Bad Request)</string>
     <string name="error_429">Too Many Requests: retry in a few Minutes again</string>
     <string name="error_500">Internal Server Error</string>
     <string name="error_unknown_d">Unknown error: %d</string>

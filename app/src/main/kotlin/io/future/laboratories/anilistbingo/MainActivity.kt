@@ -26,7 +26,9 @@ import androidx.lifecycle.ViewModel
 import io.future.laboratories.Companion.PREFERENCE_ACCESS_EXPIRED
 import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
+import io.future.laboratories.anilistapi.data.KeyValue
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
@@ -45,12 +47,12 @@ import io.future.laboratories.ui.DropDownItemData
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionGroup
+import io.future.laboratories.ui.pages.AnimeBrowserPage
 import io.future.laboratories.ui.pages.AnimeOverviewPage
 import io.future.laboratories.ui.pages.BingoOverviewPage
 import io.future.laboratories.ui.pages.BingoPage
 import io.future.laboratories.ui.pages.EditorPage
 import io.future.laboratories.ui.pages.OptionsPage
-import io.future.laboratories.ui.pages.AnimeBrowserPage
 import io.future.laboratories.ui.theme.AniListBingoTheme
 
 public class MainActivity : ComponentActivity() {
@@ -107,9 +109,7 @@ public class MainActivity : ComponentActivity() {
                 CustomScaffold(
                     titleId = { viewModel.currentPage.nameResId },
                     isNavVisible = { viewModel.currentPage !is Page.BINGO_OVERVIEW },
-                    onNavPress = {
-                        viewModel.onBackPress()
-                    },
+                    onNavPress = { viewModel.onBackPress() },
                     profilePictureUrl = viewModel.runtimeAPIData.runtimeAniListData?.user?.avatar?.medium,
                     isLoggedIn = viewModel.isLoggedIn,
                     dropDownItems = dropDownItems,
@@ -265,10 +265,11 @@ public class MainActivity : ComponentActivity() {
                             )
 
                             is Page.ANIME_BROWSER -> AnimeBrowserPage(
-                                pages = viewModel.runtimeAPIData.runtimePages,
-                                onRequestMore = { page ->
+                                pages = viewModel.runtimeAPIData.runtimeCustomPages,
+                                currentQueryParams = this.currentQuery,
+                                onRequestMore = { variableParameter ->
                                     with(apiController) {
-                                        viewModel.runtimeAPIData.fetchNewPage(page = page)
+                                        viewModel.runtimeAPIData.fetchNewPage(variableParameter = variableParameter)
                                     }
                                 },
                             )
@@ -497,7 +498,15 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
 
     class OPTIONS(sourcePage: Page) : Page(R.string.options, sourcePage)
 
-    class ANIME_BROWSER(sourcePage: Page) : Page(R.string.explorer_anime, sourcePage)
+    class ANIME_BROWSER(sourcePage: Page) : Page(R.string.explorer_anime, sourcePage) {
+        val currentQuery = PageQueryParams(
+            pageNumber = KeyValue(key = "page", value = 1),
+            format = KeyValue(key = "format", value = null),
+            season = KeyValue(key = "season", value = null),
+            year = KeyValue(key = "year", value = null),
+            search = KeyValue(key = "search", value = null),
+        )
+    }
 
     sealed interface SavableBingo {
         fun bingoPath(bingoData: BingoData, animeData: MediaList) =

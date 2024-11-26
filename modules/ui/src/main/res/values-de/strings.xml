@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="airing_status">Veröffentlichunsstatus</string>
     <string name="back">Zurück</string>
     <string name="bingo">Bingo</string>
     <string name="bingo_diagonal">Diagonal</string>
@@ -18,17 +19,22 @@
     <string name="edit">Bearbeiten</string>
     <string name="edit_dismiss_body">Sind Sie sich sicher, dass Sie alle Änderungen verwerfen wollen?</string>
     <string name="edit_dismiss_header">Abbruch im Gange</string>
+    <string name="format">Format</string>
     <string name="name">Name</string>
+    <string name="no_selection">Keine Auswahl</string>
+    <string name="operator_mode">Modus</string>
     <string name="options">Einstellungen</string>
     <string name="options_expire_date">Login Ablaufdatum</string>
     <string name="rating_body">Du kannst deine Bewertung für \"%1$s\" hier erstellen und bearbeiten!</string>
     <string name="rating_header">Bewertung: erstellen und bearbeiten</string>
     <string name="search_anime">Suche Title</string>
     <string name="search_tag">Suche Tag</string>
+    <string name="season">Season</string>
     <string name="share">Teilen</string>
     <string name="shuffle">Mischen</string>
     <string name="shuffle_hint">Info: Mischen im Bearbeitungsmodus wird nur auf <u>NEUE</u> Bingo angewendet</string>
     <string name="version">Version</string>
     <string name="yes">Ja</string>
+    <string name="year">Jahr</string>
 
 </resources>

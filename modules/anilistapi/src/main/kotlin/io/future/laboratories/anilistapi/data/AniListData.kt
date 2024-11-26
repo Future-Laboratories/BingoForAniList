@@ -133,4 +133,32 @@ public data class MediaTitle(
     val userPreferred: String,
 )
 
+public enum class MediaSeason(public val value: String) {
+    @Json(name = "WINTER")
+    WINTER("Winter"),
+    @Json(name = "SPRING")
+    SPRING("Spring"),
+    @Json(name = "SUMMER")
+    SUMMER("Summer"),
+    @Json(name = "FALL")
+    FALL("Fall"),
+}
+
+public enum class MediaFormat(public val value: String) {
+    @Json(name = "TV")
+    TV("TV Show"),
+    @Json(name = "TV_SHORT")
+    TV_SHORT("TV Short"),
+    @Json(name = "MOVIE")
+    MOVIE("Movie"),
+    @Json(name = "SPECIAL")
+    SPECIAL("Special"),
+    @Json(name = "OVA")
+    OVA("OVA"),
+    @Json(name = "ONA")
+    ONA("ONA"),
+    @Json(name = "MUSIC")
+    MUSIC("Music"),
+}
+
 //endregion
