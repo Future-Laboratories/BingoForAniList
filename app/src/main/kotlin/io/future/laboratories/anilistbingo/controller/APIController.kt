@@ -1,5 +1,6 @@
 package io.future.laboratories.anilistbingo.controller
 
+import android.R.attr.value
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -239,6 +240,30 @@ internal class APIController private constructor(
                     data.score,
                     data.status,
                 )
+            }
+        }
+    }
+
+    internal fun RuntimeData.addEntry(mediaId: Long) {
+        api.postAddMediaListEntryMutation(
+            authorization = authorization,
+            json = AniListMutationBody(
+                query = API.CreateMediaListEntryMutation,
+                variables = mapOf(
+                    "mediaId" to mediaId,
+                ),
+            ),
+        ).enqueue { _, response ->
+            val code = response.code()
+            if (code == 200) {
+                val data = response.body()?.data?.saveMediaListEntry ?: return@enqueue
+
+                runtimeAniListData?.mediaListCollection
+                    ?.lists
+                    ?.firstOrNull { it.name == MediaListStatus.PLANNING.value }
+                    ?.entries += data
+            } else {
+                onNetworkError(code)
             }
         }
     }

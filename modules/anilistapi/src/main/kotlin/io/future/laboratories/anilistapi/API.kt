@@ -1,5 +1,6 @@
 package io.future.laboratories.anilistapi
 
+import io.future.laboratories.anilistapi.data.AddMediaListEntry
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.PageData
 import io.future.laboratories.anilistapi.data.UpdateMediaListEntry
@@ -76,6 +77,17 @@ public interface API {
         @Query("response_type") token: String = "token",
         @Body json: AniListMutationBody,
     ): DataHolderCall<UpdateMediaListEntry>
+
+    @POST("/")
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json",
+    )
+    public fun postAddMediaListEntryMutation(
+        @Header("Authorization") authorization: String,
+        @Query("response_type") token: String = "token",
+        @Body json: AniListMutationBody,
+    ): DataHolderCall<AddMediaListEntry>
 
     public companion object {
         public val aniListViewerQuery: String = """
@@ -171,10 +183,31 @@ public interface API {
         """.trimIndent()
 
         public val SaveMediaListEntryMutation: String = """
-            mutation(${'$'}id: Int, ${'$'}scoreRaw: Int, ${'$'}status: MediaListStatus) {
+            mutation(
+             ${'$'}id: Int,
+             ${'$'}scoreRaw: Int, 
+             ${'$'}status: MediaListStatus
+            ) {
                 SaveMediaListEntry(id: ${'$'}id, scoreRaw: ${'$'}scoreRaw, status: ${'$'}status) {
                     score
                     status
+                }
+            }
+        """.trimIndent()
+
+        public val CreateMediaListEntryMutation: String = """
+            mutation(
+             ${'$'}mediaId: Int,
+            ) {
+                SaveMediaListEntry(
+                    mediaId: ${'$'}mediaId
+                    status: PLANNING
+                ) {
+                    id
+                    score
+                    media {
+                        $mediaBody
+                    }
                 }
             }
         """.trimIndent()

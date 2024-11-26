@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo.SHORTCUT_CATEGORY_CONVERSATION
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log.v
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -272,6 +273,11 @@ public class MainActivity : ComponentActivity() {
                                         viewModel.runtimeAPIData.fetchNewPage(variableParameter = variableParameter)
                                     }
                                 },
+                                onAddPressed = { mediaId ->
+                                    with(apiController) {
+                                        viewModel.runtimeAPIData.addEntry(mediaId)
+                                    }
+                                }
                             )
                         }
                     }

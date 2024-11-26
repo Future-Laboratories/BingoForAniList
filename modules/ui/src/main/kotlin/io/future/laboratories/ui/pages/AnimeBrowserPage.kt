@@ -12,6 +12,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.Media
+import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.components.AnimeBrowserItem
@@ -21,8 +22,9 @@ import io.future.laboratories.ui.components.BrowserSearchbar
 @Composable
 public fun AnimeBrowserPage(
     pages: SnapshotStateMap<Int, SnapshotStateList<Media>>,
+    currentQueryParams: PageQueryParams,
+    onAddPressed: (id: Long) -> Unit,
     onRequestMore: (PageQueryParams) -> Unit,
-    currentQueryParams: PageQueryParams
 ) {
     // Initially load 50 anime
     SideEffect {
@@ -48,7 +50,10 @@ public fun AnimeBrowserPage(
                     onRequestMore(currentQueryParams)
                 }
 
-                AnimeBrowserItem(item)
+                AnimeBrowserItem(
+                    media = item,
+                    onAddPressed = onAddPressed,
+                )
             }
         }
     }

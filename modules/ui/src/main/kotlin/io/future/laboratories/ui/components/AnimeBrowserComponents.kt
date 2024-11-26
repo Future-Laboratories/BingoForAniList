@@ -17,8 +17,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Lock
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,8 +50,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaFormat
+import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaSeason
 import io.future.laboratories.anilistapi.data.PageQueryParams
+import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.animations.ShakingState
@@ -65,6 +70,7 @@ import java.time.LocalDateTime
 internal fun AnimeBrowserItem(
     media: Media,
     modifier: Modifier = Modifier,
+    onAddPressed: (id: Long) -> Unit,
 ) {
     AnimeItemScaffold(
         imageData = { media.coverImage.large },
@@ -75,7 +81,13 @@ internal fun AnimeBrowserItem(
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
-
+                PositiveImageButton(
+                    onClick = {
+                        onAddPressed(media.id)
+                    },
+                    contentDescription = stringResource(id = R.string.delete),
+                    imageVector = Icons.Rounded.Add,
+                )
             }
         },
         content = { expanded ->
