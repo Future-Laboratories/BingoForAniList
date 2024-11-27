@@ -137,8 +137,17 @@ public object StyleProvider {
         @Composable
         get() = if (useGradient) SliderDefaults.colors(
             activeTrackColor = MaterialTheme.colorScheme.tertiaryContainer,
+            activeTickColor = MaterialTheme.colorScheme.tertiaryContainer,
+            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+            inactiveTickColor = MaterialTheme.colorScheme.secondaryContainer,
             thumbColor = MaterialTheme.colorScheme.tertiaryContainer,
-        ) else SliderDefaults.colors()
+        ) else SliderDefaults.colors(
+            activeTrackColor = MaterialTheme.colorScheme.primary,
+            activeTickColor = MaterialTheme.colorScheme.primary,
+            inactiveTrackColor = MaterialTheme.colorScheme.secondaryContainer,
+            inactiveTickColor = MaterialTheme.colorScheme.secondaryContainer,
+            thumbColor = MaterialTheme.colorScheme.primary,
+        )
 
     @Stable
     public val SegmentedButtonColor: SegmentedButtonColors
