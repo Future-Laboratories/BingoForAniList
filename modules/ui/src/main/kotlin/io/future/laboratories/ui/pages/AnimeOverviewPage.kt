@@ -44,6 +44,7 @@ import io.future.laboratories.ui.components.CustomPullToRefreshBox
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.FilterOptions
 import io.future.laboratories.ui.components.SearchBarWithModalBotttomSheet
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
@@ -56,6 +57,7 @@ public fun AnimeOverviewPage(
     animeDataList: MediaListCollection?,
     mediaTags: List<MediaTag>?,
     scoreFormat: ScoreFormat,
+    isDataDirty: Boolean,
     onRefresh: () -> Unit,
     onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, animeData: MediaList, ratingValue: MediaListStatus, callback: (Float, MediaListStatus) -> Unit) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
@@ -65,7 +67,21 @@ public fun AnimeOverviewPage(
     // Refreshing
     val state = rememberPullToRefreshState()
     val coroutineScope = rememberCoroutineScope()
-    var isRefreshing by rememberSaveable { mutableStateOf(false) }
+    var isRefreshing by rememberSaveable { mutableStateOf(isDataDirty) }
+
+    fun localOnRefresh() {
+        isRefreshing = true
+        coroutineScope.launch {
+            onRefresh()
+            //Delay is needed for Indicator to disappear, TODO: check with future versions
+            delay(1000L)
+            isRefreshing = false
+        }
+    }
+
+    if(isDataDirty) {
+        localOnRefresh()
+    }
 
     // Searchbar - Anime
     var animeQuery by rememberSaveable { mutableStateOf("") }
@@ -86,24 +102,14 @@ public fun AnimeOverviewPage(
         mediaTags = mediaTags,
         selectedTags = selectedTags,
         initialValue = { selectMode },
-        onOptionChange = {
-            selectMode = it
-        }
+        onOptionChange = { selectMode = it },
     )
 
     Spacer(modifier = Modifier.height(8.dp))
 
     CustomPullToRefreshBox(
         state = state,
-        onRefresh = {
-            isRefreshing = true
-            coroutineScope.launch {
-                onRefresh()
-                //Delay is needed for Indicator to disappear, TODO: check with future versions
-                kotlinx.coroutines.delay(1000L)
-                isRefreshing = false
-            }
-        },
+        onRefresh = ::localOnRefresh,
         isRefreshing = isRefreshing,
     ) {
         LazyColumn(

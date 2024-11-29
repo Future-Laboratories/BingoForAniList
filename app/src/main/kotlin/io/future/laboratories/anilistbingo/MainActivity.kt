@@ -127,12 +127,15 @@ public class MainActivity : ComponentActivity() {
                                         SCORING_SYSTEM
                                     ).currentValue
                                 },
+                                isDataDirty = viewModel.runtimeAPIData.rumtimeAniListDataIsDirty,
                                 onRefresh = {
                                     viewModel.fetchAPIData(
                                         apiController = apiController,
                                         activity = this@MainActivity,
                                         forced = true,
                                     )
+
+                                    viewModel.runtimeAPIData.rumtimeAniListDataIsDirty = false
                                 },
                                 onCommit = apiController::mutateEntry,
                                 onClickDelete = { bingoData, animeData ->
@@ -276,6 +279,8 @@ public class MainActivity : ComponentActivity() {
                                     with(apiController) {
                                         viewModel.runtimeAPIData.addEntry(mediaId) {
                                             defaultToast(message = getString(R.string.toast_anime_added))
+
+                                            viewModel.runtimeAPIData.rumtimeAniListDataIsDirty = true
                                         }
                                     }
                                 }

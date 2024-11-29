@@ -103,7 +103,7 @@ public class Options private constructor(
     internal inline fun <reified T : OptionData<*>> findOptionItemOfTypeWithKey(key: OptionKey): T {
         val option = options[key]
 
-        return if (option is T) option else throw NoSuchElementException("no ${T::class} found under $key")
+        return option as? T ?: throw NoSuchElementException("no ${T::class} found under $key")
     }
 
     @OptIn(RestrictedApi::class)

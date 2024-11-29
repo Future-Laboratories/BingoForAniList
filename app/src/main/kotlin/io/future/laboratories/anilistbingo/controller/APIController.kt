@@ -304,6 +304,7 @@ internal class APIController private constructor(
         var runtimeAniListData: MainData? by mutableStateOf(
             initialRuntimeAniListData,
         )
+        var rumtimeAniListDataIsDirty = false
 
         var currentQuery : PageQueryParams? = null
         var runtimeCustomPages = mutableStateMapOf<Int, SnapshotStateList<Media>>()
