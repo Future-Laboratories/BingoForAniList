@@ -203,11 +203,8 @@ public interface API {
                     mediaId: ${'$'}mediaId
                     status: PLANNING
                 ) {
-                    id
                     score
-                    media {
-                        $mediaBody
-                    }
+                    status
                 }
             }
         """.trimIndent()

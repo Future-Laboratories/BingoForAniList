@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.ShortcutInfo.SHORTCUT_CATEGORY_CONVERSATION
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log.v
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -244,7 +243,7 @@ public class MainActivity : ComponentActivity() {
                                         text = stringResource(id = R.string.options_appearance),
                                         options = listOfNotNull(
                                             options[USE_CARDS],
-                                            options[USE_GRADIENT]
+                                            options[USE_GRADIENT],
                                         )
                                     ),
                                     OptionGroup(
@@ -275,7 +274,9 @@ public class MainActivity : ComponentActivity() {
                                 },
                                 onAddPressed = { mediaId ->
                                     with(apiController) {
-                                        viewModel.runtimeAPIData.addEntry(mediaId)
+                                        viewModel.runtimeAPIData.addEntry(mediaId) {
+                                            defaultToast(message = getString(R.string.toast_anime_added))
+                                        }
                                     }
                                 }
                             )

@@ -31,6 +31,7 @@ import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.R
+import kotlin.math.log
 
 internal class APIController private constructor(
     private val preferences: SharedPreferences,
@@ -244,7 +245,10 @@ internal class APIController private constructor(
         }
     }
 
-    internal fun RuntimeData.addEntry(mediaId: Long) {
+    internal fun RuntimeData.addEntry(
+        mediaId: Long,
+        onSuccess: () -> Unit,
+    ) {
         api.postAddMediaListEntryMutation(
             authorization = authorization,
             json = AniListMutationBody(
@@ -256,13 +260,9 @@ internal class APIController private constructor(
         ).enqueue { _, response ->
             val code = response.code()
             if (code == 200) {
-                val data = response.body()?.data?.saveMediaListEntry ?: return@enqueue
-
-                runtimeAniListData?.mediaListCollection
-                    ?.lists
-                    ?.firstOrNull { it.name == MediaListStatus.PLANNING.value }
-                    ?.entries += data
+                onSuccess()
             } else {
+                Log.d("addEntry", response.errorBody()?.string() ?: "")
                 onNetworkError(code)
             }
         }

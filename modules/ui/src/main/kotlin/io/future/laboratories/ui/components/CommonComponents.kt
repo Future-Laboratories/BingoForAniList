@@ -134,6 +134,7 @@ internal fun PositiveImageButton(
     onClick: () -> Unit,
     contentDescription: String,
     imageVector: ImageVector,
+    size: Dp = 40.dp,
     content: @Composable RowScope.() -> Unit = {
         Icon(
             imageVector = imageVector,
@@ -142,7 +143,7 @@ internal fun PositiveImageButton(
     },
 ): Unit = Button(
     onClick = onClick,
-    modifier = Modifier.size(40.dp) then modifier,
+    modifier = Modifier.size(size) then modifier,
     colors = positiveButtonColors,
     contentPadding = PaddingValues(0.dp),
     content = content,
@@ -154,6 +155,7 @@ internal fun NegativeImageButton(
     onClick: () -> Unit,
     contentDescription: String,
     imageVector: ImageVector,
+    size: Dp = 40.dp,
     content: @Composable RowScope.() -> Unit = {
         Icon(
             imageVector = imageVector,
@@ -162,7 +164,7 @@ internal fun NegativeImageButton(
     },
 ): Unit = Button(
     onClick = onClick,
-    modifier = Modifier.size(40.dp) then modifier,
+    modifier = Modifier.size(size) then modifier,
     colors = negativeButtonColors,
     contentPadding = PaddingValues(0.dp),
     content = content,

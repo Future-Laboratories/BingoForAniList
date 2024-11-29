@@ -48,8 +48,6 @@ android {
     }
 
     signingConfigs {
-        println("my message visible by default")
-
         getByName("release") {
             val tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
             val allFilesFromDir = File(tmpFilePath).listFiles()

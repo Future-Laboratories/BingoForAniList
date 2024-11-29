@@ -32,6 +32,7 @@
     <string name="overview_anime">Anime Overview</string>
     <string name="explorer_anime">Anime Explorer</string>
     <string name="share_message">Checkout my new Bingo!</string>
+    <string name="toast_anime_added">Anime added to Watchlist</string>
 
     <!--Error-code Messages-->
     <string name="error_400">Error (Bad Request)</string>

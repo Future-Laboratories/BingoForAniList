@@ -1,5 +1,7 @@
 package io.future.laboratories.ui.components
 
+import android.media.Rating
+import android.widget.RatingBar
 import androidx.annotation.FloatRange
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -389,29 +391,46 @@ private fun RatingDialog(
                         modifier = Modifier
                             .verticalScroll(rememberScrollState())
                             .weight(weight = 1f, fill = false),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        Row(
-                            horizontalArrangement = Constants.spacedByDefault,
-                            verticalAlignment = Alignment.CenterVertically,
+                        OutlinedCard(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = MaterialTheme.shapes.large,
+                            border = BorderStroke(2.dp, StyleProvider.containerGradient),
                         ) {
-                            Text(
-                                text = stringResource(
-                                    id = R.string.rating_body,
-                                    formatArgs = arrayOf(animeData.media.title.userPreferred + animeData.media.title.userPreferred),
+                            Row(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                                horizontalArrangement = Constants.spacedByDefault,
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = stringResource(
+                                        id = R.string.rating_body,
+                                        formatArgs = arrayOf(animeData.media.title.userPreferred),
+                                    )
                                 )
-                            )
+                            }
                         }
 
-                        Rating(
-                            defaultValue = animeData.score,
-                            scoreFormat = scoreFormat,
-                            onValueChange = { scoreValue = it }
-                        )
+                        OutlinedCard(
+                            shape = MaterialTheme.shapes.large,
+                            border = BorderStroke(2.dp, StyleProvider.containerGradient),
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(all = 8.dp)
+                            ) {
+                                Rating(
+                                    defaultValue = animeData.score,
+                                    scoreFormat = scoreFormat,
+                                    onValueChange = { scoreValue = it }
+                                )
 
-                        StatusDropDown(
-                            status = animeData.status,
-                            onValueChange = { status -> ratingValue = status }
-                        )
+                                StatusDropDown(
+                                    status = animeData.status,
+                                    onValueChange = { status -> ratingValue = status }
+                                )
+                            }
+                        }
                     }
 
                     Row(
@@ -531,28 +550,46 @@ private fun RowScope.RatingSlider(
         else -> return
     }
 
-    Text(text = formatString.format(value))
+    Column {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        ) {
+            PositiveImageButton(
+                onClick = { onValueChange((value - valueSteps).coerceIn(valueRange)) },
+                contentDescription = "null",
+                size = 32.dp,
+                imageVector = Icons.Rounded.Remove,
+            )
 
-    PositiveImageButton(
-        onClick = { onValueChange((value - valueSteps).coerceIn(valueRange)) },
-        contentDescription = "null",
-        imageVector = Icons.Rounded.Remove,
-    )
+            Slider(
+                value = value,
+                modifier = Modifier.weight(1f),
+                onValueChange = onValueChange,
+                steps = if (scoreFormat != ScoreFormat.POINT_10_DECIMAL) valueRange.endInclusive.toInt() - 1 else 0,
+                valueRange = valueRange,
+                colors = StyleProvider.sliderColors,
+            )
 
-    Slider(
-        value = value,
-        modifier = Modifier.weight(1f),
-        onValueChange = onValueChange,
-        steps = if (scoreFormat != ScoreFormat.POINT_10_DECIMAL) valueRange.endInclusive.toInt() - 1 else 0,
-        valueRange = valueRange,
-        colors = StyleProvider.sliderColors,
-    )
+            PositiveImageButton(
+                onClick = { onValueChange((value + valueSteps).coerceIn(valueRange)) },
+                contentDescription = "null",
+                size = 32.dp,
+                imageVector = Icons.Rounded.Add,
+            )
+        }
 
-    PositiveImageButton(
-        onClick = { onValueChange((value + valueSteps).coerceIn(valueRange)) },
-        contentDescription = "null",
-        imageVector = Icons.Rounded.Add,
-    )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
+        ) {
+            Text(
+                text = formatString.format(value)
+            )
+        }
+    }
 }
 
 @Composable
@@ -610,7 +647,7 @@ internal fun AnimeHeader(title: String) {
                 text = title,
                 modifier = Modifier.padding(
                     horizontal = 10.dp,
-                    vertical = 6.dp
+                    vertical = 6.dp,
                 ),
                 color = StyleProvider.onGradientColor,
                 fontSize = 18.sp,

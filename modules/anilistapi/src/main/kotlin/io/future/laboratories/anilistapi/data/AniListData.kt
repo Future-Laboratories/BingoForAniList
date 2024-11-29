@@ -24,7 +24,7 @@ public data class UpdateMediaListEntry(
 
 @JsonClass(generateAdapter = true)
 public data class AddMediaListEntry(
-    @Json(name = "SaveMediaListEntry") val saveMediaListEntry: MediaList,
+    @Json(name = "SaveMediaListEntry") val saveMediaListEntry: Score,
 )
 
 @JsonClass(generateAdapter = true)

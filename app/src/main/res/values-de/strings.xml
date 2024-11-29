@@ -27,6 +27,7 @@
     <string name="overview_anime">Anime Übersicht</string>
     <string name="explorer_anime">Anime Entdecken</string>
     <string name="share_message">Schauen Sie sich mein neues Bingo an!</string>
+    <string name="toast_anime_added">Anime zu Watchlist hinzugefügt</string>
 
     <!--Error-code Messages-->
     <string name="error_400">Error (Bad Request)</string>
