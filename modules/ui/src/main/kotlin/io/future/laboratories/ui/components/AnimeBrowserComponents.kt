@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Lock
-import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -50,40 +49,50 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaFormat
-import io.future.laboratories.anilistapi.data.MediaList
-import io.future.laboratories.anilistapi.data.MediaListStatus
 import io.future.laboratories.anilistapi.data.MediaSeason
 import io.future.laboratories.anilistapi.data.PageQueryParams
-import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.animations.ShakingState
 import io.future.laboratories.ui.animations.rememberShakingState
 import io.future.laboratories.ui.animations.shakable
 import io.future.laboratories.ui.colon
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 @Composable
 internal fun AnimeBrowserItem(
     media: Media,
+    mediaIdList: List<Long>,
     modifier: Modifier = Modifier,
     onAddPressed: (id: Long) -> Unit,
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    val shakeState = rememberShakingState(
+        strength = ShakingState.Strength.Weak,
+        direction = ShakingState.Directions.LEFT_THEN_RIGHT,
+    )
+
     AnimeItemScaffold(
         imageData = { media.coverImage.large },
         actions = {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
+                    .padding(4.dp)
+                    .shakable(shakeState),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
                 PositiveImageButton(
                     onClick = {
-                        onAddPressed(media.id)
+                        // Check if media is already in list
+                        if (media.id in mediaIdList) {
+                            coroutineScope.launch {
+                                shakeState.shake(50)
+                            }
+                        } else {
+                            onAddPressed(media.id)
+                        }
                     },
                     contentDescription = stringResource(id = R.string.delete),
                     imageVector = Icons.Rounded.Add,
@@ -133,15 +142,12 @@ internal fun BrowserSearchbar(
 ) {
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf(queryParams.search.value) }
-    val coroutineScope = rememberCoroutineScope()
-    var searchJob: Job? = null
 
     DefaultSearchBar(
         query = searchQuery.orEmpty(),
         onQueryChange = {
             searchQuery = if (it.isEmpty()) null else it
             queryParams.search.value = searchQuery
-
 
             onBottomSheetClose()
         },

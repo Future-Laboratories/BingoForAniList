@@ -23,6 +23,7 @@ import io.future.laboratories.ui.components.BrowserSearchbar
 public fun AnimeBrowserPage(
     pages: SnapshotStateMap<Int, SnapshotStateList<Media>>,
     currentQueryParams: PageQueryParams,
+    mediaIdList: List<Long>,
     onAddPressed: (id: Long) -> Unit,
     onRequestMore: (PageQueryParams) -> Unit,
 ) {
@@ -52,6 +53,7 @@ public fun AnimeBrowserPage(
 
                 AnimeBrowserItem(
                     media = item,
+                    mediaIdList = mediaIdList,
                     onAddPressed = onAddPressed,
                 )
             }

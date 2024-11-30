@@ -85,6 +85,7 @@ public data class MediaListGroup(
 @JsonClass(generateAdapter = true)
 public data class MediaList(
     val id: Long,
+    val mediaId: Long = 0,
     var score: Float,
     var status: MediaListStatus = MediaListStatus.NONE,
     val media: Media,

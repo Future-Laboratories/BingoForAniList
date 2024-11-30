@@ -130,6 +130,7 @@ public interface API {
                              name
                              entries {
                                 id
+                                mediaId
                                 score
                                 status
                                 media {

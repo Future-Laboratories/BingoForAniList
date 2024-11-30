@@ -60,6 +60,7 @@ public class ShakingState(
     }
 
     public sealed class Strength(public val value: Float) {
+        public data object Weak: Strength(10f)
         public data object Normal: Strength(15f)
         public data object Strong: Strength(30f)
         public data class Custom(val strength: Float) : Strength(strength)

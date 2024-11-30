@@ -1,6 +1,5 @@
 package io.future.laboratories.anilistbingo.controller
 
-import android.R.attr.value
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -20,7 +19,6 @@ import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
-import io.future.laboratories.anilistapi.data.KeyValue
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaList
@@ -31,7 +29,6 @@ import io.future.laboratories.anilistapi.data.base.AniListMutationBody
 import io.future.laboratories.anilistapi.data.base.AniListQueryBody
 import io.future.laboratories.anilistapi.enqueue
 import io.future.laboratories.anilistbingo.R
-import kotlin.math.log
 
 internal class APIController private constructor(
     private val preferences: SharedPreferences,
@@ -301,10 +298,8 @@ internal class APIController private constructor(
         var dataFetchCompleted: Boolean,
         private val initialRuntimeAniListData: MainData? = null,
     ) {
-        var runtimeAniListData: MainData? by mutableStateOf(
-            initialRuntimeAniListData,
-        )
-        var rumtimeAniListDataIsDirty = false
+        var isRuntimeAniListDataDirty: Boolean = false
+        var runtimeAniListData: MainData? by mutableStateOf(initialRuntimeAniListData)
 
         var currentQuery : PageQueryParams? = null
         var runtimeCustomPages = mutableStateMapOf<Int, SnapshotStateList<Media>>()

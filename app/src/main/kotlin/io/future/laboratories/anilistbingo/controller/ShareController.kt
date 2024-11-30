@@ -28,7 +28,7 @@ internal object ShareController {
             )
 
         if (sharedFile.exists()) {
-            shareIntent.setType("application/json")
+            shareIntent.type = "application/json"
             shareIntent.putExtra(
                 Intent.EXTRA_STREAM,
                 FileProvider.getUriForFile(this, getString(R.string.provider_name), sharedFile),

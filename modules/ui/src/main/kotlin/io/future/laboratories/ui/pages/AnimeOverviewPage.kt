@@ -17,6 +17,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -59,15 +60,15 @@ public fun AnimeOverviewPage(
     scoreFormat: ScoreFormat,
     isDataDirty: Boolean,
     onRefresh: () -> Unit,
-    onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, animeData: MediaList, ratingValue: MediaListStatus, callback: (Float, MediaListStatus) -> Unit) -> Unit,
-    onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
-    onSelectAnime: (bingoData: BingoData, animeData: MediaList) -> Unit,
+    onCommit: (ScoreFormat, Float, MediaList, MediaListStatus, (Float, MediaListStatus) -> Unit) -> Unit,
+    onClickDelete: (BingoData, MediaList) -> Unit,
+    onSelectAnime: (BingoData, MediaList) -> Unit,
     onFABClick: () -> Unit,
 ) {
     // Refreshing
     val state = rememberPullToRefreshState()
     val coroutineScope = rememberCoroutineScope()
-    var isRefreshing by rememberSaveable { mutableStateOf(isDataDirty) }
+    var isRefreshing by rememberSaveable { mutableStateOf(false) }
 
     fun localOnRefresh() {
         isRefreshing = true
@@ -79,8 +80,10 @@ public fun AnimeOverviewPage(
         }
     }
 
-    if(isDataDirty) {
-        localOnRefresh()
+    LaunchedEffect(isDataDirty) {
+        if(isDataDirty) {
+            localOnRefresh()
+        }
     }
 
     // Searchbar - Anime

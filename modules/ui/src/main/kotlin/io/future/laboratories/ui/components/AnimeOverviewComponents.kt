@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import android.R.attr.text
 import android.media.Rating
 import android.widget.RatingBar
 import androidx.annotation.FloatRange
@@ -59,6 +60,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -585,9 +587,16 @@ private fun RowScope.RatingSlider(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterHorizontally),
         ) {
-            Text(
-                text = formatString.format(value)
-            )
+            OutlinedCard(
+                shape = MaterialTheme.shapes.large,
+                border = BorderStroke(2.dp, StyleProvider.containerGradient),
+            ) {
+                Text(
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 2.dp),
+                    text = formatString.format(value),
+                    fontSize = 20.sp,
+                )
+            }
         }
     }
 }

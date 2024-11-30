@@ -127,15 +127,14 @@ public class MainActivity : ComponentActivity() {
                                         SCORING_SYSTEM
                                     ).currentValue
                                 },
-                                isDataDirty = viewModel.runtimeAPIData.rumtimeAniListDataIsDirty,
+                                isDataDirty = viewModel.runtimeAPIData.isRuntimeAniListDataDirty,
                                 onRefresh = {
+                                    viewModel.runtimeAPIData.isRuntimeAniListDataDirty = false
                                     viewModel.fetchAPIData(
                                         apiController = apiController,
                                         activity = this@MainActivity,
                                         forced = true,
                                     )
-
-                                    viewModel.runtimeAPIData.rumtimeAniListDataIsDirty = false
                                 },
                                 onCommit = apiController::mutateEntry,
                                 onClickDelete = { bingoData, animeData ->
@@ -270,6 +269,8 @@ public class MainActivity : ComponentActivity() {
                             is Page.ANIME_BROWSER -> AnimeBrowserPage(
                                 pages = viewModel.runtimeAPIData.runtimeCustomPages,
                                 currentQueryParams = this.currentQuery,
+                                mediaIdList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection
+                                    ?.lists?.flatMap { it.entries.map { p0 -> p0.mediaId } }.orEmpty(),
                                 onRequestMore = { variableParameter ->
                                     with(apiController) {
                                         viewModel.runtimeAPIData.fetchNewPage(variableParameter = variableParameter)
@@ -279,8 +280,6 @@ public class MainActivity : ComponentActivity() {
                                     with(apiController) {
                                         viewModel.runtimeAPIData.addEntry(mediaId) {
                                             defaultToast(message = getString(R.string.toast_anime_added))
-
-                                            viewModel.runtimeAPIData.rumtimeAniListDataIsDirty = true
                                         }
                                     }
                                 }
