@@ -478,7 +478,7 @@ private fun StatusDropDown(
             .associateWith { it },
         initialValue = status.value,
     ) {
-        onValueChange(MediaListStatus.valueOf(it.uppercase()))
+        onValueChange(MediaListStatus.entries.first{entry -> entry.value == it})
     }
 
     DropdownMenu(
