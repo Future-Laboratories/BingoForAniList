@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(libs.material.icons)
     implementation(libs.material3)
+    implementation(libs.colorpicker.compose)
 
     api(project(":modules:anilistapi"))
     implementation(project(":modules:common"))

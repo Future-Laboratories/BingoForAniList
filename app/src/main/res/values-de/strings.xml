@@ -16,6 +16,11 @@
     <string name="options_appearance">Aussehen</string>
     <string name="options_experimental">Experimentell</string>
     <string name="options_general">Allgemein</string>
+    <string name="option_custom_color_scheme">individuelles Farbschema</string>
+    <string name="option_custom_color_primary">Primäre Farbe</string>
+    <string name="option_custom_color_secondary">Secondäre Farbe</string>
+    <string name="option_custom_color_tertiary">Tertiäre Farbe</string>
+    <string name="option_custom_color_error">Negative Color</string>
     <string name="option_pinned_category">Angepinnte Kategorie</string>
     <string name="option_scoring_system">Bewertungssystem</string>
     <string name="option_show_experimental_options">Experimentelle Optionen anzeigen</string>

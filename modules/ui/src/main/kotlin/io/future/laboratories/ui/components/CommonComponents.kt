@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
@@ -31,6 +34,8 @@ import androidx.compose.material.icons.rounded.AccountCircle
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Warning
 import androidx.compose.material3.Button
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,6 +43,7 @@ import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -72,6 +78,9 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
+import com.github.skydoves.colorpicker.compose.BrightnessSlider
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.common.StyleProvider.negativeButtonColors
 import io.future.laboratories.common.StyleProvider.positiveButtonColors
@@ -524,6 +533,100 @@ private fun DropdownText(text: String) {
         textAlign = TextAlign.End,
         modifier = Modifier.fillMaxWidth(),
     )
+}
+
+//endregion
+
+//region ColorPicker
+
+@Composable
+internal fun ColorPickerRow(
+    optionName: String,
+    initialValue: Color,
+    onCheckedChange: (Color) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text = optionName.colon())
+
+        ColorPickerDialog(
+            initialColor = initialValue,
+            onValueChange = onCheckedChange,
+        )
+    }
+}
+
+@Composable
+internal fun ColorPickerDialog(
+    initialColor: Color,
+    onValueChange: (Color) -> Unit,
+
+    ) {
+    val controller = rememberColorPickerController()
+    var isDialogOpen by remember { mutableStateOf(false) }
+
+    Canvas(
+        modifier = Modifier
+            .padding(vertical = 4.dp)
+            .size(32.dp)
+            .clip(CircleShape)
+            .clickable {
+                isDialogOpen = true
+            }
+    ) {
+        drawCircle(color = initialColor)
+    }
+
+    if (isDialogOpen) {
+        Dialog(onDismissRequest = { isDialogOpen = false }) {
+            OutlinedCard(
+                modifier = Modifier.padding(8.dp),
+                border = BorderStroke(2.dp, StyleProvider.containerGradient),
+                elevation = CardDefaults.outlinedCardElevation(defaultElevation = 30.dp)
+            ) {
+                DefaultHeader(title = stringResource(R.string.select_color))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    HsvColorPicker(
+                        modifier = Modifier
+                            .padding(horizontal = 30.dp)
+                            .aspectRatio(1f),
+                        controller = controller,
+                        onColorChanged = { onValueChange(it.color) },
+                        initialColor = initialColor,
+                    )
+                }
+
+                BrightnessSlider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp)
+                        .height(30.dp),
+                    controller = controller,
+                    borderRadius = 4.dp,
+                    borderSize = 16.dp,
+                    initialColor = initialColor,
+                )
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
+                ) {
+                    PositiveButton(onClick = { isDialogOpen = false }) {
+                        Text(text = stringResource(R.string.ok))
+                    }
+                }
+            }
+        }
+    }
 }
 
 //endregion

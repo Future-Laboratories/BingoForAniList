@@ -30,12 +30,17 @@ import io.future.laboratories.anilistapi.data.KeyValue
 import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.anilistapi.data.ScoreFormat
+import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_ERROR
+import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_PRIMARY
+import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_SECONDARY
+import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_TERTIARY
 import io.future.laboratories.anilistbingo.Options.Companion.PINNED_CATEGORY
 import io.future.laboratories.anilistbingo.Options.Companion.SCORING_SYSTEM
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_EXPERIMENTAL
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_EXPERIMENTAL_BROWSER
 import io.future.laboratories.anilistbingo.Options.Companion.SHOW_FINISHED_ANIME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_CARDS
+import io.future.laboratories.anilistbingo.Options.Companion.USE_CUSTOM_COLOR_SCHEME
 import io.future.laboratories.anilistbingo.Options.Companion.USE_GRADIENT
 import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.anilistbingo.controller.ShareController
@@ -45,6 +50,7 @@ import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.CustomScaffold
 import io.future.laboratories.ui.DropDownItemData
 import io.future.laboratories.ui.components.BooleanOption
+import io.future.laboratories.ui.components.ColorOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionGroup
 import io.future.laboratories.ui.pages.AnimeBrowserPage
@@ -104,7 +110,13 @@ public class MainActivity : ComponentActivity() {
         )
 
         setContent {
-            AniListBingoTheme {
+            AniListBingoTheme(
+                useCustomScheme = options.get<BooleanOption>(USE_CUSTOM_COLOR_SCHEME).currentValue && options.get<BooleanOption>(SHOW_EXPERIMENTAL).currentValue,
+                colorPrimary = options.get<ColorOption>(CUSTOM_COLOR_SCHEME_PRIMARY).currentValue,
+                colorSecondary = options.get<ColorOption>(CUSTOM_COLOR_SCHEME_SECONDARY).currentValue,
+                colorTertiary = options.get<ColorOption>(CUSTOM_COLOR_SCHEME_TERTIARY).currentValue,
+                colorError = options.get<ColorOption>(CUSTOM_COLOR_SCHEME_ERROR).currentValue,
+            ) {
                 window.statusBarColor = StyleProvider.gradientColor.toArgb()
                 CustomScaffold(
                     titleId = { viewModel.currentPage.nameResId },
@@ -162,8 +174,7 @@ public class MainActivity : ComponentActivity() {
                                 },
                                 showFAB = options[SHOW_EXPERIMENTAL_BROWSER],
                                 onFABClick = {
-                                    viewModel.currentPage =
-                                        Page.ANIME_BROWSER(viewModel.currentPage)
+                                    viewModel.currentPage = Page.ANIME_BROWSER(viewModel.currentPage)
                                 }
                             )
 
@@ -246,6 +257,11 @@ public class MainActivity : ComponentActivity() {
                                         options = listOfNotNull(
                                             options[USE_CARDS],
                                             options[USE_GRADIENT],
+                                            options[USE_CUSTOM_COLOR_SCHEME],
+                                            options[CUSTOM_COLOR_SCHEME_PRIMARY],
+                                            options[CUSTOM_COLOR_SCHEME_SECONDARY],
+                                            options[CUSTOM_COLOR_SCHEME_TERTIARY],
+                                            options[CUSTOM_COLOR_SCHEME_ERROR],
                                         )
                                     ),
                                     OptionGroup(

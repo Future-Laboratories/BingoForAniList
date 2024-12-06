@@ -1,11 +1,17 @@
 package io.future.laboratories.ui.components
 
 import android.content.SharedPreferences
+import android.graphics.Color.blue
+import android.graphics.Color.green
+import android.graphics.Color.red
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.edit
+import androidx.core.graphics.toColorInt
 import kotlin.reflect.KProperty
 
 @JvmInline
@@ -112,9 +118,35 @@ public data class DropdownOption(
         )
     }
 
-    override fun loadData(): String = preferences.getString(key.key, defaultValue)!!
+    override fun loadData(): String = preferences.getString(key.key, defaultValue) ?: defaultValue
 
     override fun String.saveData(): Unit = preferences.edit {
         putString(key.key, this@saveData)
+    }
+}
+
+public data class ColorOption(
+    override val preferences: SharedPreferences,
+    override val key: OptionKey,
+    override val name: @Composable () -> String,
+    override val defaultValue: Color,
+    override val isVisible: (() -> Boolean)?,
+    override val onValueChanged: ((Color, Color.() -> Unit) -> Unit)? = null,
+) : OptionData<Color>() {
+    @Composable
+    override fun Layout() {
+        ColorPickerRow(
+            optionName = name(),
+            initialValue = currentValue,
+            onCheckedChange = { currentValue = it }
+        )
+    }
+
+    override fun loadData(): Color {
+        return preferences.getString(key.key, null)?.let { Color(it.toULong()) } ?: defaultValue
+    }
+
+    override fun Color.saveData(): Unit = preferences.edit {
+        putString(key.key, this@saveData.value.toString())
     }
 }

@@ -381,7 +381,7 @@ private fun RatingDialog(
                     .fillMaxWidth(fraction = 0.8f)
                     .padding(bottom = 24.dp),
                 colors = StyleProvider.cardColor,
-                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp)
+                elevation = CardDefaults.elevatedCardElevation(defaultElevation = 4.dp),
             ) {
                 Column(
                     modifier = Modifier.padding(8.dp),

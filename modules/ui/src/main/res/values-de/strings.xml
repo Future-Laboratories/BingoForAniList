@@ -22,6 +22,7 @@
     <string name="format">Format</string>
     <string name="name">Name</string>
     <string name="no_selection">Keine Auswahl</string>
+    <string name="ok">OK</string>
     <string name="operator_mode">Modus</string>
     <string name="options">Einstellungen</string>
     <string name="options_expire_date">Login Ablaufdatum</string>
@@ -30,6 +31,7 @@
     <string name="search_anime">Suche Title</string>
     <string name="search_tag">Suche Tag</string>
     <string name="season">Season</string>
+    <string name="select_color">Farbe auswählen</string>
     <string name="share">Teilen</string>
     <string name="shuffle">Mischen</string>
     <string name="shuffle_hint">Info: Mischen im Bearbeitungsmodus wird nur auf <u>NEUE</u> Bingo angewendet</string>
