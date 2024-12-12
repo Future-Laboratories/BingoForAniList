@@ -149,6 +149,7 @@ public interface API {
                 ${'$'}season: MediaSeason
                 ${'$'}year: Int
                 ${'$'}search: String
+                ${'$'}search: String
             ) {
                 Page(page: ${'$'}pageNumber, perPage: 50) {
                     media(
@@ -203,6 +204,7 @@ public interface API {
                 SaveMediaListEntry(
                     mediaId: ${'$'}mediaId
                     status: PLANNING
+                    hiddenFromStatusLists: false,
                 ) {
                     score
                     status

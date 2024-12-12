@@ -12,7 +12,6 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.Media
-import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.components.AnimeBrowserItem
@@ -29,7 +28,9 @@ public fun AnimeBrowserPage(
 ) {
     // Initially load 50 anime
     SideEffect {
-        onRequestMore(currentQueryParams)
+        if(pages.isEmpty()) {
+            onRequestMore(currentQueryParams)
+        }
     }
 
     BrowserSearchbar(

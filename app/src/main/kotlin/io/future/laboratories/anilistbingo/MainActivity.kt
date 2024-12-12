@@ -527,7 +527,7 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
 
     class ANIME_BROWSER(sourcePage: Page) : Page(R.string.explorer_anime, sourcePage) {
         val currentQuery = PageQueryParams(
-            pageNumber = KeyValue(key = "page", value = 1),
+            pageNumber = KeyValue(key = "pageNumber", value = 1),
             format = KeyValue(key = "format", value = null),
             season = KeyValue(key = "season", value = null),
             year = KeyValue(key = "year", value = null),
