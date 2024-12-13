@@ -166,4 +166,29 @@ public enum class MediaFormat(public val value: String) {
     MUSIC("Music"),
 }
 
+public enum class MediaSort(public val value: String) {
+    /*
+    TODO: Special case to check for dropdown
+    TITLE_ROMAJI("TITLE_ROMAJI"),
+    TITLE_ENGLISH("TITLE_ENGLISH"),
+    TITLE_NATIVE("TITLE_NATIVE"),
+     */
+
+    //TYPE("TYPE"),
+    //FORMAT("FORMAT"),
+    //START_DATE("START_DATE"),
+    //END_DATE("END_DATE"),
+    SCORE("Score"),
+    POPULARITY("Popularity"),
+    TRENDING("Trending"),
+    //EPISODES("EPISODES"),
+    DURATION("Duration"),
+    //STATUS("STATUS"),
+    //CHAPTERS("CHAPTERS"),
+    //VOLUMES("VOLUMES"),
+    //UPDATED_AT("UPDATED_AT"),
+    //SEARCH_MATCH("SEARCH_MATCH"),
+    FAVOURITES("Favourites"),
+}
+
 //endregion

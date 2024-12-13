@@ -19,6 +19,7 @@ public data class PageQueryParams(
     val season: KeyValue<MediaSeason?>,
     val year: KeyValue<Int?>,
     val search: KeyValue<String?>,
+    val sort: KeyValue<Pair<MediaSort?, Boolean>>,
 ) : Cloneable {
     public fun toMap(): Map<String, Any> {
         val map = mutableMapOf<String, Any>()
@@ -29,6 +30,7 @@ public data class PageQueryParams(
             season,
             year,
             search,
+            sort,
         ).forEach {
             with(it) {
                 map.addToMapOrReturn()
@@ -44,6 +46,7 @@ public data class PageQueryParams(
                     && this.season.value == other.season.value
                     && this.year.value == other.year.value
                     && this.search.value == other.search.value
+                    && this.sort.value == other.sort.value
         } else false
     }
 
@@ -52,6 +55,7 @@ public data class PageQueryParams(
         result = 31 * result + season.hashCode()
         result = 31 * result + year.hashCode()
         result = 31 * result + search.hashCode()
+        result = 31 * result + sort.hashCode()
         return result
     }
 
@@ -62,6 +66,7 @@ public data class PageQueryParams(
             season = season.clone(),
             year = year.clone(),
             search = search.clone(),
+            sort = sort.clone(),
         )
     }
 }

@@ -590,7 +590,7 @@ internal fun ColorPickerDialog(
                 DefaultHeader(title = stringResource(R.string.select_color))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(weight = 1f, fill = false),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     HsvColorPicker(

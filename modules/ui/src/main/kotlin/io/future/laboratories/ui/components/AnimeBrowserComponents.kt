@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,11 +14,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.ArrowDownward
+import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.DropdownMenu
@@ -43,6 +47,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -50,6 +55,7 @@ import androidx.compose.ui.unit.sp
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaFormat
 import io.future.laboratories.anilistapi.data.MediaSeason
+import io.future.laboratories.anilistapi.data.MediaSort
 import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.common.StyleProvider
 import io.future.laboratories.ui.R
@@ -184,7 +190,7 @@ private fun BrowserModalBottomSheet(
     queryParams: PageQueryParams,
     onDismissRequest: () -> Unit,
 ) {
-    val modalBottomSheetState = rememberModalBottomSheetState()
+    val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     if (visible) {
         ModalBottomSheet(
@@ -201,6 +207,8 @@ private fun BrowserModalBottomSheet(
                 verticalArrangement = Arrangement.Center,
                 maxItemsInEachRow = 4,
             ) {
+                DefaultHeader(stringResource(R.string.year))
+
                 DefaultBottomSheetRow(
                     text = stringResource(R.string.year).colon(),
                 ) {
@@ -213,11 +221,25 @@ private fun BrowserModalBottomSheet(
                     SeasonDropDown(queryParams)
                 }
 
+                DefaultHeader(stringResource(R.string.format))
+
                 DefaultBottomSheetRow(
                     text = stringResource(R.string.format).colon(),
                 ) {
                     FormatDropDown(queryParams)
                 }
+
+                DefaultHeader(stringResource(R.string.sort))
+
+                DefaultBottomSheetRow(
+                    text = stringResource(R.string.sort).colon(),
+                ) {
+                    SortingDropDown(queryParams)
+
+                    SortingButtonDown(queryParams)
+                }
+
+                DefaultHeader(stringResource(R.string.operator_mode))
 
                 DefaultBottomSheetRow(
                     text = stringResource(R.string.operator_mode).colon(),
@@ -345,6 +367,72 @@ private fun SeasonDropDown(
 }
 
 @Composable
+private fun SortingDropDown(
+    queryParams: PageQueryParams,
+) {
+    var expanded by remember { mutableStateOf(false) }
+    var selectedSort by remember { mutableStateOf(queryParams.sort.value.first) }
+
+    Box {
+        PositiveButton(
+            onClick = { expanded = !expanded },
+        ) {
+            Text(text = selectedSort?.value.orEmpty())
+        }
+
+        DropdownMenu(
+            modifier = Modifier
+                .height(240.dp)
+                .background(StyleProvider.surfaceColor),
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            MediaSort.entries.forEach { sort ->
+                DropdownMenuItem(
+                    text = { Text(text = sort.value) },
+                    onClick = {
+                        selectedSort = sort
+                        queryParams.sort.value = queryParams.sort.value.copy(first = sort)
+
+                        expanded = false
+                    },
+                    leadingIcon = {
+                        if (sort.value == selectedSort?.value) Icon(
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = null,
+                        )
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SortingButtonDown(
+    queryParams: PageQueryParams,
+) {
+    var descending by remember { mutableStateOf(queryParams.sort.value.second) }
+    val rotation by animateFloatAsState(if(descending) 0f else 180f)
+
+    PositiveImageButton(
+        onClick = {
+            descending = !descending
+            queryParams.sort.value = queryParams.sort.value.copy(second = descending)
+        },
+        contentDescription = stringResource(R.string.descending),
+        imageVector = Icons.Rounded.ArrowDownward,
+        content = {
+            Icon(
+                imageVector = Icons.Rounded.ArrowDropDown,
+                contentDescription = null,
+                modifier = Modifier.rotate(rotation)
+            )
+        }
+    )
+}
+
+@Composable
 private fun FormatDropDown(
     queryParams: PageQueryParams,
 ) {
@@ -380,8 +468,7 @@ private fun FormatDropDown(
             }
         }
 
-        queryParams.format.value =
-            if (localSelectedFormats.isNullOrEmpty()) null else selectedFormats
+        queryParams.format.value = if (localSelectedFormats.isNullOrEmpty()) null else selectedFormats
     }
 
     Box {
@@ -406,8 +493,8 @@ private fun FormatDropDown(
                     },
                     leadingIcon = {
                         if (selectedFormats.orEmpty().contains(format)) Icon(
-                            Icons.Rounded.Check,
-                            null
+                            imageVector = Icons.Rounded.Check,
+                            contentDescription = null,
                         )
                     },
                 )

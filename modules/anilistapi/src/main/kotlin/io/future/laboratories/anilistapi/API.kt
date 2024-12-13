@@ -149,6 +149,7 @@ public interface API {
                 ${'$'}season: MediaSeason
                 ${'$'}year: Int
                 ${'$'}search: String
+                ${'$'}sort: [MediaSort]
             ) {
                 Page(page: ${'$'}pageNumber, perPage: 50) {
                     media(
@@ -156,7 +157,7 @@ public interface API {
                         season: ${'$'}season
                         seasonYear: ${'$'}year
                         search: ${'$'}search
-                        sort: [TRENDING_DESC]
+                        sort: ${'$'}sort
                     ) {
                         id
                         title {

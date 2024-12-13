@@ -28,6 +28,7 @@ import io.future.laboratories.Companion.TEMP_PATH
 import io.future.laboratories.Companion.bingoStoragePath
 import io.future.laboratories.anilistapi.data.KeyValue
 import io.future.laboratories.anilistapi.data.MediaList
+import io.future.laboratories.anilistapi.data.MediaSort
 import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_ERROR
@@ -532,6 +533,11 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
             season = KeyValue(key = "season", value = null),
             year = KeyValue(key = "year", value = null),
             search = KeyValue(key = "search", value = null),
+            sort = KeyValue(
+                key = "sort",
+                value = MediaSort.TRENDING to true,
+                toMapValue = { it -> "${it.first?.name}${if (it.second) "_DESC" else ""}" }
+            ),
         )
     }
 

@@ -28,9 +28,7 @@ public fun AnimeBrowserPage(
 ) {
     // Initially load 50 anime
     SideEffect {
-        if(pages.isEmpty()) {
-            onRequestMore(currentQueryParams)
-        }
+        onRequestMore(currentQueryParams)
     }
 
     BrowserSearchbar(
