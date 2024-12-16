@@ -158,6 +158,7 @@ public interface API {
                         seasonYear: ${'$'}year
                         search: ${'$'}search
                         sort: ${'$'}sort
+                        type: ANIME
                     ) {
                         id
                         title {
