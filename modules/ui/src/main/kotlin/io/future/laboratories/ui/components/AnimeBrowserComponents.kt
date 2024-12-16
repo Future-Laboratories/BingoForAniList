@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -10,15 +11,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.rounded.Add
@@ -74,13 +70,14 @@ internal fun AnimeBrowserItem(
     media: Media,
     mediaIdList: List<Long>,
     modifier: Modifier = Modifier,
-    onAddPressed: (id: Long) -> Unit,
+    onAddPressed: (id: Long, callback: () -> Unit) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val shakeState = rememberShakingState(
         strength = ShakingState.Strength.Weak,
         direction = ShakingState.Directions.LEFT_THEN_RIGHT,
     )
+    var isInList by remember { mutableStateOf(media.id in mediaIdList) }
 
     AnimeItemScaffold(
         imageData = { media.coverImage.large },
@@ -92,20 +89,26 @@ internal fun AnimeBrowserItem(
                     .shakable(shakeState),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
-                PositiveImageButton(
-                    onClick = {
-                        // Check if media is already in list
-                        if (media.id in mediaIdList) {
-                            coroutineScope.launch {
-                                shakeState.shake(50)
+                AnimatedContent(
+                    if(isInList) Icons.Rounded.Lock else Icons.Rounded.Add
+                ) {
+                    PositiveImageButton(
+                        onClick = {
+                            // Check if media is already in list
+                            if (isInList) {
+                                coroutineScope.launch {
+                                    shakeState.shake(50)
+                                }
+                            } else {
+                                onAddPressed(media.id) {
+                                    isInList = true
+                                }
                             }
-                        } else {
-                            onAddPressed(media.id)
-                        }
-                    },
-                    contentDescription = stringResource(id = R.string.delete),
-                    imageVector = Icons.Rounded.Add,
-                )
+                        },
+                        contentDescription = stringResource(id = R.string.delete),
+                        imageVector = it
+                    )
+                }
             }
         },
         content = { expanded ->
@@ -123,24 +126,6 @@ internal fun AnimeBrowserItem(
             }
         }
     )
-}
-
-@Composable
-internal fun DiscoverRow(
-    title: String,
-    data: List<Media>,
-) {
-    Column {
-        Text(text = title)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        LazyRow {
-            items(data) { it ->
-                Text(it.title.userPreferred)
-            }
-        }
-    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)

@@ -293,10 +293,12 @@ public class MainActivity : ComponentActivity() {
                                         viewModel.runtimeAPIData.fetchNewPage(variableParameter = variableParameter)
                                     }
                                 },
-                                onAddPressed = { mediaId ->
+                                onAddPressed = { mediaId, callback ->
                                     with(apiController) {
                                         viewModel.runtimeAPIData.addEntry(mediaId) {
                                             defaultToast(message = getString(R.string.toast_anime_added))
+
+                                            callback()
                                         }
                                     }
                                 }

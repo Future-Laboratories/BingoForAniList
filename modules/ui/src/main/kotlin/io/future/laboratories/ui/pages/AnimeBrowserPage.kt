@@ -23,7 +23,7 @@ public fun AnimeBrowserPage(
     pages: SnapshotStateMap<Int, SnapshotStateList<Media>>,
     currentQueryParams: PageQueryParams,
     mediaIdList: List<Long>,
-    onAddPressed: (id: Long) -> Unit,
+    onAddPressed: (id: Long, callback: () -> Unit) -> Unit,
     onRequestMore: (PageQueryParams) -> Unit,
 ) {
     // Initially load 50 anime
