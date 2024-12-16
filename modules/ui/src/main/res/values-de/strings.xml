@@ -21,6 +21,7 @@
     <string name="edit_dismiss_body">Sind Sie sich sicher, dass Sie alle Änderungen verwerfen wollen?</string>
     <string name="edit_dismiss_header">Abbruch im Gange</string>
     <string name="format">Format</string>
+    <string name="load_more">Mehr laden</string>
     <string name="name">Name</string>
     <string name="no_selection">Keine Auswahl</string>
     <string name="ok">OK</string>

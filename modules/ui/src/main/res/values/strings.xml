@@ -21,6 +21,7 @@
     <string name="edit_dismiss_body">Are you sure you want to cancel? All changes will be gone permanently!</string>
     <string name="edit_dismiss_header">Cancel in progress</string>
     <string name="format">Format</string>
+    <string name="load_more">Load more</string>
     <string name="name">Name</string>
     <string name="no_selection">No Selection</string>
     <string name="ok">OK</string>
