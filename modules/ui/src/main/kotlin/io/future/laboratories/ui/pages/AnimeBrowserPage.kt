@@ -1,6 +1,5 @@
 package io.future.laboratories.ui.pages
 
-import android.R.attr.onClick
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,9 +38,7 @@ public fun AnimeBrowserPage(
 
     BrowserSearchbar(
         queryParams = currentQueryParams,
-        onBottomSheetClose = {
-            onRequestMore(currentQueryParams.copy())
-        }
+        onBottomSheetClose = { onRequestMore(currentQueryParams.copy()) }
     )
 
     LazyColumn(
@@ -77,6 +74,5 @@ public fun AnimeBrowserPage(
                 }
             }
         }
-
     }
 }
