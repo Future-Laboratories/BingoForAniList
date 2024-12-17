@@ -1,3 +1,4 @@
+import org.gradle.kotlin.dsl.implementation
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 
 plugins {
@@ -54,6 +55,8 @@ dependencies {
     implementation(libs.material.icons)
     implementation(libs.material3)
     implementation(libs.colorpicker.compose)
+    implementation(libs.compose.charts)
+    implementation(libs.textflow.material3)
 
     api(project(":modules:anilistapi"))
     implementation(project(":modules:common"))

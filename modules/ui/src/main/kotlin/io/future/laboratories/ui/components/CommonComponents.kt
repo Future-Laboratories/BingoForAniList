@@ -372,6 +372,7 @@ internal fun DefaultNavIcon(
         contentDescription = contentDescription,
         modifier = Modifier
             .size(32.dp)
+            .clip(CircleShape)
             .clickable { onClick() },
         tint = StyleProvider.onGradientColor,
     )

@@ -21,6 +21,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.ArrowDropDown
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Lock
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -70,6 +71,7 @@ internal fun AnimeBrowserItem(
     media: Media,
     mediaIdList: List<Long>,
     modifier: Modifier = Modifier,
+    onInfoPressed: (id: Long) -> Unit,
     onAddPressed: (id: Long, callback: () -> Unit) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -85,14 +87,20 @@ internal fun AnimeBrowserItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp)
-                    .shakable(shakeState),
+                    .padding(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
+                PositiveImageButton(
+                    onClick = { onInfoPressed(media.id) },
+                    contentDescription = stringResource(id = R.string.delete),
+                    imageVector = Icons.Rounded.Info
+                )
+
                 AnimatedContent(
                     if(isInList) Icons.Rounded.Lock else Icons.Rounded.Add
                 ) {
                     PositiveImageButton(
+                        modifier = Modifier.shakable(shakeState),
                         onClick = {
                             // Check if media is already in list
                             if (isInList) {

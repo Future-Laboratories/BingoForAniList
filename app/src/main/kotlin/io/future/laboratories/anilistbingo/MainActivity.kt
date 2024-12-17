@@ -55,6 +55,7 @@ import io.future.laboratories.ui.components.ColorOption
 import io.future.laboratories.ui.components.DropdownOption
 import io.future.laboratories.ui.components.OptionGroup
 import io.future.laboratories.ui.pages.AnimeBrowserPage
+import io.future.laboratories.ui.pages.AnimeItemPage
 import io.future.laboratories.ui.pages.AnimeOverviewPage
 import io.future.laboratories.ui.pages.BingoOverviewPage
 import io.future.laboratories.ui.pages.BingoPage
@@ -211,8 +212,8 @@ public class MainActivity : ComponentActivity() {
                                 ) ?: bingoData,
                                 onDataChange = { bingoData ->
                                     save(
-                                        bingoData,
-                                        bingoPath(),
+                                        data = bingoData,
+                                        storagePath = bingoPath(),
                                     )
                                 },
                             )
@@ -235,7 +236,10 @@ public class MainActivity : ComponentActivity() {
                                         runtimeData.add(bingoData)
                                     }
 
-                                    save(bingoData, bingoStoragePath("${bingoData.id}"))
+                                    save(
+                                        data = bingoData,
+                                        storagePath = bingoStoragePath("${bingoData.id}")
+                                    )
 
                                     viewModel.currentPage = Page.BINGO_OVERVIEW()
                                 },
@@ -288,6 +292,13 @@ public class MainActivity : ComponentActivity() {
                                 currentQueryParams = this.currentQuery,
                                 mediaIdList = viewModel.runtimeAPIData.runtimeAniListData?.mediaListCollection
                                     ?.lists?.flatMap { it.entries.map { p0 -> p0.mediaId } }.orEmpty(),
+                                onInfoPressed = { id ->
+                                    with(apiController) {
+                                        viewModel.runtimeAPIData.fetchDetailedData(id) {
+                                            viewModel.currentPage = Page.ANIME_ITEM(sourcePage = viewModel.currentPage)
+                                        }
+                                    }
+                                },
                                 onRequestMore = { variableParameter ->
                                     with(apiController) {
                                         viewModel.runtimeAPIData.fetchNewPage(variableParameter = variableParameter)
@@ -302,6 +313,10 @@ public class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 }
+                            )
+
+                            is Page.ANIME_ITEM -> AnimeItemPage(
+                                details = viewModel.runtimeAPIData.currentDetailedAniListData
                             )
                         }
                     }
@@ -505,6 +520,8 @@ internal sealed class Page(@StringRes val nameResId: Int, private val sourcePage
         val bingoData: BingoData,
         sourcePage: Page,
     ) : Page(R.string.overview_anime, sourcePage), SavableBingo
+
+    class ANIME_ITEM(sourcePage: Page): Page(R.string.item_anime, sourcePage)
 
     class EDITOR(
         val bingoData: BingoData? = null,

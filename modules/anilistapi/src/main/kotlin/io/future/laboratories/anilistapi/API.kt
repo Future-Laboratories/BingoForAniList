@@ -1,6 +1,7 @@
 package io.future.laboratories.anilistapi
 
 import io.future.laboratories.anilistapi.data.AddMediaListEntry
+import io.future.laboratories.anilistapi.data.DetailedAniListData
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.PageData
 import io.future.laboratories.anilistapi.data.UpdateMediaListEntry
@@ -55,6 +56,17 @@ public interface API {
         @Query("response_type") token: String = "token",
         @Body json: AniListQueryBody,
     ): DataHolderCall<PageData>
+
+    @POST("/")
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json",
+    )
+    public fun postDetailedAniListData(
+        @Header("Authorization") authorization: String,
+        @Query("response_type") token: String = "token",
+        @Body json: AniListQueryBody,
+    ): DataHolderCall<DetailedAniListData>
 
     @POST("/")
     @Headers(
@@ -170,6 +182,43 @@ public interface API {
                         tags {
                             name
                         }
+                    }
+                }
+            }
+        """.trimIndent()
+
+        public val detailedAnimeQuery: String = """
+            query(${'$'}id: Int) {
+                Media(id: ${'$'}id) {
+                    id
+                    title {
+                        userPreferred
+                    }
+                    description(asHtml: false)
+                    episodes
+                    duration
+                    genres
+                    averageScore
+                    meanScore
+                    popularity
+                    tags {
+                        name
+                        rank
+                        isAdult
+                    }
+                    bannerImage
+                    coverImage {
+                        large
+                    }
+                    startDate {
+                        year
+                        month
+                        day
+                    }
+                    endDate {
+                        year
+                        month
+                        day
                     }
                 }
             }

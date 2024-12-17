@@ -31,6 +31,7 @@
     <string name="overview_bingo">Bingo Übersicht</string>
     <string name="overview_anime">Anime Übersicht</string>
     <string name="explorer_anime">Anime Entdecken</string>
+    <string name="item_anime">Anime Info</string>
     <string name="share_message">Schauen Sie sich mein neues Bingo an!</string>
     <string name="toast_anime_added">Anime zu Watchlist hinzugefügt</string>
 

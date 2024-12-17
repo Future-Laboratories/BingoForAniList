@@ -25,8 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Brush.Companion.horizontalGradient
 import androidx.compose.ui.graphics.Brush.Companion.linearGradient
+import androidx.compose.ui.graphics.Brush.Companion.verticalGradient
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.LinearGradient
 import androidx.compose.ui.graphics.compositeOver
 import io.future.laboratories.common.StyleProvider.useCards
 
@@ -55,6 +58,20 @@ public object StyleProvider {
     public val containerGradient: Brush
         @Composable
         get() = linearGradient(
+            if (useGradient) gradientList else solidGradientList,
+        )
+
+    @Stable
+    public val containerVerticalGradient: Brush
+        @Composable
+        get() = verticalGradient(
+            if (useGradient) gradientList else solidGradientList,
+        )
+
+    @Stable
+    public val containerHorizontalGradient: Brush
+        @Composable
+        get() = horizontalGradient(
             if (useGradient) gradientList else solidGradientList,
         )
 

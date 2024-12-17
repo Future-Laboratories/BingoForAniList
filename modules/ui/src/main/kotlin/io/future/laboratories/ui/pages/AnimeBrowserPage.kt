@@ -28,6 +28,7 @@ public fun AnimeBrowserPage(
     pages: SnapshotStateMap<Int, SnapshotStateList<Media>>,
     currentQueryParams: PageQueryParams,
     mediaIdList: List<Long>,
+    onInfoPressed: (id: Long) -> Unit,
     onAddPressed: (id: Long, callback: () -> Unit) -> Unit,
     onRequestMore: (PageQueryParams) -> Unit,
 ) {
@@ -56,6 +57,7 @@ public fun AnimeBrowserPage(
                 AnimeBrowserItem(
                     media = item,
                     mediaIdList = mediaIdList,
+                    onInfoPressed = onInfoPressed,
                     onAddPressed = onAddPressed,
                 )
             }

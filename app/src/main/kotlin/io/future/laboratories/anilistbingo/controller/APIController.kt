@@ -19,6 +19,7 @@ import io.future.laboratories.Companion.PREFERENCE_ACCESS_TYPE
 import io.future.laboratories.Companion.PREFERENCE_USER_ID
 import io.future.laboratories.anilistapi.API
 import io.future.laboratories.anilistapi.api
+import io.future.laboratories.anilistapi.data.DetailedAniListData
 import io.future.laboratories.anilistapi.data.MainData
 import io.future.laboratories.anilistapi.data.Media
 import io.future.laboratories.anilistapi.data.MediaList
@@ -147,6 +148,11 @@ internal class APIController private constructor(
         )
     }
 
+    /**
+     * Fetch new page of data
+     *
+     * @param variableParameter the new parameters to use
+     */
     internal fun RuntimeData.fetchNewPage(
         variableParameter: PageQueryParams,
     ) {
@@ -210,6 +216,15 @@ internal class APIController private constructor(
         }
     }
 
+    /**
+     * Mutate an entry in the user's list
+     *
+     * @param format ScoreFormat to use
+     * @param value the Score
+     * @param animeData the entry to mutate
+     * @param status the status of the entry
+     * @param onCallback What to do with the response
+     */
     internal fun mutateEntry(
         format: ScoreFormat,
         value: Float,
@@ -242,6 +257,12 @@ internal class APIController private constructor(
         }
     }
 
+    /**
+     * Adding a new entry to the user's list and calling [onSuccess] if the API is returning a 200 back
+     *
+     *  @param mediaId the id of the media to add
+     *  @param onSuccess what to do if the API returns a 200 back
+     */
     internal fun RuntimeData.addEntry(
         mediaId: Long,
         onSuccess: () -> Unit,
@@ -260,6 +281,37 @@ internal class APIController private constructor(
                 onSuccess()
             } else {
                 Log.d("addEntry", response.errorBody()?.string() ?: "")
+                onNetworkError(code)
+            }
+        }
+    }
+
+    internal fun RuntimeData.fetchDetailedData(
+        id : Long,
+        onSuccess: () -> Unit,
+    ) {
+        if(id == this.currentDetailedAniListData?.data?.id) {
+            onSuccess()
+
+            return
+        }
+
+        api.postDetailedAniListData(
+            authorization = authorization,
+            json = AniListQueryBody(
+                query = API.detailedAnimeQuery,
+                variables = mapOf(
+                    "id" to id,
+                ),
+            ),
+        ).enqueue { _, response ->
+            val code = response.code()
+            if (code == 200) {
+                this.currentDetailedAniListData = response.body()?.data
+
+                onSuccess()
+            } else {
+                Log.d("fetchDetailedData", response.errorBody()?.string() ?: "")
                 onNetworkError(code)
             }
         }
@@ -303,6 +355,8 @@ internal class APIController private constructor(
 
         var currentQuery : PageQueryParams? = null
         var runtimeCustomPages = mutableStateMapOf<Int, SnapshotStateList<Media>>()
+
+        var currentDetailedAniListData: DetailedAniListData? by mutableStateOf(null)
     }
 
     companion object {

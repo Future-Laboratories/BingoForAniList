@@ -1,6 +1,7 @@
 package io.future.laboratories.anilistapi
 
 import android.util.Log
+import com.squareup.moshi.JsonClass
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 

@@ -36,6 +36,7 @@
     <string name="overview_bingo">Bingo Overview</string>
     <string name="overview_anime">Anime Overview</string>
     <string name="explorer_anime">Anime Explorer</string>
+    <string name="item_anime">Anime Info</string>
     <string name="share_message">Checkout my new Bingo!</string>
     <string name="toast_anime_added">Anime added to Watchlist</string>
 
