@@ -60,6 +60,7 @@ public fun AnimeOverviewPage(
     scoreFormat: ScoreFormat,
     isDataDirty: Boolean,
     onRefresh: () -> Unit,
+    onInfoPressed: (id: Long) -> Unit,
     onCommit: (ScoreFormat, Float, MediaList, MediaListStatus, (Float, MediaListStatus) -> Unit) -> Unit,
     onClickDelete: (BingoData, MediaList) -> Unit,
     onSelectAnime: (BingoData, MediaList) -> Unit,
@@ -150,6 +151,7 @@ public fun AnimeOverviewPage(
                         AnimeItem(
                             animeData = animeData,
                             bingoData = bingoData.clone(),
+                            onInfoPressed = onInfoPressed,
                             scoreFormat = scoreFormat,
                             onCommit = { format, rating, status, save ->
                                 onCommit(format, rating, animeData, status, save)

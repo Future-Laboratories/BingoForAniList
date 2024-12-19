@@ -25,6 +25,7 @@
     <string name="edit_dismiss_header">Cancel in progress</string>
     <string name="episodes">Episodes</string>
     <string name="format">Format</string>
+    <string name="info">Info</string>
     <string name="load_more">Load more</string>
     <string name="minutes">%d minutes</string>
     <string name="name">Name</string>
@@ -33,8 +34,11 @@
     <string name="operator_mode">Mode</string>
     <string name="options">Options</string>
     <string name="options_expire_date">Login expire date</string>
+    <string name="popularity">Popularity</string>
     <string name="rating_body">You can create or update your rating for \"%1$s\" here!</string>
     <string name="rating_header">Rating: create and edit</string>
+    <string name="score_average">Average Score</string>
+    <string name="score_mean">Mean Score</string>
     <string name="search_anime">Search title</string>
     <string name="search_tag">Search tag</string>
     <string name="season">Season</string>
@@ -46,6 +50,5 @@
     <string name="version">Version</string>
     <string name="yes">Yes</string>
     <string name="year">Year</string>
-
 
 </resources>

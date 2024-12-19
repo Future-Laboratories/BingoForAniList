@@ -17,6 +17,8 @@ import kotlin.collections.any
 
 internal fun String.colon(): String = "$this:"
 
+internal fun String.percentage(): String = "$this%"
+
 internal infix fun <A, B, C : Pair<A, B>, D> C.toTriple(other: D) = Triple(first, second, other)
 
 //endregion

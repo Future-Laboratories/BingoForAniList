@@ -16,14 +16,15 @@ public data class DetailedAniListDataBody(
     val episodes: Int?,
     val duration: Int?,
     val genres: List<String>,
-    val averageScore: Float,
-    val meanScore: Float,
-    val popularity: Int,
+    val averageScore: Float?,
+    val meanScore: Float?,
+    val popularity: Int?,
     val tags: List<DetailedMediaTag>,
     val bannerImage: String?,
     val coverImage: MediaCoverImage,
     val startDate: FuzzyDate?,
     val endDate: FuzzyDate?,
+    val stats: MediaStats?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -34,8 +35,37 @@ public data class DetailedMediaTag(
 )
 
 @JsonClass(generateAdapter = true)
+public data class MediaStats(
+    val scoreDistribution: List<ScoreDistribution>,
+    val statusDistribution: List<StatusDistribution>,
+)
+
+@JsonClass(generateAdapter = true)
+public data class ScoreDistribution(
+    val score: Int,
+    val amount: Int,
+)
+
+
+@JsonClass(generateAdapter = true)
+public data class StatusDistribution(
+    val status: MediaListStatus,
+    val amount: Int,
+)
+
+
+@JsonClass(generateAdapter = true)
 public data class FuzzyDate(
     val year: Int?,
     val month: Int?,
     val day: Int?,
-)
+) {
+    override fun toString(): String {
+        return when {
+            day != null && month != null && year != null -> "$day.$month.$year"
+            month != null && year != null -> "$month.$year"
+            year != null -> "$year"
+            else -> "N/A"
+        }
+    }
+}

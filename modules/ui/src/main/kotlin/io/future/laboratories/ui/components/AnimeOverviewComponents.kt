@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Delete
+import androidx.compose.material.icons.rounded.Info
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.icons.rounded.SentimentNeutral
 import androidx.compose.material.icons.rounded.SentimentVeryDissatisfied
@@ -84,6 +85,7 @@ import io.future.laboratories.ui.toTriple
 internal fun AnimeItem(
     animeData: MediaList,
     bingoData: BingoData,
+    onInfoPressed: (id: Long) -> Unit,
     scoreFormat: ScoreFormat,
     onCommit: (scoreFormat: ScoreFormat, scoreValue: Float, ratingValue: MediaListStatus, (Float, MediaListStatus) -> Unit) -> Unit,
     onClickDelete: (bingoData: BingoData, animeData: MediaList) -> Unit,
@@ -115,6 +117,12 @@ internal fun AnimeItem(
                     .padding(4.dp),
                 horizontalArrangement = Arrangement.spacedBy(4.dp, Alignment.End),
             ) {
+                PositiveImageButton(
+                    onClick = { onInfoPressed(animeData.media.id) },
+                    contentDescription = stringResource(R.string.info),
+                    imageVector = Icons.Rounded.Info
+                )
+
                 RatingDialog(
                     animeData = animeData,
                     scoreFormat = scoreFormat,

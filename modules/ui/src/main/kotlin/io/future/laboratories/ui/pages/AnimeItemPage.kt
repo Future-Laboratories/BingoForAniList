@@ -12,6 +12,8 @@ import io.future.laboratories.anilistapi.data.DetailedAniListData
 import io.future.laboratories.ui.components.AnimeReleaseInfo
 import io.future.laboratories.ui.components.AnimeTagsCharts
 import io.future.laboratories.ui.components.GeneralInfo
+import io.future.laboratories.ui.components.ScoreCharts
+import io.future.laboratories.ui.components.WatchStatusChart
 
 @Composable
 public fun AnimeItemPage(
@@ -27,6 +29,7 @@ public fun AnimeItemPage(
         item {
             GeneralInfo(
                 imageURL = details.data.coverImage.large,
+                bannerImage = details.data.bannerImage,
                 title = details.data.title.userPreferred,
                 body = details.data.description,
             )
@@ -42,8 +45,23 @@ public fun AnimeItemPage(
         }
 
         item {
+            ScoreCharts(
+                scoreDistribution = details.data.stats?.scoreDistribution,
+                averageScore = details.data.averageScore,
+                meanScore = details.data.meanScore,
+                popularity = details.data.popularity,
+            )
+        }
+
+        item {
             AnimeTagsCharts(
                 tags = details.data.tags,
+            )
+        }
+
+        item {
+            WatchStatusChart(
+                status = details.data.stats?.statusDistribution,
             )
         }
     }

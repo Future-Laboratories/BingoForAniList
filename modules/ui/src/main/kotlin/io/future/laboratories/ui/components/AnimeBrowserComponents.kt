@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import android.R.attr.contentDescription
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -92,7 +93,7 @@ internal fun AnimeBrowserItem(
             ) {
                 PositiveImageButton(
                     onClick = { onInfoPressed(media.id) },
-                    contentDescription = stringResource(id = R.string.delete),
+                    contentDescription = stringResource(R.string.info),
                     imageVector = Icons.Rounded.Info
                 )
 

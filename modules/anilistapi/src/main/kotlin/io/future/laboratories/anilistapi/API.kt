@@ -220,6 +220,16 @@ public interface API {
                         month
                         day
                     }
+                    stats {
+                        statusDistribution {
+                            status
+                            amount
+                        }
+                        scoreDistribution {
+                            score
+                            amount
+                        }
+                    }
                 }
             }
         """.trimIndent()
