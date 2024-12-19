@@ -2,6 +2,8 @@ package io.future.laboratories.anilistapi.data
 
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
+import java.text.DateFormat
+import java.util.Calendar
 
 @JsonClass(generateAdapter = true)
 public data class DetailedAniListData(
@@ -36,8 +38,8 @@ public data class DetailedMediaTag(
 
 @JsonClass(generateAdapter = true)
 public data class MediaStats(
-    val scoreDistribution: List<ScoreDistribution>,
-    val statusDistribution: List<StatusDistribution>,
+    val scoreDistribution: List<ScoreDistribution>?,
+    val statusDistribution: List<StatusDistribution>?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -61,11 +63,12 @@ public data class FuzzyDate(
     val day: Int?,
 ) {
     override fun toString(): String {
-        return when {
-            day != null && month != null && year != null -> "$day.$month.$year"
-            month != null && year != null -> "$month.$year"
-            year != null -> "$year"
-            else -> "N/A"
+        val date = Calendar.getInstance().apply {
+            if (day != null) set(Calendar.DAY_OF_MONTH, day)
+            if (month != null) set(Calendar.MONTH, month)
+            if (year != null) set(Calendar.YEAR, year)
         }
+
+        return if (day != null && month != null && year != null) DateFormat.getDateInstance().format(date.time) else "N/A"
     }
 }
