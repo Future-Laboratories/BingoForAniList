@@ -67,7 +67,7 @@ public data class FuzzyDate(
                     set(Calendar.DAY_OF_MONTH, day)
                     set(Calendar.MONTH, month)
                     set(Calendar.YEAR, year)
-                }
+                }.time
             )
         } else "N/A"
     }
