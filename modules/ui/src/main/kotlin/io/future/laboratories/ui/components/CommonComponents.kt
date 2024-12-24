@@ -1,5 +1,6 @@
 package io.future.laboratories.ui.components
 
+import android.graphics.drawable.shapes.RoundRectShape
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -23,7 +24,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -53,6 +57,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -60,9 +65,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.RenderVectorGroup
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -85,6 +92,7 @@ import io.future.laboratories.common.StyleProvider.positiveButtonColors
 import io.future.laboratories.ui.Constants
 import io.future.laboratories.ui.R
 import io.future.laboratories.ui.colon
+import io.future.laboratories.ui.theme.AniListBingoTheme
 
 //region Divider & Spacer
 
@@ -497,9 +505,7 @@ private fun DropdownBox(
 
         DropdownMenu(
             expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-            },
+            onDismissRequest = { expanded = false },
             modifier = Modifier
                 .background(StyleProvider.surfaceColor)
                 .heightIn(
@@ -588,7 +594,9 @@ internal fun ColorPickerDialog(
                 DefaultHeader(title = stringResource(R.string.select_color))
 
                 Row(
-                    modifier = Modifier.fillMaxWidth().weight(weight = 1f, fill = false),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(weight = 1f, fill = false),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     HsvColorPicker(
@@ -621,6 +629,84 @@ internal fun ColorPickerDialog(
                     PositiveButton(onClick = { isDialogOpen = false }) {
                         Text(text = stringResource(R.string.ok))
                     }
+                }
+            }
+        }
+    }
+}
+
+//endregion
+
+//region ColorPallet
+
+@Composable
+internal fun ColorPalletRow(
+    presets: SnapshotStateList<ColorPallets.PalletPreset>,
+    onSelectedChange: (ColorPallets.PalletPreset) -> Unit,
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        items(presets) {
+            ColorPallet(it) {
+                onSelectedChange(it)
+            }
+        }
+    }
+}
+
+@Composable
+internal fun ColorPallet(
+    preset: ColorPallets.PalletPreset,
+    onSelect: (ColorPallets.PalletPreset) -> Unit,
+) {
+    AniListBingoTheme(
+        colorPrimary = preset.primary,
+        colorSecondary = preset.secondary,
+        colorTertiary = preset.tertiary,
+    ) {
+        ElevatedCard(
+            colors = StyleProvider.cardColor,
+        ) {
+            Column(
+                modifier = Modifier.padding(10.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(MaterialTheme.shapes.medium)
+                        .size(120.dp)
+                        .background(preset.primary),
+                    contentAlignment = Alignment.BottomEnd,
+                ) {
+                    Column(modifier = Modifier.width(60.dp)) {
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(preset.secondary),
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(preset.tertiary),
+                        )
+                    }
+                }
+
+                Text(
+                    modifier = Modifier.width(120.dp),
+                    textAlign = TextAlign.Center,
+                    text = preset.name,
+                    color = StyleProvider.onGradientColor,
+                )
+
+                Button(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = positiveButtonColors,
+                    onClick = { onSelect(preset) }
+                ) {
+                    Text(text = stringResource(R.string.select))
                 }
             }
         }

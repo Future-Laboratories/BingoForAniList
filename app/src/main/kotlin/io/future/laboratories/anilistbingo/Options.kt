@@ -1,6 +1,7 @@
 package io.future.laboratories.anilistbingo
 
 import android.content.SharedPreferences
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import io.future.laboratories.anilistapi.data.MediaListStatus
@@ -8,10 +9,11 @@ import io.future.laboratories.anilistapi.data.ScoreFormat
 import io.future.laboratories.anilistbingo.annotation.RestrictedApi
 import io.future.laboratories.anilistbingo.controller.APIController
 import io.future.laboratories.common.StyleProvider
+import io.future.laboratories.ui.components.BaseOptionData
 import io.future.laboratories.ui.components.BooleanOption
 import io.future.laboratories.ui.components.ColorOption
+import io.future.laboratories.ui.components.ColorPallets
 import io.future.laboratories.ui.components.DropdownOption
-import io.future.laboratories.ui.components.OptionData
 import io.future.laboratories.ui.components.OptionKey
 
 public class Options private constructor(
@@ -89,6 +91,71 @@ public class Options private constructor(
         defaultValue = Color(0xFF7A0D0D),
         isVisible = { showExperimental.currentValue && useCustomColorScheme.currentValue },
     )
+    private val presetOptions: ColorPallets = ColorPallets(
+        key = COLOR_PALLET,
+        onSelectPressed = {
+            customColorSchemePrimary.currentValue = it.primary
+            customColorSchemeSecondary.currentValue = it.secondary
+            customColorSchemeTertiary.currentValue = it.tertiary
+        },
+        isVisible = { showExperimental.currentValue && useCustomColorScheme.currentValue },
+        defaultValue = mutableStateListOf(
+            ColorPallets.PalletPreset(
+                name = "Default",
+                primary = Color(0xFF0395b2),
+                secondary = Color(0xFF00687F),
+                tertiary = Color(0xFF005466),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Teal",
+                primary = Color(0xFFA6F6F1),
+                secondary = Color(0xFF41AEA9),
+                tertiary = Color(0xFF213E3B),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Navy",
+                primary = Color(0xFF4B70F5),
+                secondary = Color(0xFF4C3BCF),
+                tertiary = Color(0xFF402E7A),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Mysti",
+                primary = Color(0xFFb45dbb),
+                secondary = Color(0xFF2e0f38),
+                tertiary = Color(0xFF8351a8),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Sunrise",
+                primary = Color(0xFFFFEEA9),
+                secondary = Color(0xFFFFBF78),
+                tertiary = Color(0xFFFF7D29),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Maroon",
+                primary = Color(0xFFCC2B52),
+                secondary = Color(0xFFAF1740),
+                tertiary = Color(0xFF740938),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Spezi",
+                primary = Color(0xFFEB5B00),
+                secondary = Color(0xFFE4003A),
+                tertiary = Color(0xFFB60071),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Coffee",
+                primary = Color(0xFFae3c31),
+                secondary = Color(0xFF5e1718),
+                tertiary = Color(0xFF331013),
+            ),
+            ColorPallets.PalletPreset(
+                name = "Contrast",
+                primary = Color(0xFFfcfcfc),
+                secondary = Color(0xFF525252),
+                tertiary = Color(0xFFababab),
+            ),
+        )
+    )
     private val scoringSystem: DropdownOption = DropdownOption(
         preferences = preferences,
         key = SCORING_SYSTEM,
@@ -124,7 +191,7 @@ public class Options private constructor(
 
     @PublishedApi
     @RestrictedApi
-    internal val options: Map<OptionKey, OptionData<*>> = listOf(
+    internal val options: Map<OptionKey, BaseOptionData<*>> = listOf(
         showFinishedAnime,
         pinnedCategory,
         useCards,
@@ -134,6 +201,7 @@ public class Options private constructor(
         customColorSchemeSecondary,
         customColorSchemeTertiary,
         customColorSchemeError,
+        presetOptions,
         scoringSystem,
         showExperimental,
         showExperimentalBrowser,
@@ -141,14 +209,14 @@ public class Options private constructor(
 
     @PublishedApi
     @RestrictedApi
-    internal inline fun <reified T : OptionData<*>> findOptionItemOfTypeWithKey(key: OptionKey): T {
+    internal inline fun <reified T : BaseOptionData<*>> findOptionItemOfTypeWithKey(key: OptionKey): T {
         val option = options[key]
 
         return option as? T ?: throw NoSuchElementException("no ${T::class} found under $key")
     }
 
     @OptIn(RestrictedApi::class)
-    public inline operator fun <reified T : OptionData<*>> get(key: OptionKey): T {
+    public inline operator fun <reified T : BaseOptionData<*>> get(key: OptionKey): T {
         return findOptionItemOfTypeWithKey(key)
     }
 
@@ -162,6 +230,7 @@ public class Options private constructor(
         internal val CUSTOM_COLOR_SCHEME_SECONDARY = OptionKey("CUSTOM_COLOR_SCHEME_SECONDARY")
         internal val CUSTOM_COLOR_SCHEME_TERTIARY = OptionKey("CUSTOM_COLOR_SCHEME_TERTIARY")
         internal val CUSTOM_COLOR_SCHEME_ERROR = OptionKey("CUSTOM_COLOR_SCHEME_ERROR")
+        internal val COLOR_PALLET = OptionKey("COLOR_PALLET")
         internal val SCORING_SYSTEM = OptionKey("SCORING_SYSTEM")
         internal val SHOW_EXPERIMENTAL = OptionKey("SHOW_EXPERIMENTAL")
         internal val SHOW_EXPERIMENTAL_BROWSER = OptionKey("SHOW_EXPERIMENTAL_BROWSER")

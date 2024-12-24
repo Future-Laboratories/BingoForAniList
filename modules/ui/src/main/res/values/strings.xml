@@ -42,6 +42,7 @@
     <string name="search_anime">Search title</string>
     <string name="search_tag">Search tag</string>
     <string name="season">Season</string>
+    <string name="select">Select</string>
     <string name="select_color">Select Color</string>
     <string name="share">Share</string>
     <string name="shuffle">Shuffle</string>

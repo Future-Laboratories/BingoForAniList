@@ -1,6 +1,5 @@
 package io.future.laboratories.anilistbingo
 
-import android.R.attr.version
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.ShortcutInfo.SHORTCUT_CATEGORY_CONVERSATION
@@ -32,6 +31,7 @@ import io.future.laboratories.anilistapi.data.MediaList
 import io.future.laboratories.anilistapi.data.MediaSort
 import io.future.laboratories.anilistapi.data.PageQueryParams
 import io.future.laboratories.anilistapi.data.ScoreFormat
+import io.future.laboratories.anilistbingo.Options.Companion.COLOR_PALLET
 import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_ERROR
 import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_PRIMARY
 import io.future.laboratories.anilistbingo.Options.Companion.CUSTOM_COLOR_SCHEME_SECONDARY
@@ -49,7 +49,6 @@ import io.future.laboratories.anilistbingo.controller.ShareController
 import io.future.laboratories.anilistbingo.controller.ShareController.receive
 import io.future.laboratories.common.BingoData
 import io.future.laboratories.common.StyleProvider
-import io.future.laboratories.common.StyleProvider.useCards
 import io.future.laboratories.ui.CustomScaffold
 import io.future.laboratories.ui.DropDownItemData
 import io.future.laboratories.ui.components.BooleanOption
@@ -276,6 +275,7 @@ public class MainActivity : ComponentActivity() {
                                             options[CUSTOM_COLOR_SCHEME_SECONDARY],
                                             options[CUSTOM_COLOR_SCHEME_TERTIARY],
                                             options[CUSTOM_COLOR_SCHEME_ERROR],
+                                            options[COLOR_PALLET],
                                         )
                                     ),
                                     OptionGroup(
