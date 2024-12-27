@@ -145,8 +145,8 @@ public class Options private constructor(
             ColorPallets.PalletPreset(
                 name = "Coffee",
                 primary = Color(0xFFae3c31),
-                secondary = Color(0xFF5e1718),
-                tertiary = Color(0xFF331013),
+                secondary = Color(0xFF331013),
+                tertiary = Color(0xFF5e1718),
             ),
             ColorPallets.PalletPreset(
                 name = "Contrast",

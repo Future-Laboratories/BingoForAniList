@@ -698,7 +698,7 @@ internal fun ColorPallet(
                     modifier = Modifier.width(120.dp),
                     textAlign = TextAlign.Center,
                     text = preset.name,
-                    color = StyleProvider.onGradientColor,
+                    color = if (StyleProvider.useGradient) StyleProvider.onGradientColor else Color.Unspecified,
                 )
 
                 Button(
