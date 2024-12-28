@@ -60,12 +60,11 @@ internal class APIController private constructor(
     ) {
         // put the received values into the given preferences
         preferences.edit(commit = true) {
-            putString(PREFERENCE_ACCESS_TOKEN, uri.getValueOfKey("access_token"))
-            putString(PREFERENCE_ACCESS_TYPE, uri.getValueOfKey("token_type"))
+            putString(PREFERENCE_ACCESS_TOKEN, uri valueOfKey "access_token")
+            putString(PREFERENCE_ACCESS_TYPE, uri valueOfKey "token_type")
             putLong(
                 PREFERENCE_ACCESS_EXPIRED,
-                System.currentTimeMillis() + (uri.getValueOfKey("expires_in")
-                    ?: "0").toLong() * 1000L,
+                System.currentTimeMillis() + ((uri valueOfKey "expires_in") ?: "0").toLong() * 1000L,
             )
         }
 
@@ -93,7 +92,7 @@ internal class APIController private constructor(
      * @param key The key searching for
      * @return String that represents the value under the given [key]
      */
-    private fun Uri?.getValueOfKey(key: String): String? {
+    private infix fun Uri?.valueOfKey(key: String): String? {
         return this?.fragment
             ?.substringAfter("${key}=")
             ?.substringBefore("&")

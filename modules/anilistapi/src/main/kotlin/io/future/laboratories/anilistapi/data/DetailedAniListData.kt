@@ -27,6 +27,7 @@ public data class DetailedAniListDataBody(
     val startDate: FuzzyDate?,
     val endDate: FuzzyDate?,
     val stats: MediaStats?,
+    val characters: CharacterConnection?,
 )
 
 @JsonClass(generateAdapter = true)
@@ -71,4 +72,50 @@ public data class FuzzyDate(
             )
         } else "N/A"
     }
+}
+
+@JsonClass(generateAdapter = true)
+public data class CharacterConnection(
+    val edges: List<CharacterEdge>?,
+)
+
+@JsonClass(generateAdapter = true)
+public data class CharacterEdge(
+    val node: Character,
+    val role: CharacterRole,
+)
+
+@JsonClass(generateAdapter = true)
+public data class Character(
+    val name: CharacterName,
+    val age: String?,
+    val image: CharacterImage?,
+    val dateOfBirth: FuzzyDate?,
+    val gender: String?,
+    val bloodType: String?,
+)
+
+@JsonClass(generateAdapter = true)
+public data class CharacterName(
+    val first: String?,
+    val middle: String?,
+    val last: String?,
+    val full: String?,
+    val alternative: List<String>?,
+    val alternativeSpoiler: List<String>?,
+    val userPreferred: String?,
+)
+
+@JsonClass(generateAdapter = true)
+public data class CharacterImage(
+    val large: String?,
+)
+
+public enum class CharacterRole(public val value: String) {
+    @Json(name = "MAIN")
+    MAIN("Main"),
+    @Json(name = "SUPPORTING")
+    SUPPORTING("Supporting"),
+    @Json(name = "BACKGROUND")
+    BACKGROUND("Background"),
 }

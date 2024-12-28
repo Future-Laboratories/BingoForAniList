@@ -230,6 +230,37 @@ public interface API {
                             amount
                         }
                     }
+                    characters(
+                        sort: FAVOURITES_DESC,
+                        page: 1,
+                        perPage: 25,
+                    ) {
+                        edges {
+                            node {
+                                name {
+                                    first
+                                    middle
+                                    last
+                                    full
+                                    alternative
+                                    alternativeSpoiler
+                                    userPreferred
+                                }
+                                age
+                                image {
+                                    large
+                                }
+                                dateOfBirth {
+                                    year
+                                    month
+                                    day
+                                }
+                                gender
+                                bloodType
+                            }
+                            role
+                        }
+                    }
                 }
             }
         """.trimIndent()

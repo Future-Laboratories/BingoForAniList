@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="age">Alter</string>
     <string name="airing_status">Veröffentlichunsstatus</string>
     <string name="back">Zurück</string>
     <string name="bingo">Bingo</string>
@@ -10,6 +11,8 @@
     <string name="bingo_size">Bingogröße</string>
     <string name="bingo_stats">Statistiken</string>
     <string name="bingo_vertical">Vertikal</string>
+    <string name="birthday">Geburtstag</string>
+    <string name="blood_type">Blutgruppe</string>
     <string name="commit">Absenden</string>
     <string name="complete">Abschluss</string>
     <string name="date_end">End Datum</string>
@@ -25,6 +28,7 @@
     <string name="edit_dismiss_header">Abbruch im Gange</string>
     <string name="episodes">Episoden</string>
     <string name="format">Format</string>
+    <string name="gender">Geschlecht</string>
     <string name="info">Info</string>
     <string name="load_more">Mehr laden</string>
     <string name="minutes">%d Minuten</string>
@@ -37,6 +41,7 @@
     <string name="popularity">Popularität</string>
     <string name="rating_body">Du kannst deine Bewertung für \"%1$s\" hier erstellen und bearbeiten!</string>
     <string name="rating_header">Bewertung: erstellen und bearbeiten</string>
+    <string name="role">Rolle</string>
     <string name="score_average">Durchschnittliche Bewertung</string>
     <string name="score_mean">Mittelwert Bewertung</string>
     <string name="search_anime">Suche Title</string>

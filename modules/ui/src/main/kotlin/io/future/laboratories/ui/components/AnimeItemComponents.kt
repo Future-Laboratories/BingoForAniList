@@ -3,6 +3,7 @@ package io.future.laboratories.ui.components
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,16 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CardElevation
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -39,10 +47,13 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import eu.wewox.textflow.material3.TextFlow
+import io.future.laboratories.anilistapi.data.Character
+import io.future.laboratories.anilistapi.data.CharacterEdge
 import io.future.laboratories.anilistapi.data.DetailedMediaTag
 import io.future.laboratories.anilistapi.data.FuzzyDate
 import io.future.laboratories.anilistapi.data.ScoreDistribution
@@ -61,6 +72,7 @@ import ir.ehsannarmani.compose_charts.models.LabelHelperProperties
 import ir.ehsannarmani.compose_charts.models.LabelProperties
 import ir.ehsannarmani.compose_charts.models.Pie
 import ir.ehsannarmani.compose_charts.models.VerticalIndicatorProperties
+import kotlin.collections.isNullOrEmpty
 
 @Composable
 internal fun GeneralInfo(
@@ -357,7 +369,7 @@ internal fun WatchStatusChart(
                 Pie(
                     label = statusDistribution.status.value,
                     data = statusDistribution.amount.toDouble(),
-                    color = colorList[index]
+                    color = colorList[index],
                 )
             }
         )
@@ -410,7 +422,7 @@ private fun SelectedLabel(
 
     LabelRow(
         pie = pie,
-        text = "${pie.label.orEmpty().colon()} ${pie.data.toInt()}"
+        text = "${pie.label.orEmpty().colon()} ${pie.data.toInt()}",
     )
 }
 
@@ -442,5 +454,99 @@ private fun LabelRow(
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(text = text)
+    }
+}
+
+@Composable
+internal fun CharacterOverview(
+    character: List<CharacterEdge>?,
+) {
+    if (character.isNullOrEmpty()) return
+
+    StyledContainer(modifier = Modifier.fillMaxWidth()) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            DefaultHeader("Character Overview")
+
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                items(character) { character ->
+                    CharacterCard(character = character)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CharacterCard(
+    character: CharacterEdge,
+) {
+    //TODO: Placeholder
+    OutlinedCard(
+        modifier = Modifier.width(350.dp),
+        shape = MaterialTheme.shapes.large,
+        elevation = CardDefaults.elevatedCardElevation(defaultElevation = 16.dp),
+        border = BorderStroke(2.dp, StyleProvider.containerGradient),
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            AsyncImage(
+                modifier = Modifier.width(110.dp),
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(character.node.image?.large)
+                    .crossfade(true)
+                    .build(),
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+
+            Column(modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 12.dp)
+                .padding(end = 8.dp)
+            ) {
+                InfoRow(
+                    valueAvailable = character.node.name.full != null,
+                    label = stringResource(R.string.name),
+                    info = character.node.name.full.orEmpty(),
+                )
+
+                InfoRow(
+                    valueAvailable = character.node.age != null,
+                    label = stringResource(R.string.age),
+                    info = character.node.age.orEmpty(),
+                )
+
+                InfoRow(
+                    valueAvailable = character.node.dateOfBirth != null,
+                    label = stringResource(R.string.birthday),
+                    info = character.node.dateOfBirth.toString(),
+                )
+
+                InfoRow(
+                    valueAvailable = character.node.bloodType != null,
+                    label = stringResource(R.string.blood_type),
+                    info = character.node.bloodType.orEmpty(),
+                )
+
+                InfoRow(
+                    valueAvailable = character.node.gender != null,
+                    label = stringResource(R.string.gender),
+                    info = character.node.gender.orEmpty(),
+                )
+
+                InfoRow(
+                    valueAvailable = true,
+                    label = stringResource(R.string.role),
+                    info = character.role.value,
+                )
+            }
+        }
     }
 }

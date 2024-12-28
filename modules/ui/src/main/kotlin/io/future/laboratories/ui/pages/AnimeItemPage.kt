@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import io.future.laboratories.anilistapi.data.DetailedAniListData
 import io.future.laboratories.ui.components.AnimeReleaseInfo
 import io.future.laboratories.ui.components.AnimeTagsCharts
+import io.future.laboratories.ui.components.CharacterOverview
 import io.future.laboratories.ui.components.GeneralInfo
 import io.future.laboratories.ui.components.ScoreCharts
 import io.future.laboratories.ui.components.WatchStatusChart
@@ -62,6 +63,12 @@ public fun AnimeItemPage(
         item {
             WatchStatusChart(
                 status = details.data.stats?.statusDistribution,
+            )
+        }
+
+        item {
+            CharacterOverview(
+                character = details.data.characters?.edges,
             )
         }
     }
