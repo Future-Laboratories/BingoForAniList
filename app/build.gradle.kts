@@ -25,7 +25,7 @@ android {
     defaultConfig {
         applicationId = "io.future.laboratories.anilistbingo"
         minSdk = 27
-        targetSdk = 35
+        targetSdk = 36
         versionCode = major * 100 * 100 + minor * 100 + patch
         versionName = "$major.$minor.$patch"
 
