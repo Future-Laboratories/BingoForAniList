@@ -16,7 +16,7 @@ kotlin {
 
 android {
     namespace = "io.future.laboratories.anilistbingo"
-    compileSdk = 35
+    compileSdk = 36
 
     val major = 1
     val minor = 0

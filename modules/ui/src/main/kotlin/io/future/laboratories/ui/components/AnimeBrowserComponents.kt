@@ -35,6 +35,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -64,8 +65,10 @@ import io.future.laboratories.ui.animations.ShakingState
 import io.future.laboratories.ui.animations.rememberShakingState
 import io.future.laboratories.ui.animations.shakable
 import io.future.laboratories.ui.colon
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import kotlin.time.Duration.Companion.seconds
 
 @Composable
 internal fun AnimeBrowserItem(
@@ -146,13 +149,17 @@ internal fun BrowserSearchbar(
     var showModalBottomSheet by rememberSaveable { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf(queryParams.search.value) }
 
+    LaunchedEffect(searchQuery) {
+        delay(1.seconds)
+
+        onBottomSheetClose()
+    }
+
     DefaultSearchBar(
         query = searchQuery.orEmpty(),
         onQueryChange = {
             searchQuery = if (it.isEmpty()) null else it
             queryParams.search.value = searchQuery
-
-            onBottomSheetClose()
         },
         placeholderStringId = R.string.search_anime,
         trailingIcon = {

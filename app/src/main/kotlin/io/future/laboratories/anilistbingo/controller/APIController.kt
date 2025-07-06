@@ -62,9 +62,7 @@ internal class APIController private constructor(
         preferences.edit(commit = true) {
             putString(PREFERENCE_ACCESS_TOKEN, uri valueOfKey "access_token")
             putString(PREFERENCE_ACCESS_TYPE, uri valueOfKey "token_type")
-            putLong(
-                PREFERENCE_ACCESS_EXPIRED,
-                System.currentTimeMillis() + ((uri valueOfKey "expires_in") ?: "0").toLong() * 1000L,
+            putLong(PREFERENCE_ACCESS_EXPIRED, System.currentTimeMillis() + ((uri valueOfKey "expires_in") ?: "0").toLong() * 1000L,
             )
         }
 
@@ -157,6 +155,7 @@ internal class APIController private constructor(
     ) {
         if (currentQuery != variableParameter) {
             runtimeCustomPages.clear()
+            variableParameter.pageNumber.value = 0
             currentQuery = variableParameter.clone()
         }
 

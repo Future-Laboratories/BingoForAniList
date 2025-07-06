@@ -15,7 +15,7 @@ kotlin {
 
 android {
     namespace = "io.future.laboratories.anilistapi"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 27

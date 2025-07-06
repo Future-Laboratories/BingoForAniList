@@ -485,7 +485,6 @@ internal fun CharacterOverview(
 private fun CharacterCard(
     character: CharacterEdge,
 ) {
-    //TODO: Placeholder
     OutlinedCard(
         modifier = Modifier.width(350.dp),
         shape = MaterialTheme.shapes.large,
