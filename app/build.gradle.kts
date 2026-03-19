@@ -20,7 +20,7 @@ android {
 
     val major = 1
     val minor = 1
-    val patch = 0
+    val patch = 1
 
     defaultConfig {
         applicationId = "io.future.laboratories.anilistbingo"
